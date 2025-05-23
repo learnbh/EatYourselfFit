@@ -1,0 +1,20 @@
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+ #Backend
+ backend/target/
+ backend/!**/src/main/**/target/
+ backend/!**/src/test/**/target/
+ backend/.mvn
+/backend/mvnw
+/backend/mvnw.cmd
+
+ #Frontend
+ frontend/node_modules
+ frontend/dist
+ frontend/dist-ssr
+ frontend/*.local
