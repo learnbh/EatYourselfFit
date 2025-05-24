@@ -1,0 +1,92 @@
+name: EatYourselfFit
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout From Repository Main
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install And Build Frontend
+        working-directory: frontend
+        run: | #Pipe = führe mehrere Befehle in einer Anweisung aus
+          npm install
+          npm run build
+
+      - name: Upload Frontend-Build To GitHubs Cache
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/dist/
+
+  build-backend:
+    runs-on: ubuntu-latest
+    needs: build-frontend
+    steps:
+      - name: Checkout From Repository Main
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+          cache: "maven"
+
+      - name: Download Frontend-Build From GitHubs Cache
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: backend/src/main/resources/static
+
+      - name: Build Backend With Maven
+        run: mvn -B package --file backend/pom.xml
+
+      - name: Upload Backend Build To GitHubs Cache
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-build
+          path: backend/target/app.jar
+
+  put-to-docker-hub:
+    runs-on: ubuntu-latest
+    needs: build-backend
+    steps:
+      - name: Checkout From Repository Main
+        uses: actions/checkout@v4
+
+      - name: Download Backend-Build To GitHubs Cache
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-build
+          path: backend/target
+
+      - name: Login To Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{secrets.DOCKER_HUB_USERNAME}}
+          password: ${{secrets.DOCKER_HUB_PASSWORD}}
+
+      - name: Build And Push To Docker Hub And Generate Image
+        uses: docker/build-push-action@v5
+        with:
+          push: 'true' # damit das Image hochgeladen wird
+          tags: ${{secrets.DOCKER_IMAGE_TAG}} # z.B. "myuser/my-backend:latest"
+          context: . # verweist auf Dockerfile im Projektverzeichnis
+
+  deploy-to-render:
+    needs: put-to-docker-hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render.com Deployment
+        run: |
+          curl -X POST ${{secrets.RENDER_DEPLOY_HOOK}}
