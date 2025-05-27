@@ -6,10 +6,8 @@
 *.ipr
 
  #Backend
- backend/target/
- backend/!**/src/main/**/target/
- backend/!**/src/test/**/target/
- backend/.mvn
+/backend/target/
+/backend/.mvn
 /backend/mvnw
 /backend/mvnw.cmd
 /backend/HELP.md
