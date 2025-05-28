@@ -32,6 +32,7 @@ public class IngredientService {
                 ingredientDto.prices(),
                 ingredientDto.nutrientsId()
         );
+
         ingredientRepository.save(newIngredient);
         return newIngredient;
     }

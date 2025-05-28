@@ -1,5 +1,6 @@
 package org.bea.backend.controller;
 
+import jakarta.validation.Valid;
 import org.bea.backend.model.Ingredient;
 import org.bea.backend.model.IngredientDto;
 import org.bea.backend.service.IngredientService;
@@ -23,7 +24,7 @@ public class IngredientController {
     }
 
     @PostMapping
-    public Ingredient addIngredient(@RequestBody IngredientDto ingredientDto) {
+    public Ingredient addIngredient(@Valid @RequestBody IngredientDto ingredientDto) {
         return ingredientService.addIngredient(ingredientDto);
     }
 }

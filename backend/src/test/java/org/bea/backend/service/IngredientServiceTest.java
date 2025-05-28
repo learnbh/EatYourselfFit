@@ -34,6 +34,7 @@ class IngredientServiceTest {
     @Test
     public void getIngredients_shouldReturn_EmptyList_whenMongoCollectionIsEmpty(){
         assertEquals(Collections.emptyList(), ingredientService.getIngredients());
+        Mockito.verify(mockIngredientRepository, Mockito.times(1)).findAll();
     }
 
     @Test
@@ -50,7 +51,6 @@ class IngredientServiceTest {
 
     @Test
     public void addIngredient_shouldReturn_createdIngredient() {
-        // given
         // when
         Mockito.when(mockServiceId.generateId()).thenReturn(milk.id());
         Mockito.when(mockIngredientRepository.save(milk)).thenReturn(milk);
