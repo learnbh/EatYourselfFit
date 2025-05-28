@@ -1,6 +1,7 @@
 package org.bea.backend.service;
 
 import org.bea.backend.model.Ingredient;
+import org.bea.backend.model.IngredientDto;
 import org.bea.backend.repository.IngredientRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,22 +14,27 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class IngredientServiceTest {
 
-    IngredientRepository mockIngredientRepository;
+    private IngredientRepository mockIngredientRepository;
+    private ServiceId mockServiceId;
     private IngredientService ingredientService;
 
     Ingredient milk;
+    IngredientDto milkDto;
 
     @BeforeEach
     void setUp() {
         mockIngredientRepository = Mockito.mock(IngredientRepository.class);
-        ingredientService = new IngredientService(mockIngredientRepository);
+        mockServiceId = Mockito.mock(ServiceId.class);
+        ingredientService = new IngredientService(mockIngredientRepository, mockServiceId);
 
         milk = new Ingredient("milk", "milk", "low fat", 100.0, "ml", 1.29, "egal");
+        milkDto = new IngredientDto("milk", "low fat", 100.0, "ml", 1.29, "egal");
     }
 
     @Test
     public void getIngredients_shouldReturn_EmptyList_whenMongoCollectionIsEmpty(){
         assertEquals(Collections.emptyList(), ingredientService.getIngredients());
+        Mockito.verify(mockIngredientRepository, Mockito.times(1)).findAll();
     }
 
     @Test
@@ -43,4 +49,13 @@ class IngredientServiceTest {
         Mockito.verify(mockIngredientRepository, Mockito.times(1)).findAll();
     }
 
+    @Test
+    public void addIngredient_shouldReturn_createdIngredient() {
+        // when
+        Mockito.when(mockServiceId.generateId()).thenReturn(milk.id());
+        Mockito.when(mockIngredientRepository.save(milk)).thenReturn(milk);
+        // then
+        assertEquals(milk, ingredientService.addIngredient(milkDto));
+        Mockito.verify(mockIngredientRepository, Mockito.times(1)).save(milk);
+    }
 }

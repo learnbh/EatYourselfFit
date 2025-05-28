@@ -1,10 +1,10 @@
 package org.bea.backend.controller;
 
+import jakarta.validation.Valid;
 import org.bea.backend.model.Ingredient;
+import org.bea.backend.model.IngredientDto;
 import org.bea.backend.service.IngredientService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,5 +21,10 @@ public class IngredientController {
     @GetMapping
     public List<Ingredient> getIngredients() {
         return ingredientService.getIngredients();
+    }
+
+    @PostMapping
+    public Ingredient addIngredient(@Valid @RequestBody IngredientDto ingredientDto) {
+        return ingredientService.addIngredient(ingredientDto);
     }
 }
