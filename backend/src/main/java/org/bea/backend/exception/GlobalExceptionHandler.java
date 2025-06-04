@@ -24,7 +24,6 @@ public class GlobalExceptionHandler {
         ExceptionMessage error = new ExceptionMessage("Error: "+e.getMessage(),
                 Instant.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.name());
-        e.printStackTrace();
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR );
     }
 
