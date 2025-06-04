@@ -3,8 +3,8 @@ package org.bea.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bea.backend.model.Ingredient;
 import org.bea.backend.model.IngredientDto;
-import org.bea.backend.openAI.IngredientOpenAiDto;
-import org.bea.backend.openAI.OpenAiConfig;
+import org.bea.backend.openai.IngredientOpenAiDto;
+import org.bea.backend.openai.OpenAiConfig;
 import org.bea.backend.repository.IngredientRepository;
 
 import org.junit.jupiter.api.Test;

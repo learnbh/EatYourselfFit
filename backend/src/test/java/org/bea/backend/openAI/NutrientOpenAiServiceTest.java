@@ -2,6 +2,8 @@ package org.bea.backend.openAI;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bea.backend.openai.NutrientOpenAiService;
+import org.bea.backend.openai.OpenAiConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
