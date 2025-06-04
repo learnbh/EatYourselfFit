@@ -3,16 +3,24 @@ package org.bea.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bea.backend.model.Ingredient;
 import org.bea.backend.model.IngredientDto;
+import org.bea.backend.openAI.IngredientOpenAiDto;
+import org.bea.backend.openAI.OpenAiConfig;
 import org.bea.backend.repository.IngredientRepository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.test.web.client.match.MockRestRequestMatchers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -20,8 +28,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.Collections;
 import java.util.List;
 
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureMockRestServiceServer
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class IngredientControllerTest {
 
@@ -29,6 +41,14 @@ public class IngredientControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private IngredientRepository mockIngredientRepository;
+
+    // OpenAi
+    @Value("${openai.api.url.base}")
+    private String baseUrl;
+    @Value("${openai.api.key}")
+    private String openAiApiKey;
+    @Autowired
+    private MockRestServiceServer mockRestServer;
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -38,6 +58,15 @@ public class IngredientControllerTest {
     IngredientDto milkDto2 = new IngredientDto("milk", "fat", 100.0, "ml", 1.59, "bad");
     IngredientDto invalidDtoMaxSize = new IngredientDto("", "low fat", 0.0, "", 1.29, "egal");
     IngredientDto invalidDtoNull = new IngredientDto(null, "low fat", null, null, 1.29, "egal");
+
+    IngredientOpenAiDto ingredientOpenAiDto = new IngredientOpenAiDto("rindehack", "");
+    String openAiResponse = """
+                {
+                  "choices": [
+                    {
+                      "message": {
+                        "role": "assistant",
+                        "content": %s}}]}""";
 
     @Test
     void getIngredients_shouldHandleUnknownError() throws Exception{
@@ -147,5 +176,57 @@ public class IngredientControllerTest {
                         MockMvcResultMatchers.jsonPath("$.prices").value(milkDto2.prices()),
                         MockMvcResultMatchers.jsonPath("$.nutrientsId").value(milkDto2.nutrientsId())
                 );
+    }
+    @Test
+    void addIngredientByOpenAi_shouldAddCorrectIngredientAndTheirNutrients() throws Exception{
+        // given
+        String response = String.format(openAiResponse, mapper.writeValueAsString(OpenAiConfig.ingredientResponseTest));
+
+        IngredientDto ingredientDto = mapper
+                .readTree(OpenAiConfig.ingredientResponseTest)
+                .path("ingredientDto")
+                .traverse(mapper)
+                .readValueAs(IngredientDto.class);
+
+        mockRestServer.expect(requestTo(baseUrl+"/v1/chat/completions"))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(MockRestRequestMatchers.header(HttpHeaders.AUTHORIZATION, "Bearer "+openAiApiKey))
+                .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients/openai/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(ingredientOpenAiDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpectAll(
+                        MockMvcResultMatchers.jsonPath("$.id").exists(),
+                        MockMvcResultMatchers.jsonPath("$.product").value(ingredientDto.product()),
+                        MockMvcResultMatchers.jsonPath("$.variation").value(ingredientDto.variation()),
+                        MockMvcResultMatchers.jsonPath("$.quantity").value(ingredientDto.quantity()),
+                        MockMvcResultMatchers.jsonPath("$.unit").value(ingredientDto.unit()),
+                        MockMvcResultMatchers.jsonPath("$.prices").value(ingredientDto.prices()),
+                        MockMvcResultMatchers.jsonPath("$.nutrientsId").exists()
+                );
+        mockRestServer.verify();
+    }
+    @Test
+    void addIngredientByOpenAi_shouldThrowResponseStatusException_whenJsonIsWrong() throws Exception{
+        String response = String.format(openAiResponse, mapper.writeValueAsString(OpenAiConfig.responseWithoutIngredientNode));
+
+        System.out.println(response);
+        mockRestServer.expect(requestTo(baseUrl+"/v1/chat/completions"))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(MockRestRequestMatchers.header(HttpHeaders.AUTHORIZATION, "Bearer "+openAiApiKey))
+                .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients/openai/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(ingredientOpenAiDto)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpectAll(
+                        MockMvcResultMatchers
+                                .jsonPath("$.error")
+                                .value("Error: 400 BAD_REQUEST \"Antwort von OpenAI für Ingredient rindehack ist leer.\"")
+                );
+        mockRestServer.verify();
     }
 }
