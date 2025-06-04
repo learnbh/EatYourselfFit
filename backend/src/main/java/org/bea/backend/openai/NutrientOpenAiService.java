@@ -1,4 +1,4 @@
-package org.bea.backend.openAI;
+package org.bea.backend.openai;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

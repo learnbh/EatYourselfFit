@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.bea.backend.model.Ingredient;
 import org.bea.backend.model.IngredientDto;
-import org.bea.backend.openAI.IngredientOpenAiDto;
+import org.bea.backend.openai.IngredientOpenAiDto;
 import org.bea.backend.service.IngredientService;
 import org.springframework.web.bind.annotation.*;
 

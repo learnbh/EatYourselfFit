@@ -1,4 +1,4 @@
-package org.bea.backend.openAI;
+package org.bea.backend.openai;
 
 public record IngredientOpenAiDto(
         String product,
