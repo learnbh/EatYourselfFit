@@ -1,6 +1,64 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
+}
+.home{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-row-gap: 0.8rem;
+  grid-column-gap: 3rem;
+  justify-items: stretch;
+}
+.recipeplan{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+  justify-items: stretch;
+}
+.recipeplan > div:last-child {
+  justify-self: end; /* Das letzte Element (zweite Spalte) nach rechts ausrichten */
+}
+
+.tile{
+  margin-top: 0.5rem;
+}
+.tileHeader{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 5px;
+}
+.hide{
+  display: none;
+}
+.searchbtn{
+  padding: 10px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-left: 5px;
+}
+.addbtn{
+  padding: 14px;
+  margin-left: 5px;
+}
+.border{
+  box-shadow: 0 2px 8px var(--color-site-secondary);
+  border-width: var(--border-site-width);
+  border-style: var(--border-site-style);
+  border-color: var(--color-site-secondary);
+  border-radius:var(--border-site-radius);
+}
+.border-delete{
+  box-shadow: 0 2px 8px #FFAB91;
+  border-width: var(--border-site-width);
+  border-style: var(--border-site-style);
+  border-color: #FFAB91;
+  border-radius:var(--border-site-radius);
+}
+.border-delete:hover{
+  box-shadow: 0 2px 8px darkred;
+  border-color: darkred;
+
 }
