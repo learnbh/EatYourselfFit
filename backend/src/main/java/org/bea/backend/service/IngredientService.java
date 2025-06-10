@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class IngredientService {
@@ -100,5 +100,13 @@ public class IngredientService {
                 }
         }
         return null;
+    }
+
+    public Set<Ingredient> getIngredientByName(String name) {
+        List<Ingredient> products = ingredientRepository.findIngredientsByProductContainsIgnoreCase(name);
+        List<Ingredient> variation = ingredientRepository.findIngredientsByVariationContainsIgnoreCase(name);
+        Set<Ingredient> ingredients = new LinkedHashSet<>(products);
+        ingredients.addAll(variation);
+        return ingredients;
     }
 }
