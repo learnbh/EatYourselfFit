@@ -27,17 +27,47 @@ export default function IngredientSearch(props:Readonly<Props>) {
 
     function handleQuantity(e:React.FormEvent<HTMLInputElement>){
         e.preventDefault()
-        const input = e.currentTarget.value;
-        if (input === '' || /^\d*\.?\d*$/.test(input)) {
-            props.ingredient.quantity = Number(input);
-            props.handleQuantity(props.ingredient);
-        }
+        props.ingredient.quantity = Number(e.currentTarget.value);
+        props.handleQuantity(props.ingredient);
     }
 
     function handleKeyDown (e: React.KeyboardEvent<HTMLInputElement>) {
-        if (!/\d/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete') {
-            e.preventDefault();
+        const allowedKeys = [
+            'Backspace',
+            'Tab',
+            'ArrowLeft',
+            'ArrowRight',
+            'Delete',
+            'Home',
+            'End'
+        ];
+
+        const isCtrlA = e.key === 'a' && (e.ctrlKey || e.metaKey);
+        const isCtrlC = e.key === 'c' && (e.ctrlKey || e.metaKey);
+        const isCtrlV = e.key === 'v' && (e.ctrlKey || e.metaKey);
+        const isCtrlX = e.key === 'x' && (e.ctrlKey || e.metaKey);
+
+        if (
+            allowedKeys.includes(e.key) ||
+            isCtrlA || isCtrlC || isCtrlV || isCtrlX
+        ) {
+            return;
         }
+
+        if (/^\d$/.test(e.key)) {
+            return;
+        }
+
+        if (e.key === ',') {
+            // Prüfe, ob bereits ein Komma im Feld ist
+            if (e.currentTarget.value.includes(',')) {
+                e.preventDefault();
+            }
+            return;
+        }
+
+        // Alles andere blockieren
+        e.preventDefault();
     }
     return (
         <>
