@@ -1,0 +1,133 @@
+import type {Ingredient} from "../types.ts";
+import IngredientSearch from "./IngredientSearch.tsx";
+import {type ChangeEvent, useCallback, useEffect, useState} from "react";
+import axios from "axios";
+import IngredientNotFound from "./IngredientNotFound.tsx";
+
+type Props = {
+    handleChangeDishName: (dishName:string) => void
+    addIngredientToRecipe: (ingredient:Ingredient) => void
+    removeIngredientFromRecipe: (ingredient:Ingredient) => void
+    handleQuantity:(ingredient:Ingredient) =>  void
+}
+
+export default function AddRecipe(props:Readonly<Props>) {
+    const [ingredientSearch, setIngredientSearch] = useState<string>("");
+    const [ingredientsSearch, setIngredientsSearch] = useState<Ingredient[]>([]);
+    const [ingredientNotFoundVisible, setIngredientNotFoundVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const getDBData = useCallback(async (search:string) => {
+        if(search.trim() === ""){
+            setIngredientsSearch([]);
+            setIsLoading(false);
+            setIngredientNotFoundVisible(false);
+            return;
+        }
+        try {
+            setIsLoading(true);
+            const response = await axios.get("/eyf/ingredients/name/" + search);
+            if (response.data.length > 0) {
+                setIngredientsSearch(response.data);
+                setIngredientNotFoundVisible(false);
+            } else {
+                setIngredientsSearch([]);
+                setIngredientNotFoundVisible(true);
+            }
+        } catch (error){
+            if (axios.isAxiosError(error)) {
+                console.error('Axios error:', error.response?.data || error.message);
+            } else {
+                console.error('Unexpected error:', error);
+            }
+        }finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    function handleChangeDishName(e:ChangeEvent<HTMLInputElement>){
+        e.preventDefault();
+        props.handleChangeDishName(e.target.value);
+    }
+    function handleChangeIngredient(e:ChangeEvent<HTMLInputElement>){
+        e.preventDefault();
+        setIngredientSearch( e.target.value)
+    }
+    function addIngredientToRecipe(ingredient:Ingredient){
+        props.addIngredientToRecipe(ingredient);
+    }
+    function removeIngredientFromRecipe(ingredient:Ingredient){
+        props.removeIngredientFromRecipe(ingredient);
+    }
+    function handleQuantity(ingredient:Ingredient){
+        props.handleQuantity(ingredient);
+    }
+
+    function abortAddIngredient (){
+        setIngredientSearch("");
+        setIngredientsSearch([]);
+    }
+    function addPerOpenAiIngredient(){
+        axios.post("/openai/add/", {product: ingredientSearch})
+            .catch((error)=> console.log(error));
+        getDBData(ingredientSearch);
+    }
+
+    useEffect(() => {
+        (async () => {
+            await getDBData(ingredientSearch);
+        })();
+    }, [ingredientSearch, getDBData]);
+
+    return(
+        <>
+            <form>
+                <div className="flex flex-col">
+                    <div className="flex flex-col">
+                        <label>Name für das Rezept hinzufügen: </label>
+                        <input
+                            placeholder="Hier kann der Name für's Rezept rein"
+                            defaultValue=""
+                            name="dishname"
+                            id="dishname"
+                            onChange={handleChangeDishName}
+                        />
+                    </div>
+                    <div className="flex flex-col">
+                        <label>Zutaten hinzufügen:</label>
+                        <input
+                            className=" grow"
+                            placeholder="Zutat suchen"
+                            value={ingredientSearch}
+                            name="addingredient"
+                            id="addingredient"
+                            onChange={handleChangeIngredient}
+                        />
+                    </div>
+                    <div className="space-y-4">
+                        {ingredientNotFoundVisible && (
+                            <IngredientNotFound
+                                addPerAi={addPerOpenAiIngredient}
+                                abort={abortAddIngredient}
+                            />
+                        )}
+                        {ingredientSearch !== "" && ingredientsSearch.length > 0 && (
+                            ingredientsSearch.map((i:Ingredient) =>
+                                <IngredientSearch
+                                    key={i.id}
+                                    ingredient={i}
+                                    addIngredientToRecipe={addIngredientToRecipe}
+                                    removeIngredientFromRecipe={removeIngredientFromRecipe}
+                                    handleQuantity={handleQuantity}
+                                />
+                            )
+                        )}
+                        {isLoading && (
+                            <span>Daten werden geladen ...</span>
+                        )}
+                    </div>
+                </div>
+            </form>
+        </>
+    )
+}

@@ -9,6 +9,7 @@ import org.bea.backend.service.IngredientService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/eyf/ingredients")
@@ -23,6 +24,11 @@ public class IngredientController {
     @GetMapping
     public List<Ingredient> getIngredients() {
         return ingredientService.getIngredients();
+    }
+
+    @GetMapping("/name/{name}")
+    public Set<Ingredient> getIngredientByName(@PathVariable String name) {
+        return ingredientService.getIngredientByName(name);
     }
 
     @PostMapping
