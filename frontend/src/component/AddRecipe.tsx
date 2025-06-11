@@ -67,10 +67,21 @@ export default function AddRecipe(props:Readonly<Props>) {
         setIngredientSearch("");
         setIngredientsSearch([]);
     }
-    function addPerOpenAiIngredient(){
-        axios.post("/openai/add/", {product: ingredientSearch})
-            .catch((error)=> console.log(error));
-        getDBData(ingredientSearch);
+    const addPerOpenAiIngredient = async () => {
+        try {
+            setIngredientNotFoundVisible(false);
+            setIsLoading(true);
+            await axios.post("/eyf/ingredients/openai/add", {product: ingredientSearch, variation:""})
+            await getDBData(ingredientSearch);
+        } catch (error){
+            console.log(error);
+        }finally {
+            setIsLoading(false);
+        }
+    }
+
+    function addPerUser(){
+        console.log("AdRecipe.addPerUser");
     }
 
     useEffect(() => {
@@ -108,6 +119,7 @@ export default function AddRecipe(props:Readonly<Props>) {
                         {ingredientNotFoundVisible && (
                             <IngredientNotFound
                                 addPerAi={addPerOpenAiIngredient}
+                                addPerUser={addPerUser}
                                 abort={abortAddIngredient}
                             />
                         )}

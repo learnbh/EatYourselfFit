@@ -2,6 +2,7 @@ import React from "react";
 
 type Props = {
     addPerAi:() =>  void
+    addPerUser:() =>  void
     abort:() =>  void
 }
 export default function IngredientNotFound(props:Readonly<Props>) {
@@ -9,6 +10,10 @@ export default function IngredientNotFound(props:Readonly<Props>) {
     function addPerAi(e: React.MouseEvent<HTMLButtonElement>){
         e.preventDefault()
         props.addPerAi();
+    }
+    function addPerUser(e: React.MouseEvent<HTMLButtonElement>){
+        e.preventDefault()
+        props.addPerUser();
     }
     function abort(e: React.MouseEvent<HTMLButtonElement>){
         e.preventDefault()
@@ -28,7 +33,12 @@ export default function IngredientNotFound(props:Readonly<Props>) {
                     >
                         KI
                     </button>
-                    <button className=" border">Ich</button>
+                    <button
+                        className=" border"
+                        onClick={addPerUser}
+                    >
+                        Ich
+                    </button>
                     <button
                         className="col-span-2 border"
                         onClick={abort}
