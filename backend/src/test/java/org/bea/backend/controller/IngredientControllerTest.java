@@ -229,4 +229,19 @@ public class IngredientControllerTest {
                 );
         mockRestServer.verify();
     }
+    @Test
+    void getIngredientById_shouldThrowIdNotFoundException_whenIdIsNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/eyf/ingredients/ingredient/detail/"+milk.id()))
+                .andExpect(MockMvcResultMatchers
+                        .status().isNotFound())
+                .andExpect(MockMvcResultMatchers
+                        .jsonPath("$.error").value("Error: Zutat wurde nicht gefunden."));
+    }
+    @Test
+    void getIngredientById_shouldReturn_IngredientMilkForMilkId() throws Exception {
+        mockIngredientRepository.save(milk);
+        mockMvc.perform(MockMvcRequestBuilders.get("/eyf/ingredients/ingredient/detail/"+milk.id()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(mapper.writeValueAsString(milk)));
+    }
 }

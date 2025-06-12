@@ -1,4 +1,6 @@
 import type {Ingredient} from "../types.ts";
+import {handleKeyDownNumber} from "../helper.ts";
+import HideDetailIdLink from "./HideDetailIdLink.tsx";
 import React, {useState} from "react";
 import RemoveButton from "./RemoveButton.tsx";
 import AddButton from "./AddButton.tsx";
@@ -31,48 +33,16 @@ export default function IngredientSearch(props:Readonly<Props>) {
         props.handleQuantity(props.ingredient);
     }
 
-    function handleKeyDown (e: React.KeyboardEvent<HTMLInputElement>) {
-        const allowedKeys = [
-            'Backspace',
-            'Tab',
-            'ArrowLeft',
-            'ArrowRight',
-            'Delete',
-            'Home',
-            'End'
-        ];
-
-        const isCtrlA = e.key === 'a' && (e.ctrlKey || e.metaKey);
-        const isCtrlC = e.key === 'c' && (e.ctrlKey || e.metaKey);
-        const isCtrlV = e.key === 'v' && (e.ctrlKey || e.metaKey);
-        const isCtrlX = e.key === 'x' && (e.ctrlKey || e.metaKey);
-
-        if (
-            allowedKeys.includes(e.key) ||
-            isCtrlA || isCtrlC || isCtrlV || isCtrlX
-        ) {
-            return;
-        }
-
-        if (/^\d$/.test(e.key)) {
-            return;
-        }
-
-        if (e.key === ',') {
-            // Prüfe, ob bereits ein Komma im Feld ist
-            if (e.currentTarget.value.includes(',')) {
-                e.preventDefault();
-            }
-            return;
-        }
-
-        // Alles andere blockieren
-        e.preventDefault();
-    }
     return (
         <>
-            <div className="grid  grid-cols-10  items-center gap-4 w-full border pl-2">
-                <span className="col-span-2 text-left">{props.ingredient.product}</span>
+            <div className="grid  grid-cols-10  items-center gap-2 w-full border pl-2">
+                <HideDetailIdLink
+                    class="col-span-2 text-left"
+                    to="/ingredient"
+                    id= {props.ingredient.id}
+                >
+                <span>{props.ingredient.product}</span>
+                </HideDetailIdLink>
                 <span className="text-left col-span-3">{props.ingredient.variation}</span>
                 <input className="col-span-2 border w-20"
                        defaultValue={props.ingredient.quantity}
@@ -80,7 +50,7 @@ export default function IngredientSearch(props:Readonly<Props>) {
                        type="number"
                        min="0"
                        pattern="\d*"
-                       onKeyDown={handleKeyDown}
+                       onKeyDown={handleKeyDownNumber}
                 />
                 <span className="col-span-1 ">{props.ingredient.unit}</span>
                 { isIngredientAdded

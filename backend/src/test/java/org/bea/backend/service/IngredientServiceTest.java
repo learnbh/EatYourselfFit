@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.bea.backend.exception.IdNotFoundException;
 import org.bea.backend.model.Ingredient;
 import org.bea.backend.model.IngredientDto;
 import org.bea.backend.openai.IngredientOpenAiDto;
@@ -21,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -123,5 +125,21 @@ class IngredientServiceTest {
                         "prices": 7.99}}
             """);
         assertThrows(ResponseStatusException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
+    }
+
+    @Test
+    void getIngredientById_shouldThrowIdNotFoundException_whenIdIsNotFound() {
+        assertThrows(IdNotFoundException.class, () -> ingredientService.getIngredientById(milk.id()));
+    }
+    @Test
+    void getIngredientById_shouldReturn_IngredientMilkForMilkId() {
+        // given
+        mockIngredientRepository.save(milk);
+        // when
+        Mockito.when(mockIngredientRepository.findById(milk.id()))
+                .thenReturn(Optional.of(milk));
+        // then
+        assertEquals(milk, ingredientService.getIngredientById(milk.id()));
+        Mockito.verify(mockIngredientRepository, Mockito.times(1)).findById(milk.id());
     }
 }

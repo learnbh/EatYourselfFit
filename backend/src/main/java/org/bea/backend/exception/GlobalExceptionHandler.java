@@ -26,7 +26,15 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR.name());
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR );
     }
-
+    @ExceptionHandler(IdNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ExceptionMessage> handleIdNotFoundException(IdNotFoundException e){
+        ExceptionMessage error = new ExceptionMessage(
+                "Error: "+e.getMessage(),
+                Instant.now(),
+                HttpStatus.NOT_FOUND.name());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ValidationErrorResponse> handleValidationException(MethodArgumentNotValidException e) {
