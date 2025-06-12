@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.bea.backend.exception.IdNotFoundException;
 import org.bea.backend.model.*;
 import org.bea.backend.openai.IngredientOpenAiDto;
 import org.bea.backend.openai.NutrientOpenAiService;
@@ -108,5 +109,9 @@ public class IngredientService {
         Set<Ingredient> ingredients = new LinkedHashSet<>(products);
         ingredients.addAll(variation);
         return ingredients;
+    }
+
+    public Ingredient getIngredientById(String id) {
+        return ingredientRepository.findById(id).orElseThrow(() -> new IdNotFoundException("Zutat wurde nicht gefunden."));
     }
 }
