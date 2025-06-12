@@ -74,7 +74,11 @@ export default function AddRecipe(props:Readonly<Props>) {
             await axios.post("/eyf/ingredients/openai/add", {product: ingredientSearch, variation:""})
             await getDBData(ingredientSearch);
         } catch (error){
-            console.log(error);
+            if (axios.isAxiosError(error)) {
+                console.error('Axios error:', error.response?.data || error.message);
+            } else {
+                console.error('Unexpected error:', error);
+            }
         }finally {
             setIsLoading(false);
         }
@@ -125,13 +129,13 @@ export default function AddRecipe(props:Readonly<Props>) {
                         )}
                         {ingredientSearch !== "" && ingredientsSearch.length > 0 && (
                             ingredientsSearch.map((i:Ingredient) =>
-                                <IngredientSearch
-                                    key={i.id}
-                                    ingredient={i}
-                                    addIngredientToRecipe={addIngredientToRecipe}
-                                    removeIngredientFromRecipe={removeIngredientFromRecipe}
-                                    handleQuantity={handleQuantity}
-                                />
+                                    <IngredientSearch
+                                        key={i.id}
+                                        ingredient={i}
+                                        addIngredientToRecipe={addIngredientToRecipe}
+                                        removeIngredientFromRecipe={removeIngredientFromRecipe}
+                                        handleQuantity={handleQuantity}
+                                    />
                             )
                         )}
                         {isLoading && (
