@@ -12,7 +12,6 @@ export default function Recipeplan(){
     function handleChangeDishName(dishName:string){
         setDishname(dishName)
     }
-    console.log("dishname: "+dishname);
 
     function addIngredientToRecipe(ingredient:Ingredient){
         if(!ingredients.some((i:Ingredient) =>i.id === ingredient.id )){
@@ -34,7 +33,6 @@ export default function Recipeplan(){
         }
     }
     function handleQuantity(ingredient:Ingredient){
-        console.log(ingredients);
         setIngredients(prevArr => {
             const changedIngredients:Ingredient[] = prevArr.map(i =>
             i.id === ingredient.id
@@ -43,7 +41,6 @@ export default function Recipeplan(){
             );
             return changedIngredients;
         });
-        console.log(ingredients);
     }
 
     function saveRecipe(){

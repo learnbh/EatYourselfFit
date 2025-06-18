@@ -19,7 +19,7 @@ function App() {
                 <img src={HeaderImg} alt="picture with food from freepick.com" width="100%" height="250"/>
                 <Header />
             </header>
-            <main className="main-content">
+            <main className="main-content border">
                 <Routes>
                     <Route path="/" element={<Home/>}/>
                     <Route path="/recipe" element={<Recipe/>}/>
