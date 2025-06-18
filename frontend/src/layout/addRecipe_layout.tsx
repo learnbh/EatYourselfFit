@@ -1,8 +1,8 @@
 import type {Ingredient} from "../types.ts";
-import IngredientSearch from "./IngredientSearch.tsx";
+import IngredientSearch from "../component/IngredientSearch.tsx";
 import {type ChangeEvent, useCallback, useEffect, useState} from "react";
 import axios from "axios";
-import IngredientNotFound from "./IngredientNotFound.tsx";
+import IngredientNotFound from "../component/IngredientNotFound.tsx";
 
 type Props = {
     handleChangeDishName: (dishName:string) => void
@@ -11,7 +11,7 @@ type Props = {
     handleQuantity:(ingredient:Ingredient) =>  void
 }
 
-export default function AddRecipe(props:Readonly<Props>) {
+export default function AddRecipe_layout(props:Readonly<Props>) {
     const [ingredientSearch, setIngredientSearch] = useState<string>("");
     const [ingredientsSearch, setIngredientsSearch] = useState<Ingredient[]>([]);
     const [ingredientNotFoundVisible, setIngredientNotFoundVisible] = useState(false);

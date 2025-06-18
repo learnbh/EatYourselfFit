@@ -1,6 +1,6 @@
 import {useState} from "react";
 import type {Ingredient} from "../types.ts";
-import AddRecipe from "../component/AddRecipe.tsx";
+import AddRecipe_layout from "../layout/addRecipe_layout.tsx";
 import IngredientRecipe from "../component/IngredientRecipe.tsx";
 
 export default function Recipeplan(){
@@ -53,7 +53,7 @@ export default function Recipeplan(){
                 <h1>Hier kannst Du ein neues Gericht erstellen</h1>
                 <div className="recipeplan">
                     <div>
-                        <AddRecipe
+                        <AddRecipe_layout
                             handleChangeDishName={handleChangeDishName}
                             addIngredientToRecipe={addIngredientToRecipe}
                             removeIngredientFromRecipe={removeIngredientFromRecipe}

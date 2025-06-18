@@ -3,7 +3,7 @@ import axios, {type AxiosResponse} from "axios";
 import type {Ingredient, Nutrient, Nutrients} from "../types.ts";
 import IngredientLayout from "../layout/ingredient_layout.tsx";
 import NutrientLayout from "../layout/nutrient_layout.tsx";
-import {mapNutrientsToNutrientArray} from "../helper.ts";
+import {ingredientToDto, mapNutrientsToNutrientArray} from "../helper.ts";
 
 export default function IngredientDetails() {
     const ingredientId: string | null = sessionStorage.getItem("detailId");
@@ -14,7 +14,7 @@ export default function IngredientDetails() {
 
     const [isIngredientChanged, setIngredientChanged] = useState<boolean>(false)
     const [isNutrientChanged, setNutrientChanged] = useState<boolean>(false)
-    const [errorNothingChanged, setErrorNothingChanged] = useState<string>("")
+    const [isDataChanged, setDataChanged] = useState<string>("")
 
     const getDetails = useCallback( async ( id: string | null ) => {
         try {
@@ -48,36 +48,37 @@ export default function IngredientDetails() {
         );
         setNutrients(updateNutrients)
         setNutrientChanged(true);
-        setErrorNothingChanged( "" );
+        setDataChanged( "" );
     }
     function handleChangeIngredient(e:ChangeEvent<HTMLInputElement>) {
         e.preventDefault();
         const { name, value } = e.target;
-        const newValue:string|number = name === "quantity" ? Number (value) : String (value);
+        const newValue:string|number = name === "price" ? Number (value) : String (value);
         setIngredient(prevState => ( { ...prevState, [name]: newValue } as Ingredient ) );
+        console.log(JSON.stringify(ingredient))
         setIngredientChanged(true);
-        setErrorNothingChanged( "" );
+        setDataChanged( "" );
     }
 
     const submit = async (e:FormEvent<HTMLFormElement>)=> {
         e.preventDefault();
-        if ( isIngredientChanged || isNutrientChanged ) {
-            setErrorNothingChanged( "" );
-            if ( isIngredientChanged ) {
-                try {
-                    const response = await axios.put("/eyf/ingredients", ingredient);
-                    setIngredient(response.data);
-                    setIngredientChanged(false);
-                } catch (error){
-                    if (axios.isAxiosError(error)) {
-                        console.error('Axios error:', error.response?.data || error.message);
-                    } else {
-                        console.error('Unexpected error:', error);
+        if(ingredient) {
+            if ( isIngredientChanged || isNutrientChanged ) {
+                setDataChanged( "" );
+                if ( isIngredientChanged ) {
+                    try {
+                        const response = await axios.put("/eyf/ingredients/"+ingredientId, ingredientToDto(ingredient));
+                        setIngredient(response.data);
+                        setIngredientChanged(false);
+                    } catch (error){
+                        if (axios.isAxiosError(error)) {
+                            console.error('Axios error:', error.response?.data || error.message);
+                        } else {
+                            console.error('Unexpected error:', error);
+                        }
                     }
                 }
-            }
-            if ( isNutrientChanged ) {
-                if(ingredient) {
+                if ( isNutrientChanged ) {
                     try {
                         const response = await axios.put<AxiosResponse>("/eyf/nutrients/" + ingredient.nutrientsId, nutrients)
                         setNutrients(mapNutrientsToNutrientArray(response));
@@ -91,10 +92,10 @@ export default function IngredientDetails() {
                     }
                 }
                 await getDetails(ingredientId);
-                setErrorNothingChanged( "Daten wurden gespeichert." )
+                setDataChanged( "Daten wurden gespeichert." )
+            } else {
+                setDataChanged( "Es wurde nichts geändert. Speichern abgebrochen." )
             }
-        } else {
-            setErrorNothingChanged( "Es wurde nichts geändert. Speichern abgebrochen." )
         }
     }
 
@@ -114,8 +115,8 @@ export default function IngredientDetails() {
                 <form  onSubmit={(e)=>submit(e)}>
                     { ingredient && (<IngredientLayout ingredient={ ingredient } onChange={ handleChangeIngredient }/>) }
                     { nutrients && (<NutrientLayout nutrients={ nutrients } onChange={ handleChangeNutrient }/>) }
-                    { errorNothingChanged !== "" && (
-                        <span>{ errorNothingChanged }</span>
+                    { isDataChanged !== "" && (
+                        <span>{ isDataChanged }</span>
                     ) }
                     <button className="border pt-2 pb-2 w-full" type="submit" >
                         Speichern

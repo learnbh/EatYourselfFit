@@ -40,7 +40,7 @@ export default function IngredientLayout(props:Readonly<Props>){
                         </InputNumber>
                         <InputNumber
                             label="Preis"
-                            name="price"
+                            name="prices"
                             value={Number(props.ingredient.prices)}
                             onChange={handleChange}
                         >
