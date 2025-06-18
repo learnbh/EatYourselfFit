@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import jakarta.validation.Valid;
 import org.bea.backend.exception.IdNotFoundException;
 import org.bea.backend.exception.OpenAiNotFoundIngredientException;
 import org.bea.backend.exception.ProductVariationNotFound;
@@ -13,8 +12,6 @@ import org.bea.backend.openai.IngredientOpenAiDto;
 import org.bea.backend.openai.NutrientOpenAiService;
 import org.bea.backend.repository.IngredientRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 
@@ -124,8 +121,7 @@ public class IngredientService {
         return nutrientService.getNutrientsById(ingredient.nutrientsId());
     }
 
-    // NOSONAR: Ignoriere diese Warnung für diese Methode
-    public Ingredient updateIngredient(@PathVariable String id, @Valid @RequestBody IngredientDto ingredientDto) {
+    public Ingredient updateIngredient(String id, IngredientDto ingredientDto) {
         Ingredient ingredient = getIngredientById(id);
         Ingredient ingredientUpgedated = new Ingredient(
             ingredient.id(),
