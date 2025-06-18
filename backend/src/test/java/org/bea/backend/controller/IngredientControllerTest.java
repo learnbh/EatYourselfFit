@@ -3,10 +3,13 @@ package org.bea.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bea.backend.model.Ingredient;
 import org.bea.backend.model.IngredientDto;
+import org.bea.backend.model.Nutrients;
 import org.bea.backend.openai.IngredientOpenAiDto;
 import org.bea.backend.openai.OpenAiConfig;
 import org.bea.backend.repository.IngredientRepository;
 
+import org.bea.backend.repository.NutrientsRepository;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +31,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.Collections;
 import java.util.List;
 
+import static org.instancio.Select.field;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -41,6 +45,8 @@ public class IngredientControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private IngredientRepository mockIngredientRepository;
+    @Autowired
+    private NutrientsRepository mockNutrientsRepository;
 
     // OpenAi
     @Value("${openai.api.url.base}")
@@ -52,6 +58,7 @@ public class IngredientControllerTest {
 
     ObjectMapper mapper = new ObjectMapper();
 
+    Ingredient milkOrig = new Ingredient("milk", "milch", "fat", 90.0, "g", 1.09, "egal");
     Ingredient milk = new Ingredient("milk", "milk", "low fat", 100.0, "ml", 1.29, "egal");
     IngredientDto milkDto = new IngredientDto("milk", "low fat", 100.0, "ml", 1.29, "egal");
     IngredientDto milkDtoDuplicate = new IngredientDto("milk", "low fat", 100.0, "ml", 1.09, "good");
@@ -76,6 +83,7 @@ public class IngredientControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.timestamp").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(HttpStatus.INTERNAL_SERVER_ERROR.name()));
     }
+
     @Test
     public void getIngredients_shouldReturn_EmptyList_whenDbIsEmpty() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/eyf/ingredients"))
@@ -93,6 +101,23 @@ public class IngredientControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string(mapper.writeValueAsString(expected)));
     }
+
+    @Test
+    void getIngredientById_shouldThrowIdNotFoundException_whenIdIsNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/eyf/ingredients/ingredient/detail/"+milk.id()))
+                .andExpect(MockMvcResultMatchers
+                        .status().isNotFound())
+                .andExpect(MockMvcResultMatchers
+                        .jsonPath("$.error").value("Error: Zutat wurde nicht gefunden."));
+    }
+    @Test
+    void getIngredientById_shouldReturn_IngredientMilkForMilkId() throws Exception {
+        mockIngredientRepository.save(milk);
+        mockMvc.perform(MockMvcRequestBuilders.get("/eyf/ingredients/ingredient/detail/"+milk.id()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(mapper.writeValueAsString(milk)));
+    }
+
     @Test
     public void addIngredient_shouldReturnMethodArgumentNotValidException_forSizeAndMax_withInvalidIngredientDto() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients")
@@ -125,22 +150,6 @@ public class IngredientControllerTest {
                                 .value("Unit must have at least 1 character"),
                         MockMvcResultMatchers.jsonPath("$.timestamp").exists(),
                         MockMvcResultMatchers.jsonPath("$.status").value(HttpStatus.BAD_REQUEST.name())
-                );
-    }
-    @Test
-    public void addIngredient_shouldReturn_createdIngredient_withValidIngredientDto() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(milkDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpectAll(
-                        MockMvcResultMatchers.jsonPath("$.id").exists(),
-                        MockMvcResultMatchers.jsonPath("$.product").value(milk.product()),
-                        MockMvcResultMatchers.jsonPath("$.variation").value(milk.variation()),
-                        MockMvcResultMatchers.jsonPath("$.quantity").value(milk.quantity()),
-                        MockMvcResultMatchers.jsonPath("$.unit").value(milk.unit()),
-                        MockMvcResultMatchers.jsonPath("$.prices").value(milk.prices()),
-                        MockMvcResultMatchers.jsonPath("$.nutrientsId").value(milk.nutrientsId())
                 );
     }
     @Test
@@ -177,6 +186,23 @@ public class IngredientControllerTest {
                         MockMvcResultMatchers.jsonPath("$.nutrientsId").value(milkDto2.nutrientsId())
                 );
     }
+    @Test
+    public void addIngredient_shouldReturn_createdIngredient_withValidIngredientDto() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(milkDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpectAll(
+                        MockMvcResultMatchers.jsonPath("$.id").exists(),
+                        MockMvcResultMatchers.jsonPath("$.product").value(milk.product()),
+                        MockMvcResultMatchers.jsonPath("$.variation").value(milk.variation()),
+                        MockMvcResultMatchers.jsonPath("$.quantity").value(milk.quantity()),
+                        MockMvcResultMatchers.jsonPath("$.unit").value(milk.unit()),
+                        MockMvcResultMatchers.jsonPath("$.prices").value(milk.prices()),
+                        MockMvcResultMatchers.jsonPath("$.nutrientsId").value(milk.nutrientsId())
+                );
+    }
+
     @Test
     void addIngredientByOpenAi_shouldAddCorrectIngredientAndTheirNutrients() throws Exception{
         // given
@@ -225,23 +251,72 @@ public class IngredientControllerTest {
                 .andExpectAll(
                         MockMvcResultMatchers
                                 .jsonPath("$.error")
-                                .value("Error: 400 BAD_REQUEST \"Antwort von OpenAI für Ingredient rindehack ist leer.\"")
+                                .value("Error: Antwort von OpenAI für Ingredient rindehack ist leer. Änderne die Anfrage und versuche es erneut.")
                 );
         mockRestServer.verify();
     }
     @Test
-    void getIngredientById_shouldThrowIdNotFoundException_whenIdIsNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/eyf/ingredients/ingredient/detail/"+milk.id()))
+    void addIngredientByOpenAi_shouldOpenAiNotFoundIngredientException_whenNutrientsNotFound() throws Exception{
+        String response = String.format(openAiResponse, mapper.writeValueAsString(OpenAiConfig.responseWithoutIngredientNode));
+
+        System.out.println(response);
+        mockRestServer.expect(requestTo(baseUrl+"/v1/chat/completions"))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(MockRestRequestMatchers.header(HttpHeaders.AUTHORIZATION, "Bearer "+openAiApiKey))
+                .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients/openai/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(ingredientOpenAiDto)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpectAll(
+                        MockMvcResultMatchers
+                                .jsonPath("$.error")
+                                .value("Error: Antwort von OpenAI für Ingredient rindehack ist leer. Änderne die Anfrage und versuche es erneut.")
+                );
+        mockRestServer.verify();
+    }
+
+    @Test
+    void updateIngredient_shouldReturn_upgedatedIngredient() throws Exception{
+        // given
+        mockIngredientRepository.save(milkOrig);
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.put("/eyf/ingredients/"+milkOrig.id())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(milkDto)))
+        // then
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpectAll(
+                        MockMvcResultMatchers.jsonPath("$.id").value(milkOrig.id()),
+                        MockMvcResultMatchers.jsonPath("$.product").value(milk.product()),
+                        MockMvcResultMatchers.jsonPath("$.variation").value(milk.variation()),
+                        MockMvcResultMatchers.jsonPath("$.quantity").value(milk.quantity()),
+                        MockMvcResultMatchers.jsonPath("$.unit").value(milk.unit()),
+                        MockMvcResultMatchers.jsonPath("$.prices").value(milk.prices()),
+                        MockMvcResultMatchers.jsonPath("$.nutrientsId").value(milkOrig.nutrientsId())
+                );
+    }
+
+    @Test
+    void getNutrientsDaily_shouldThrowProductVariationNotFound_whenProductVariationIsNotFound() throws Exception  {
+        mockMvc.perform(MockMvcRequestBuilders.get("/eyf/ingredients/daily/nutrients"))
                 .andExpect(MockMvcResultMatchers
                         .status().isNotFound())
                 .andExpect(MockMvcResultMatchers
-                        .jsonPath("$.error").value("Error: Zutat wurde nicht gefunden."));
+                        .jsonPath("$.error").value("Error: Produkt, Variation: Nährstoffe, Täglicher Bedarf existiert nicht."));
     }
     @Test
-    void getIngredientById_shouldReturn_IngredientMilkForMilkId() throws Exception {
-        mockIngredientRepository.save(milk);
-        mockMvc.perform(MockMvcRequestBuilders.get("/eyf/ingredients/ingredient/detail/"+milk.id()))
+    void getNutrientsDaily_shouldReturn_NutrientsDaily() throws Exception {
+        // given
+        Ingredient ingredient = new Ingredient("ingredientId","Nährstoffe", "Täglicher Bedarf", 0.0, "g", 0.0,"nutrientId");
+        Nutrients expected = Instancio.of(Nutrients.class)
+                .set(field(Nutrients::id), "nutrientId")
+                .create();
+        mockIngredientRepository.save(ingredient);
+        mockNutrientsRepository.save(expected);
+        mockMvc.perform(MockMvcRequestBuilders.get("/eyf/ingredients/daily/nutrients"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(mapper.writeValueAsString(milk)));
+                .andExpect(MockMvcResultMatchers.content().string(mapper.writeValueAsString(expected)));
     }
 }

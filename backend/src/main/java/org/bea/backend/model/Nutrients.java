@@ -1,5 +1,10 @@
+
 package org.bea.backend.model;
 
+import lombok.Builder;
+import lombok.With;
+@Builder
+@With
 public record Nutrients(
     String id,
     // Macronutrients

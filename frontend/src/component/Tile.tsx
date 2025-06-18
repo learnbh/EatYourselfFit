@@ -14,7 +14,7 @@ type Props = {
 export default function Tile(props:Readonly<Props>){
     return(
         <>
-            <div>
+            <div className="border pt-2">
                 <div className="tileHeader">
                     {props.element}
                     <span>{props.title}</span>

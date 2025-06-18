@@ -1,8 +1,8 @@
 import type {Ingredient} from "../types.ts";
-import IngredientSearch from "./IngredientSearch.tsx";
+import IngredientSearch from "../component/IngredientSearch.tsx";
 import {type ChangeEvent, useCallback, useEffect, useState} from "react";
 import axios from "axios";
-import IngredientNotFound from "./IngredientNotFound.tsx";
+import IngredientNotFound from "../component/IngredientNotFound.tsx";
 
 type Props = {
     handleChangeDishName: (dishName:string) => void
@@ -11,11 +11,12 @@ type Props = {
     handleQuantity:(ingredient:Ingredient) =>  void
 }
 
-export default function AddRecipe(props:Readonly<Props>) {
+export default function AddRecipe_layout(props:Readonly<Props>) {
     const [ingredientSearch, setIngredientSearch] = useState<string>("");
     const [ingredientsSearch, setIngredientsSearch] = useState<Ingredient[]>([]);
     const [ingredientNotFoundVisible, setIngredientNotFoundVisible] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
 
     const getDBData = useCallback(async (search:string) => {
         if(search.trim() === ""){
@@ -45,6 +46,36 @@ export default function AddRecipe(props:Readonly<Props>) {
         }
     }, []);
 
+    const editIngredientGeneratedByOpenAi = useCallback(async (search:string) => {
+        if(search.trim() === ""){
+            setIngredientsSearch([]);
+            setIsLoading(false);
+            setIngredientNotFoundVisible(false);
+            return;
+        }
+        try {
+            setIsLoading(true);
+            const response = await axios.get("/eyf/ingredients/name/" + search);
+            if (response.data.length > 0) {
+                const ingredientId:string = response.data[0].id;
+                setIngredientsSearch(response.data);
+                sessionStorage.setItem('detailId',ingredientId);
+                window.open("/ingredient", "_blank");
+                setIngredientNotFoundVisible(false);
+            } else {
+                setIngredientsSearch([]);
+                setIngredientNotFoundVisible(true);
+            }
+        } catch (error){
+            if (axios.isAxiosError(error)) {
+                console.error('Axios error:', error.response?.data || error.message);
+            } else {
+                console.error('Unexpected error:', error);
+            }
+        }finally {
+            setIsLoading(false);
+        }
+    }, []);
     function handleChangeDishName(e:ChangeEvent<HTMLInputElement>){
         e.preventDefault();
         props.handleChangeDishName(e.target.value);
@@ -72,12 +103,18 @@ export default function AddRecipe(props:Readonly<Props>) {
             setIngredientNotFoundVisible(false);
             setIsLoading(true);
             await axios.post("/eyf/ingredients/openai/add", {product: ingredientSearch, variation:""})
-            await getDBData(ingredientSearch);
+            await editIngredientGeneratedByOpenAi(ingredientSearch);
         } catch (error){
             if (axios.isAxiosError(error)) {
-                console.error('Axios error:', error.response?.data || error.message);
+                if (error.response && error.response.data.message) {
+                    console.error('Axios errors_:', error.response?.data || error.message);
+                    alert(error.response.data.message);
+                } else {
+                    console.log("error: "+error);
+                    alert('Es konnten keine Nährstoffe gefunden werden. Änderne die Anfrage und versuche es erneut.');
+                }
             } else {
-                console.error('Unexpected error:', error);
+                console.log(error);
             }
         }finally {
             setIsLoading(false);

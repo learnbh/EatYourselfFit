@@ -2,10 +2,10 @@ package org.bea.backend.enums;
 
 public enum NutrientType {
     MACRONUTRIENT("Makronährstoff"),
-    VITAMIN("Vitamin"),
-    MAJORELEMENT("Mengenelement"),
-    TRACEELEMENT("Spurenlement"),
-    CARBOHYTRATE("Kohlenhydrat"),
+    VITAMIN("Vitamine"),
+    MAJORELEMENT("Mengenelemente"),
+    TRACEELEMENT("Spurenlemente"),
+    CARBOHYTRATE("Kohlenhydrate"),
     ESSENTIALAMINOACID("Aminosäure essentiell"),
     AMINOACID("Aminosäure"),
     FATTYACID("Fettsäure"),

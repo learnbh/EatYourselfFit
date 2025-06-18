@@ -78,14 +78,15 @@ public class OpenAiConfig {
                     - Alle Felder sind Pflichtfelder. Verwende Defaultwerte bei Unbekanntem: String: "", Number: 0.
                     - Alle Werte beziehen sich auf 100g des Produkts. Einheiten z.B. "kcal", "g", "mg", "kJ".
                     - ingredientDto.prices: Wähle hier einen handelsüblichen Durchschnittspreis in Euro (z.B. Endverbraucherpreis für Supermarkt Denns's Biomarkt) als realistischen Schätzwert in Euro. Verwende keine Null oder Platzhalter.
-                    - prüfe, ob nur die Felder ingredientDto.produkt und ingredientDto.variation auf Rechtschreibung und korrigiere, achte dabei auf Groß- und Kleinschreibung
-                    - Wenn eine Variation angegeben wird, aber unvollständig oder nicht standardisiert ist (z.B. "1,5" statt "1,5% Fett"), dann vervollständige sie zu einer sinnvollen, handelsüblichen Bezeichnung. Verwende dabei die korrekte Formatierung und Beschreibung.
-                    - Wenn ein Produktname angegeben wird, der in Wirklichkeit eine spezifische Variation eines übergeordneten Produkts ist (z.B. "Edamer" → "Käse"), dann korrigiere dies automatisch. Verwende als "product" die korrekte Oberkategorie (z.B. "Käse") und trage die ursprünglich angegebene Produktspezifikation ins Feld "variation" ein, z.B.:
+                    - prüfe und korrigiere die Felder ingredientDto.produkt und ingredientDto.variation auf Rechtschreibung, achte dabei auf Groß- und Kleinschreibung
+                    - vervollständige eine unvollständige oder nicht standardisierte Variation (z.B. "1,5" statt "1,5% Fett") zu einer sinnvollen, handelsüblichen Bezeichnung. Verwende dabei die korrekte Formatierung und Beschreibung.
+                    - Wenn ein Produktname angegeben wird, dass eigentlich eine spezifische Variation eines übergeordneten Produkts ist (z.B. "Edamer" → "Käse"), dann korrigiere dies automatisch. Verwende als "product" die korrekte Oberkategorie (z.B. "Käse") und trage die ursprünglich angegebene Produktspezifikation ins Feld "variation" ein, z.B.:
                      "Edamer" → product: "Käse", variation: "Edamer"
-                     "Mozzarella" → product: "Käse", variation: "Mozzarella"
                      "Vollkornbrot" → product: "Brot", variation: "Vollkornbrot"
                       Diese Regel gilt auch, wenn keine Variation separat angegeben wurde.
                     - Bitte antworte ausschließlich im JSON-Format und verzichte auf zusätzliche Formatierungen oder Backticks
+                    - Wenn Du keine sinnvollen Daten findest/die Anfrage keinen Sinn macht (z.B dhfgu, oder essen) gib statt JSON den String "Es konnten keine Nährstoffe gefunden werden. Änderne die Anfrage und versuche es erneut."
+                    - Gib den String auch zurück, wenn du als Variante: Standardvariante/ als Produkt: Lebensmittel o.ä. angeben möchtest.
                 """;
 
        public static final String ingredientResponseTest = """

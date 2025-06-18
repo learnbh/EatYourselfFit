@@ -3,12 +3,11 @@ package org.bea.backend.openai;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bea.backend.exception.OpenAiNotFoundIngredientException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -28,7 +27,6 @@ public class NutrientOpenAiService {
     }
 
     public String getNutrients(String product, String variation){
-
         String userPrompt;
 
         if (variation == null || variation.trim().isEmpty()) {
@@ -52,14 +50,14 @@ public class NutrientOpenAiService {
                 .body(String.class);
 
         if (!StringUtils.hasText(messageResponse) || !messageResponse.trim().startsWith("{")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "OpenAI hat kein valides JSON zurückgegeben (vermutlich verweigert).");
+            throw new OpenAiNotFoundIngredientException("OpenAI hat kein valides JSON zurückgegeben (vermutlich verweigert). Änderne die Anfrage und versuche es erneut.");
         }
         try {
             JsonNode choiceNode =  objectMapper.readTree(messageResponse).get("choices");
             JsonNode messageNode = choiceNode.get(0).get("message");
             return messageNode.get("content").asText();
         } catch (JsonProcessingException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "OpenAI-Antwort konnte nicht geparst werden (vermutlich kein gültiges JSON).");
+            throw new OpenAiNotFoundIngredientException("OpenAI-Antwort konnte nicht geparst werden (vermutlich kein gültiges JSON). Änderne die Anfrage und versuche es erneut.");
         }
     }
 }

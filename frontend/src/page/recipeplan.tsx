@@ -1,6 +1,6 @@
 import {useState} from "react";
 import type {Ingredient} from "../types.ts";
-import AddRecipe from "../component/AddRecipe.tsx";
+import AddRecipe_layout from "../layout/addRecipe_layout.tsx";
 import IngredientRecipe from "../component/IngredientRecipe.tsx";
 
 export default function Recipeplan(){
@@ -12,7 +12,6 @@ export default function Recipeplan(){
     function handleChangeDishName(dishName:string){
         setDishname(dishName)
     }
-    console.log("dishname: "+dishname);
 
     function addIngredientToRecipe(ingredient:Ingredient){
         if(!ingredients.some((i:Ingredient) =>i.id === ingredient.id )){
@@ -34,7 +33,6 @@ export default function Recipeplan(){
         }
     }
     function handleQuantity(ingredient:Ingredient){
-        console.log(ingredients);
         setIngredients(prevArr => {
             const changedIngredients:Ingredient[] = prevArr.map(i =>
             i.id === ingredient.id
@@ -43,7 +41,6 @@ export default function Recipeplan(){
             );
             return changedIngredients;
         });
-        console.log(ingredients);
     }
 
     function saveRecipe(){
@@ -56,7 +53,7 @@ export default function Recipeplan(){
                 <h1>Hier kannst Du ein neues Gericht erstellen</h1>
                 <div className="recipeplan">
                     <div>
-                        <AddRecipe
+                        <AddRecipe_layout
                             handleChangeDishName={handleChangeDishName}
                             addIngredientToRecipe={addIngredientToRecipe}
                             removeIngredientFromRecipe={removeIngredientFromRecipe}

@@ -1,4 +1,6 @@
 import React from "react";
+import type {Ingredient, IngredientDto, Nutrient} from "./types.ts";
+import type {AxiosResponse} from "axios";
 
 export function handleKeyDownNumber (e: React.KeyboardEvent<HTMLInputElement>) {
     const allowedKeys = [
@@ -28,11 +30,43 @@ export function handleKeyDownNumber (e: React.KeyboardEvent<HTMLInputElement>) {
     }
 
     if (e.key === ',') {
-        if (e.currentTarget.value.includes(',')) {
+        if (e.currentTarget.value.includes('.')) {
             e.preventDefault();
         }
         return;
     }
 
     e.preventDefault();
+}
+
+export function mapNutrientsToNutrientArray(responseNutrient:AxiosResponse):Nutrient[]{
+    return Object.entries(responseNutrient.data)
+        .filter(n => n[0] !== "id")
+        .map(n => {
+            if(isNutrient(n[1])) {
+                return n[1] as unknown as Nutrient
+            } else {
+                throw new Error("Unexpected non-Nutrient entry in data:" + JSON.stringify(n[1]));
+            }
+        });
+}
+
+export function isNutrient(value: unknown): value is Nutrient {
+    return typeof value === 'object' &&
+        value !== null &&
+        'name' in value &&
+        'type' in value &&
+        'quantity' in value &&
+        'unit' in value;
+}
+
+export function ingredientToDto(ingredient:Ingredient):IngredientDto{
+    return {
+        product:ingredient.product,
+        variation:ingredient.variation,
+        quantity:ingredient.quantity,
+        unit:ingredient.unit,
+        prices:ingredient.prices,
+        nutrientsId:ingredient.nutrientsId
+    }
 }
