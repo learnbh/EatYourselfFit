@@ -40,9 +40,9 @@ public class IngredientController {
     public Ingredient addIngredient(@Valid @RequestBody IngredientDto ingredientDto){
         return ingredientService.addIngredient(ingredientDto);
     }
-    @PutMapping
-    public Ingredient updateIngredient(@Valid @RequestBody Ingredient ingredient){
-        return ingredientService.updateIngredient(ingredient);
+    @PutMapping("/{id}")
+    public Ingredient updateIngredient(@PathVariable String id,  @Valid @RequestBody IngredientDto ingredientDto){
+        return ingredientService.updateIngredient(id, ingredientDto);
     }
     @PostMapping("/openai/add")
     public Ingredient addIngredientByOpenAi(@Valid @RequestBody IngredientOpenAiDto ingredientOpenAiDto) throws JsonProcessingException {

@@ -13,6 +13,8 @@ import org.bea.backend.openai.IngredientOpenAiDto;
 import org.bea.backend.openai.NutrientOpenAiService;
 import org.bea.backend.repository.IngredientRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 
@@ -122,12 +124,18 @@ public class IngredientService {
         return nutrientService.getNutrientsById(ingredient.nutrientsId());
     }
 
-    public Ingredient updateIngredient(@Valid Ingredient ingredient) {
-        if(ingredientRepository.findById(ingredient.id()).isPresent()) {
-                ingredientRepository.save(ingredient);
-        } else {
-            throw new IdNotFoundException("Zutat konnte nicht upgedated werden, da die sie in der Datenbank nicht existiert.");
-        }
-        return ingredient;
+    public Ingredient updateIngredient(@PathVariable String id, @Valid @RequestBody IngredientDto ingredientDto) {
+        Ingredient ingredient = getIngredientById(id);
+        Ingredient ingredientUpgedated = new Ingredient(
+            ingredient.id(),
+            ingredientDto.product(),
+            ingredientDto.variation(),
+            ingredientDto.quantity(),
+            ingredientDto.unit(),
+            ingredientDto.prices(),
+            ingredient.nutrientsId()
+        );
+        ingredientRepository.save(ingredientUpgedated);
+        return ingredientUpgedated;
     }
 }

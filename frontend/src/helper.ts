@@ -1,5 +1,5 @@
 import React from "react";
-import type {Nutrient} from "./types.ts";
+import type {Ingredient, IngredientDto, Nutrient} from "./types.ts";
 import type {AxiosResponse} from "axios";
 
 export function handleKeyDownNumber (e: React.KeyboardEvent<HTMLInputElement>) {
@@ -58,4 +58,15 @@ export function isNutrient(value: unknown): value is Nutrient {
         'type' in value &&
         'quantity' in value &&
         'unit' in value;
+}
+
+export function ingredientToDto(ingredient:Ingredient):IngredientDto{
+    return {
+        product:ingredient.product,
+        variation:ingredient.variation,
+        quantity:ingredient.quantity,
+        unit:ingredient.unit,
+        prices:ingredient.prices,
+        nutrientsId:ingredient.nutrientsId
+    }
 }

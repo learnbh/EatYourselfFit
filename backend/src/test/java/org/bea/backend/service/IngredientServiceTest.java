@@ -40,6 +40,7 @@ class IngredientServiceTest {
     private ServiceId mockServiceId;
     private IngredientService ingredientService;
 
+    Ingredient milkOrig;
     Ingredient milk;
     IngredientDto milkDto;
     IngredientOpenAiDto ingredientOpenAiDto;
@@ -53,6 +54,8 @@ class IngredientServiceTest {
         mockNutrientOpenAiService = Mockito.mock(NutrientOpenAiService.class);
         ingredientService = new IngredientService(mockIngredientRepository, mockNutrientService, mockServiceId, mockNutrientOpenAiService);
 
+
+        milkOrig = new Ingredient("milk", "milch", "fat", 90.0, "g", 1.09, "egal");
         milk = new Ingredient("milk", "milk", "low fat", 100.0, "ml", 1.29, "egal");
         milkDto = new IngredientDto("milk", "low fat", 100.0, "ml", 1.29, "egal");
         ingredientOpenAiDto = new IngredientOpenAiDto("rindehack", "");
@@ -135,6 +138,18 @@ class IngredientServiceTest {
                                 ingredientOpenAiDto.variation()))
                 .thenReturn("Es konnten keine Nährstoffe gefunden werden. Änderne die Anfrage und versuche es erneut.");
         assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
+    }
+
+    @Test
+    void updateIngredient_shouldReturn_upgedatedIngredient() {
+        // when
+        Mockito.when(mockIngredientRepository.findById(milkOrig.id())).thenReturn(Optional.of(milkOrig));
+        Mockito.when(mockIngredientRepository.save(milk)).thenReturn(milk);
+        // then
+        assertEquals(milk, ingredientService.updateIngredient(milkOrig.id(), milkDto));
+        // verify
+        Mockito.verify(mockIngredientRepository, Mockito.times(1)).findById(milkOrig.id());
+        Mockito.verify(mockIngredientRepository, Mockito.times(1)).save(milk);
     }
 
     @Test

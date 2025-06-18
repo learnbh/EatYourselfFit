@@ -7,6 +7,14 @@ export type Ingredient = {
     prices:number,
     nutrientsId:string
 }
+export type IngredientDto = {
+    product:string,
+    variation:string,
+    quantity:number,
+    unit:string,
+    prices:number,
+    nutrientsId:string
+}
 
 export type Nutrient = {
     name:string,
