@@ -5,6 +5,7 @@ import org.bea.backend.enums.NutrientType;
 import org.bea.backend.model.Nutrient;
 import org.bea.backend.model.Nutrients;
 import org.bea.backend.repository.NutrientsRepository;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,6 +15,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import static org.instancio.Select.field;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -45,14 +48,31 @@ class NutrientControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string(mapper.writeValueAsString(nutrients)));
     }
-
     @Test
     void addNutrients_shouldAddAndReturn_IngredientMilk() throws Exception {
-        System.out.println(mapper.writeValueAsString(nutrients));
         mockMvc.perform(MockMvcRequestBuilders.post("/eyf/nutrients")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(mapper.writeValueAsString(nutrients)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string(mapper.writeValueAsString(nutrients)));
+    }
+    @Test
+    void updateNutrients_shouldReturnUpdatedNutrients() throws Exception {
+        // given
+        Nutrients nutrients = Instancio.of(Nutrients.class)
+                .set(field(Nutrients::id), "nutrientId")
+                .set(field(Nutrients::energyKcal),  new Nutrient("Energie", NutrientType.MACRONUTRIENT,3.0, "kcal"))
+                .create();
+        Nutrient change = new Nutrient("Energie", NutrientType.MACRONUTRIENT,3.14, "kcal");
+        Nutrient[] changeArr = {change};
+        Nutrients expected = nutrients.withEnergyKcal(change);
+        mockNutrientsRepository.save(nutrients);
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.put("/eyf/nutrients/" + nutrients.id())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(changeArr)))
+                // then
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(mapper.writeValueAsString(expected)));
     }
 }
