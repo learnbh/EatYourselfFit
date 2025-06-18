@@ -2,6 +2,7 @@ package org.bea.backend.openAI;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bea.backend.exception.OpenAiNotFoundIngredientException;
 import org.bea.backend.openai.NutrientOpenAiService;
 import org.bea.backend.openai.OpenAiConfig;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +15,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
@@ -80,7 +80,7 @@ class NutrientOpenAiServiceTest {
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
 
-        assertThrows(ResponseStatusException.class, () -> nutrientOpenAiService.getNutrients("Blödsinn", ""));
+        assertThrows(OpenAiNotFoundIngredientException.class, () -> nutrientOpenAiService.getNutrients("Blödsinn", ""));
     }
     @Test
     void getNutrients_shouldThrowResponseStatusException_responseCouldNotParsed() {
@@ -91,6 +91,6 @@ class NutrientOpenAiServiceTest {
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
 
-        assertThrows(ResponseStatusException.class, () -> nutrientOpenAiService.getNutrients("Blödsinn", ""));
+        assertThrows(OpenAiNotFoundIngredientException.class, () -> nutrientOpenAiService.getNutrients("Blödsinn", ""));
     }
 }

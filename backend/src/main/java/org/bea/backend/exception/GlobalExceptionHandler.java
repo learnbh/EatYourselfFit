@@ -9,7 +9,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -29,6 +28,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IdNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ExceptionMessage> handleIdNotFoundException(IdNotFoundException e){
+        ExceptionMessage error = new ExceptionMessage(
+                "Error: "+e.getMessage(),
+                Instant.now(),
+                HttpStatus.NOT_FOUND.name());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(ProductVariationNotFound.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ExceptionMessage> handleIdNotFoundException(ProductVariationNotFound e){
         ExceptionMessage error = new ExceptionMessage(
                 "Error: "+e.getMessage(),
                 Instant.now(),
@@ -68,8 +76,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<ExceptionMessage> handleResponseStatusException(ResponseStatusException e) {
+    @ExceptionHandler(OpenAiNotFoundIngredientException.class)
+    public ResponseEntity<ExceptionMessage> handleOpenAiNotFoundIngredientException(OpenAiNotFoundIngredientException e) {
         ExceptionMessage error = new ExceptionMessage(
                 "Error: "+e.getMessage(),
                 Instant.now(),
