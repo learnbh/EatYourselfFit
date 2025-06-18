@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.bea.backend.model.Ingredient;
 import org.bea.backend.model.IngredientDto;
+import org.bea.backend.model.Nutrients;
 import org.bea.backend.openai.IngredientOpenAiDto;
 import org.bea.backend.service.IngredientService;
 import org.springframework.web.bind.annotation.*;
@@ -39,8 +40,16 @@ public class IngredientController {
     public Ingredient addIngredient(@Valid @RequestBody IngredientDto ingredientDto){
         return ingredientService.addIngredient(ingredientDto);
     }
+    @PutMapping
+    public Ingredient updateIngredient(@Valid @RequestBody Ingredient ingredient){
+        return ingredientService.updateIngredient(ingredient);
+    }
     @PostMapping("/openai/add")
     public Ingredient addIngredientByOpenAi(@Valid @RequestBody IngredientOpenAiDto ingredientOpenAiDto) throws JsonProcessingException {
         return ingredientService.addIngredientByOpenAi(ingredientOpenAiDto);
+    }
+    @GetMapping("/daily/nutrients")
+    public Nutrients getNutrientsDaily() {
+        return ingredientService.getNutrientsDaily();
     }
 }

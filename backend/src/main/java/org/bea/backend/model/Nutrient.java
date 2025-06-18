@@ -1,9 +1,10 @@
 package org.bea.backend.model;
 
+import lombok.With;
 import org.bea.backend.enums.NutrientType;
 
 public record Nutrient(
         String name,
         NutrientType type,
-        Double quantity,
+        @With Double quantity,
         String unit) {}
