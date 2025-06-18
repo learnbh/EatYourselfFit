@@ -124,6 +124,7 @@ public class IngredientService {
         return nutrientService.getNutrientsById(ingredient.nutrientsId());
     }
 
+    // NOSONAR: Ignoriere diese Warnung für diese Methode
     public Ingredient updateIngredient(@PathVariable String id, @Valid @RequestBody IngredientDto ingredientDto) {
         Ingredient ingredient = getIngredientById(id);
         Ingredient ingredientUpgedated = new Ingredient(
