@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.bea.backend.model.Ingredient;
 import org.bea.backend.model.IngredientDto;
+import org.bea.backend.model.IngredientProfile;
 import org.bea.backend.model.Nutrients;
 import org.bea.backend.openai.IngredientOpenAiDto;
 import org.bea.backend.service.IngredientService;
@@ -37,8 +38,8 @@ public class IngredientController {
     }
 
     @PostMapping
-    public Ingredient addIngredient(@Valid @RequestBody IngredientDto ingredientDto){
-        return ingredientService.addIngredient(ingredientDto);
+    public String addIngredient(@Valid @RequestBody IngredientProfile ingredientProfile) {
+        return ingredientService.addIngredient(ingredientProfile);
     }
     @PutMapping("/{id}")
     public Ingredient updateIngredient(@PathVariable String id,  @Valid @RequestBody IngredientDto ingredientDto){

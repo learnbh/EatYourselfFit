@@ -2,7 +2,7 @@ package org.bea.backend.enums;
 
 public enum MajorElement {
     SALT("Salz", "mg"),
-    PRAL("PRAL-Wert", "mEg"),
+    PRAL("PRAL", "mEg"),
     SODIUM("Natrium", "mg"),
     POTASSIUM("Kalium", "mg"),
     CALCIUM("Kalzium", "mg"),

@@ -51,6 +51,20 @@ export function mapNutrientsToNutrientArray(responseNutrient:AxiosResponse):Nutr
         });
 }
 
+export function mapNutrientsToCreateNutrientArray(responseNutrient:AxiosResponse):Nutrient[]{
+    return Object.entries(responseNutrient.data)
+        .filter(n => n[0] !== "id")
+        .map(n => {
+            if(isNutrient(n[1])) {
+                const nutrient:Nutrient = n[1] as unknown as Nutrient
+                nutrient.quantity = 0
+                return nutrient
+            } else {
+                throw new Error("Unexpected non-Nutrient entry in data:" + JSON.stringify(n[1]));
+            }
+        });
+}
+
 export function isNutrient(value: unknown): value is Nutrient {
     return typeof value === 'object' &&
         value !== null &&

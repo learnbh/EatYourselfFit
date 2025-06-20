@@ -6,7 +6,7 @@ public enum TraceElement {
     COPPER("Kupfer", "μg"),
     MANGANESE("Mangan", "μg"),
     FLUORIDE("Fluorid", "μg"),
-    IODIDE("Iodid", "μg");
+    IODIDE("Jod", "μg");
 
     private final String inGerman;
     private final String unit;

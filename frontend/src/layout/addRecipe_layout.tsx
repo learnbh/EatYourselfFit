@@ -3,6 +3,7 @@ import IngredientSearch from "../component/IngredientSearch.tsx";
 import {type ChangeEvent, useCallback, useEffect, useState} from "react";
 import axios from "axios";
 import IngredientNotFound from "../component/IngredientNotFound.tsx";
+import {useNavigate} from "react-router-dom";
 
 type Props = {
     handleChangeDishName: (dishName:string) => void
@@ -12,6 +13,8 @@ type Props = {
 }
 
 export default function AddRecipe_layout(props:Readonly<Props>) {
+    const routeTo =useNavigate()
+
     const [ingredientSearch, setIngredientSearch] = useState<string>("");
     const [ingredientsSearch, setIngredientsSearch] = useState<Ingredient[]>([]);
     const [ingredientNotFoundVisible, setIngredientNotFoundVisible] = useState(false);
@@ -45,7 +48,6 @@ export default function AddRecipe_layout(props:Readonly<Props>) {
             setIsLoading(false);
         }
     }, []);
-
     const editIngredientGeneratedByOpenAi = useCallback(async (search:string) => {
         if(search.trim() === ""){
             setIngredientsSearch([]);
@@ -76,6 +78,7 @@ export default function AddRecipe_layout(props:Readonly<Props>) {
             setIsLoading(false);
         }
     }, []);
+
     function handleChangeDishName(e:ChangeEvent<HTMLInputElement>){
         e.preventDefault();
         props.handleChangeDishName(e.target.value);
@@ -84,14 +87,16 @@ export default function AddRecipe_layout(props:Readonly<Props>) {
         e.preventDefault();
         setIngredientSearch( e.target.value)
     }
+    // for changing the quantity of an ingredient, that will be added to a recipe
+    function handleQuantity(ingredient:Ingredient){
+        props.handleQuantity(ingredient);
+    }
+
     function addIngredientToRecipe(ingredient:Ingredient){
         props.addIngredientToRecipe(ingredient);
     }
     function removeIngredientFromRecipe(ingredient:Ingredient){
         props.removeIngredientFromRecipe(ingredient);
-    }
-    function handleQuantity(ingredient:Ingredient){
-        props.handleQuantity(ingredient);
     }
 
     function abortAddIngredient (){
@@ -120,9 +125,8 @@ export default function AddRecipe_layout(props:Readonly<Props>) {
             setIsLoading(false);
         }
     }
-
     function addPerUser(){
-        console.log("AdRecipe.addPerUser");
+        routeTo("/ingredient/add/"+ingredientSearch);
     }
 
     useEffect(() => {

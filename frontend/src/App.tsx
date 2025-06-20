@@ -9,6 +9,7 @@ import Recipeplan from "./page/recipeplan.tsx";
 import Weekplan from "./page/weekplan.tsx";
 import Shoppinglist from "./page/shoppinglist.tsx";
 import IngredientDetails from "./page/ingredient_details.tsx";
+import IngredientCreate from "./page/ingredient_create.tsx";
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
                     <Route path="/weekplan" element={<Weekplan/>}/>
                     <Route path="/shoppinglist" element={<Shoppinglist/>}/>
                     <Route path="/ingredient/" element={<IngredientDetails/>}/>
+                    <Route path="/ingredient/add/:product" element={<IngredientCreate/>}/>
                 </Routes>
             </main>
             <footer>

@@ -6,7 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.bea.backend.exception.IdNotFoundException;
 import org.bea.backend.exception.OpenAiNotFoundIngredientException;
-import org.bea.backend.exception.ProductVariationNotFound;
+import org.bea.backend.exception.ProductVariationNotFoundException;
+import org.bea.backend.mapper.NutrientMapper;
 import org.bea.backend.model.*;
 import org.bea.backend.openai.IngredientOpenAiDto;
 import org.bea.backend.openai.NutrientOpenAiService;
@@ -20,42 +21,54 @@ public class IngredientService {
 
     private final IngredientRepository ingredientRepository;
     private final NutrientService nutrientService;
+    private final NutrientMapper nutrientMapper;
 
     private final ServiceId serviceId;
     private final NutrientOpenAiService nutrientOpenAiService;
 
-    public IngredientService(IngredientRepository ingredientRepository,
-                             NutrientService nutrientService,
-                             ServiceId serviceId,
-                             NutrientOpenAiService nutrientOpenAiService) {
+    public IngredientService(
+            ServiceId serviceId,
+            IngredientRepository ingredientRepository,
+            NutrientService nutrientService,
+            NutrientMapper nutrientMapper,
+            NutrientOpenAiService nutrientOpenAiService) {
         this.ingredientRepository = ingredientRepository;
         this.nutrientService = nutrientService;
         this.serviceId = serviceId;
         this.nutrientOpenAiService = nutrientOpenAiService;
+        this.nutrientMapper = nutrientMapper;
     }
 
     public List<Ingredient> getIngredients() {
         return ingredientRepository.findAll();
     }
 
-    public Ingredient addIngredient(IngredientDto ingredientDto) {
-        Ingredient newIngredient = new Ingredient(
-                serviceId.generateId(),
-                ingredientDto.product(),
-                ingredientDto.variation(),
-                ingredientDto.quantity(),
-                ingredientDto.unit(),
-                ingredientDto.prices(),
-                ingredientDto.nutrientsId()
-        );
-        ingredientRepository.save(newIngredient);
-        return newIngredient;
+    public String addIngredient(IngredientProfile ingredientProfile) {
+        String product = ingredientProfile.ingredientCreate().product();
+        String variation = ingredientProfile.ingredientCreate().variation();
+
+            String nutrientId = serviceId.generateId();
+            Nutrients newNutrients = nutrientMapper.createNutrients(nutrientId, ingredientProfile.nutrientsArray());
+
+            String ingredientId = serviceId.generateId();
+            Ingredient newIngredient = new Ingredient(
+                    ingredientId,
+                    product,
+                    variation,
+                    ingredientProfile.ingredientCreate().quantity(),
+                    ingredientProfile.ingredientCreate().unit(),
+                    ingredientProfile.ingredientCreate().prices(),
+                    nutrientId
+            );
+            ingredientRepository.save(newIngredient);
+            nutrientService.addNutrients(newNutrients);
+
+            return ingredientId;
     }
 
     public Ingredient addIngredientByOpenAi(IngredientOpenAiDto ingredientOpenAiDto) throws JsonProcessingException {
         String product = ingredientOpenAiDto.product();
         String variation = ingredientOpenAiDto.variation();
-
 
         if (ingredientRepository.getIngredientByProductAndVariation(product, variation).isEmpty()) {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -77,7 +90,6 @@ public class IngredientService {
                 ){
                     throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Ingredient ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
                 }
-
                 // add Ingredient and Nutrient
                 if (ingredientRepository.getIngredientByProductAndVariation(ingredientNode.get("product").asText(), ingredientNode.get("variation").asText()).isEmpty()){
                     // Nutrients:
@@ -117,7 +129,7 @@ public class IngredientService {
     public Nutrients getNutrientsDaily() {
         Ingredient ingredient = ingredientRepository
                 .getIngredientByProductAndVariation("Nährstoffe", "Täglicher Bedarf")
-                .orElseThrow(() -> new ProductVariationNotFound("Produkt, Variation: Nährstoffe, Täglicher Bedarf existiert nicht."));
+                .orElseThrow(() -> new ProductVariationNotFoundException("Produkt, Variation: Nährstoffe, Täglicher Bedarf existiert nicht."));
         return nutrientService.getNutrientsById(ingredient.nutrientsId());
     }
 
@@ -135,4 +147,5 @@ public class IngredientService {
         ingredientRepository.save(ingredientUpgedated);
         return ingredientUpgedated;
     }
+
 }

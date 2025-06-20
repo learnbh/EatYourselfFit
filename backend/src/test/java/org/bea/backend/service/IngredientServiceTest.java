@@ -4,11 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.bea.backend.FakeTestData.IngredientCreateFakeData;
 import org.bea.backend.exception.IdNotFoundException;
 import org.bea.backend.exception.OpenAiNotFoundIngredientException;
-import org.bea.backend.exception.ProductVariationNotFound;
+import org.bea.backend.exception.ProductVariationNotFoundException;
+import org.bea.backend.mapper.NutrientMapper;
 import org.bea.backend.model.Ingredient;
 import org.bea.backend.model.IngredientDto;
+import org.bea.backend.model.IngredientProfile;
 import org.bea.backend.openai.IngredientOpenAiDto;
 import org.bea.backend.model.Nutrients;
 import org.bea.backend.openai.NutrientOpenAiService;
@@ -36,9 +39,14 @@ class IngredientServiceTest {
     private NutrientOpenAiService mockNutrientOpenAiService;
 
     private IngredientRepository mockIngredientRepository;
-    private NutrientService mockNutrientService;
     private ServiceId mockServiceId;
+    private NutrientService mockNutrientService;
+    NutrientMapper mockNutrientMapper;
     private IngredientService ingredientService;
+
+    IngredientProfile ingredientProfile;
+    Nutrients expectedNutrients;
+    Ingredient expectedIngredient;
 
     Ingredient milkOrig;
     Ingredient milk;
@@ -51,9 +59,30 @@ class IngredientServiceTest {
         mockIngredientRepository = Mockito.mock(IngredientRepository.class);
         mockNutrientService = Mockito.mock(NutrientService.class);
         mockServiceId = Mockito.mock(ServiceId.class);
+        mockNutrientMapper = Mockito.mock(NutrientMapper.class);
         mockNutrientOpenAiService = Mockito.mock(NutrientOpenAiService.class);
-        ingredientService = new IngredientService(mockIngredientRepository, mockNutrientService, mockServiceId, mockNutrientOpenAiService);
+        ingredientService = new IngredientService(
+                mockServiceId,
+                mockIngredientRepository,
+                mockNutrientService,
+                mockNutrientMapper,
+                mockNutrientOpenAiService
+        );
 
+        ingredientProfile = new IngredientProfile(
+                IngredientCreateFakeData.ingredientCreate,
+                IngredientCreateFakeData.nutrientsArray
+        );
+        expectedNutrients = IngredientCreateFakeData.nutrients;
+        expectedIngredient = new Ingredient(
+                "ingredientId",
+                IngredientCreateFakeData.ingredientCreate.product(),
+                IngredientCreateFakeData.ingredientCreate.variation(),
+                IngredientCreateFakeData.ingredientCreate.quantity(),
+                IngredientCreateFakeData.ingredientCreate.unit(),
+                IngredientCreateFakeData.ingredientCreate.prices(),
+                expectedNutrients.id()
+        );
 
         milkOrig = new Ingredient("milk", "milch", "fat", 90.0, "g", 1.09, "egal");
         milk = new Ingredient("milk", "milk", "low fat", 100.0, "ml", 1.29, "egal");
@@ -68,6 +97,7 @@ class IngredientServiceTest {
         Mockito.verify(mockIngredientRepository, Mockito.times(1)).findAll();
     }
 
+
     @Test
     public void getIngredients_shouldReturn_IngredientsList_whenAtLeastOneIngredientIsPresent() {
         List<Ingredient> expected = Collections.singletonList(milk);
@@ -81,11 +111,16 @@ class IngredientServiceTest {
     @Test
     public void addIngredient_shouldReturn_createdIngredient() {
         // when
-        Mockito.when(mockServiceId.generateId()).thenReturn(milk.id());
-        Mockito.when(mockIngredientRepository.save(milk)).thenReturn(milk);
+        Mockito.when(mockServiceId.generateId()).thenReturn(expectedNutrients.id(), expectedIngredient.id());
+        Mockito.when(mockIngredientRepository.save(expectedIngredient)).thenReturn(expectedIngredient);
+        Mockito.when(mockNutrientMapper.createNutrients(expectedNutrients.id(), ingredientProfile.nutrientsArray())).thenReturn(expectedNutrients);
+        Mockito.when(mockNutrientService.addNutrients(expectedNutrients)).thenReturn(expectedNutrients);
         // then
-        assertEquals(milk, ingredientService.addIngredient(milkDto));
-        Mockito.verify(mockIngredientRepository, Mockito.times(1)).save(milk);
+        assertEquals(expectedIngredient.id(), ingredientService.addIngredient(ingredientProfile));
+        //verify
+        Mockito.verify(mockServiceId, Mockito.times(2)).generateId();
+        Mockito.verify(mockIngredientRepository, Mockito.times(1)).save(expectedIngredient);
+        Mockito.verify(mockNutrientService, Mockito.times(1)).addNutrients(expectedNutrients);
     }
 
     @Test
@@ -116,7 +151,7 @@ class IngredientServiceTest {
     }
 
     @Test
-    public void addIngredientByOpenAi_shouldOpenAiNotFoundIngredientException_whenJsonIsWrong(){
+    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenJsonIsWrong(){
         // when
         Mockito.when(mockNutrientOpenAiService
                         .getNutrients(ingredientOpenAiDto.product(),
@@ -141,7 +176,7 @@ class IngredientServiceTest {
     }
 
     @Test
-    void updateIngredient_shouldReturn_upgedatedIngredient() {
+    void updateIngredient_shouldReturn_updatedIngredient() {
         // when
         Mockito.when(mockIngredientRepository.findById(milkOrig.id())).thenReturn(Optional.of(milkOrig));
         Mockito.when(mockIngredientRepository.save(milk)).thenReturn(milk);
@@ -168,7 +203,7 @@ class IngredientServiceTest {
 
     @Test
     void getNutrientsDaily_shouldThrowProductVariationNotFound_whenProductVariationIsNotFound() {
-        assertThrows(ProductVariationNotFound.class, ()->ingredientService.getNutrientsDaily());
+        assertThrows(ProductVariationNotFoundException.class, ()->ingredientService.getNutrientsDaily());
     }
     @Test
     void getNutrientsDaily_shouldReturn_NutrientsDaily() {

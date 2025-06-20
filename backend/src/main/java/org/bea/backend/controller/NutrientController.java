@@ -21,6 +21,7 @@ public class NutrientController {
     public Nutrients addNutrients(@RequestBody Nutrients nutrients){
         return nutrientService.addNutrients(nutrients);
     }
+
     @PutMapping("/{id}")
     public Nutrients updateNutrients(@PathVariable String id, @RequestBody Nutrient[] nutrientArray) {
         return nutrientService.updateNutrients(id, nutrientArray);

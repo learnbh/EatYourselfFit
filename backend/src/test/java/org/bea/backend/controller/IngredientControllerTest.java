@@ -1,9 +1,8 @@
 package org.bea.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.bea.backend.model.Ingredient;
-import org.bea.backend.model.IngredientDto;
-import org.bea.backend.model.Nutrients;
+import org.bea.backend.FakeTestData.IngredientCreateFakeData;
+import org.bea.backend.model.*;
 import org.bea.backend.openai.IngredientOpenAiDto;
 import org.bea.backend.openai.OpenAiConfig;
 import org.bea.backend.repository.IngredientRepository;
@@ -31,6 +30,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.Collections;
 import java.util.List;
 
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.not;
 import static org.instancio.Select.field;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -65,6 +66,47 @@ public class IngredientControllerTest {
     IngredientDto milkDto2 = new IngredientDto("milk", "fat", 100.0, "ml", 1.59, "bad");
     IngredientDto invalidDtoMaxSize = new IngredientDto("", "low fat", 0.0, "", 1.29, "egal");
     IngredientDto invalidDtoNull = new IngredientDto(null, "low fat", null, null, 1.29, "egal");
+
+    IngredientProfile ingredientProfile = new IngredientProfile(
+            IngredientCreateFakeData.ingredientCreate,
+            IngredientCreateFakeData.nutrientsArray
+    );
+    IngredientProfile ingredientProfileDuplicate = new IngredientProfile(
+            new IngredientCreate(
+                    milkDtoDuplicate.product(),
+                    milkDtoDuplicate.variation(),
+                    milkDtoDuplicate.quantity(),
+                    milkDtoDuplicate.unit(),
+                    milkDtoDuplicate.prices()),
+            IngredientCreateFakeData.nutrientsArray
+    );
+    IngredientProfile ingredientProfileNull = new IngredientProfile(
+            new IngredientCreate(
+                    invalidDtoNull.product(),
+                    invalidDtoNull.variation(),
+                    invalidDtoNull.quantity(),
+                    invalidDtoNull.unit(),
+                    invalidDtoNull.prices()),
+            IngredientCreateFakeData.nutrientsArray
+    );
+    IngredientProfile ingredientProfileMaxSize = new IngredientProfile(
+            new IngredientCreate(
+                    invalidDtoMaxSize.product(),
+                    invalidDtoMaxSize.variation(),
+                    invalidDtoMaxSize.quantity(),
+                    invalidDtoMaxSize.unit(),
+                    invalidDtoMaxSize.prices()),
+            IngredientCreateFakeData.nutrientsArray
+    );
+    IngredientProfile ingredientProfileProductVariationCombination = new IngredientProfile(
+            new IngredientCreate(
+                    milkDto2.product(),
+                    milkDto2.variation(),
+                    milkDto2.quantity(),
+                    milkDto2.unit(),
+                    milkDto2.prices()),
+            IngredientCreateFakeData.nutrientsArray
+    );
 
     IngredientOpenAiDto ingredientOpenAiDto = new IngredientOpenAiDto("rindehack", "");
     String openAiResponse = """
@@ -119,54 +161,50 @@ public class IngredientControllerTest {
     }
 
     @Test
-    public void addIngredient_shouldReturnMethodArgumentNotValidException_forSizeAndMax_withInvalidIngredientDto() throws Exception {
+    public void addIngredient_shouldThrowMethodArgumentNotValidException_forSizeAndMax_withInvalidIngredientCreate() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(mapper.writeValueAsString(invalidDtoNull)))
+                    .content(mapper.writeValueAsString(ingredientProfileMaxSize)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpectAll(
-                    MockMvcResultMatchers.jsonPath("$.messages.product")
-                        .value("Product cannot be null"),
-                    MockMvcResultMatchers.jsonPath("$.messages.quantity")
-                        .value("Quantity cannot be null"),
-                    MockMvcResultMatchers.jsonPath("$.messages.unit")
-                        .value("Unit cannot be null"),
-                    MockMvcResultMatchers.jsonPath("$.timestamp").exists(),
-                    MockMvcResultMatchers.jsonPath("$.status").value(HttpStatus.BAD_REQUEST.name())
-                );
-    }
-    @Test
-    public void addIngredient_shouldReturnMethodArgumentNotValidException_forNull_withInvalidIngredientDto() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(invalidDtoMaxSize)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpectAll(
-                        MockMvcResultMatchers.jsonPath("$.messages.product")
+                        MockMvcResultMatchers.jsonPath("$.messages['ingredientCreate.product']")
                                 .value("Product must have at least 1 character"),
-                        MockMvcResultMatchers.jsonPath("$.messages.quantity")
+                        MockMvcResultMatchers.jsonPath("$.messages['ingredientCreate.quantity']")
                                 .value("Quantity must be at least 0.01"),
-                        MockMvcResultMatchers.jsonPath("$.messages.unit")
+                        MockMvcResultMatchers.jsonPath("$.messages['ingredientCreate.unit']")
                                 .value("Unit must have at least 1 character"),
                         MockMvcResultMatchers.jsonPath("$.timestamp").exists(),
                         MockMvcResultMatchers.jsonPath("$.status").value(HttpStatus.BAD_REQUEST.name())
                 );
     }
     @Test
+    public void addIngredient_shouldRThrowMethodArgumentNotValidException_forNull_withInvalidIngredientCreate() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(ingredientProfileNull)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpectAll(
+                        MockMvcResultMatchers.jsonPath("$.messages['ingredientCreate.product']")
+                                .value("Product cannot be null"),
+                        MockMvcResultMatchers.jsonPath("$.messages['ingredientCreate.quantity']")
+                                .value("Quantity cannot be null"),
+                        MockMvcResultMatchers.jsonPath("$.messages['ingredientCreate.unit']")
+                                .value("Unit cannot be null"),
+                        MockMvcResultMatchers.jsonPath("$.timestamp").exists(),
+                        MockMvcResultMatchers.jsonPath("$.status").value(HttpStatus.BAD_REQUEST.name())
+                );
+    }
+    @Test
     void addIngredient_shouldThrowException_whenDuplicate_ProductVariationCombination_IsInserted() throws Exception {
+        mockIngredientRepository.save(milk);
         mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(milkDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(milkDtoDuplicate)))
+                        .content(mapper.writeValueAsString(ingredientProfileDuplicate)))
                 .andExpect(MockMvcResultMatchers.status().isConflict())
                 .andExpectAll(
                         MockMvcResultMatchers
                                 .jsonPath("$.error")
-                                .value("Error: A ingredient with this product-variation combination already exists")
+                                .value("Error: Eine Zutat mit dieser Produkt-Variation existiert bereits.")
                 );
     }
     @Test
@@ -174,33 +212,18 @@ public class IngredientControllerTest {
         mockIngredientRepository.save(milk);
         mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(milkDto2)))
+                        .content(mapper.writeValueAsString(ingredientProfileProductVariationCombination)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpectAll(
-                        MockMvcResultMatchers.jsonPath("$.id").exists(),
-                        MockMvcResultMatchers.jsonPath("$.product").value(milkDto2.product()),
-                        MockMvcResultMatchers.jsonPath("$.variation").value(milkDto2.variation()),
-                        MockMvcResultMatchers.jsonPath("$.quantity").value(milkDto2.quantity()),
-                        MockMvcResultMatchers.jsonPath("$.unit").value(milkDto2.unit()),
-                        MockMvcResultMatchers.jsonPath("$.prices").value(milkDto2.prices()),
-                        MockMvcResultMatchers.jsonPath("$.nutrientsId").value(milkDto2.nutrientsId())
-                );
+                .andExpect(MockMvcResultMatchers.content().string(not(emptyOrNullString())));
     }
+
     @Test
-    public void addIngredient_shouldReturn_createdIngredient_withValidIngredientDto() throws Exception {
+    public void addIngredient_shouldReturn_createdIngredient() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(milkDto)))
+                        .content(mapper.writeValueAsString(ingredientProfile)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpectAll(
-                        MockMvcResultMatchers.jsonPath("$.id").exists(),
-                        MockMvcResultMatchers.jsonPath("$.product").value(milk.product()),
-                        MockMvcResultMatchers.jsonPath("$.variation").value(milk.variation()),
-                        MockMvcResultMatchers.jsonPath("$.quantity").value(milk.quantity()),
-                        MockMvcResultMatchers.jsonPath("$.unit").value(milk.unit()),
-                        MockMvcResultMatchers.jsonPath("$.prices").value(milk.prices()),
-                        MockMvcResultMatchers.jsonPath("$.nutrientsId").value(milk.nutrientsId())
-                );
+                .andExpect(MockMvcResultMatchers.content().string(not(emptyOrNullString())));
     }
 
     @Test
@@ -278,7 +301,7 @@ public class IngredientControllerTest {
     }
 
     @Test
-    void updateIngredient_shouldReturn_upgedatedIngredient() throws Exception{
+    void updateIngredient_shouldReturn_updatedIngredient() throws Exception{
         // given
         mockIngredientRepository.save(milkOrig);
         // when

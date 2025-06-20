@@ -1,10 +1,10 @@
-import type {Ingredient} from "../types.ts";
+import type {Ingredient, IngredientCreate} from "../types.ts";
 import type {ChangeEvent} from "react";
 import InputNumber from "../component/InputNumber.tsx";
 import InputText from "../component/InputText.tsx";
 
 type Props = {
-    ingredient:Ingredient|undefined
+    ingredient:Ingredient | IngredientCreate | undefined
     onChange: (e:ChangeEvent<HTMLInputElement>)=>void
 }
 
