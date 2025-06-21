@@ -39,3 +39,13 @@ export type Nutrients = {
     [key: string]: Nutrient | string;
 };
 
+export type IngredientProductRef = {
+    focusField: (fieldName: string) => void;
+};
+
+export type InputRef = {
+    focus: () => void;
+};
+
+
+

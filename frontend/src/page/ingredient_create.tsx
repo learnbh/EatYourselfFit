@@ -1,100 +1,108 @@
-import {useNavigate, useParams} from "react-router-dom";
-import {type ChangeEvent, type FormEvent, useCallback, useEffect, useState} from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {type ChangeEvent, type FormEvent, useCallback, useEffect, useRef, useState} from "react";
 import axios from "axios";
-import type {IngredientCreate, IngredientProfile, Nutrient, Nutrients} from "../types.ts";
+import type {IngredientCreate, IngredientProductRef, IngredientProfile, Nutrient, Nutrients} from "../types.ts";
 import IngredientLayout from "../layout/ingredient_layout.tsx";
 import NutrientLayout from "../layout/nutrient_layout.tsx";
-import {mapNutrientsToCreateNutrientArray} from "../helper.ts";
+import { handleAxiosFormError,
+    mapNutrientsToCreateNutrientArray
+} from "../helper.ts";
+import ShowError from "../component/ShowError.tsx";
 
 export default function IngredientCreate(){
-
+    const {product} = useParams<string>()
     const routeTo = useNavigate();
 
-    const {product} = useParams<string>()
+    const refProduct = useRef<IngredientProductRef>({
+        focusField: () => {
+        }
+    });
 
     const [ingredientCreate, setIngredientCreate] = useState<IngredientCreate>()
-    const [nutrientArray, setNutrientArray] = useState<Nutrient[]>([])
+    const [nutrientArray, setNutrientArray] = useState<Nutrient[]>( [] )
 
-    const [isLoading, setLoading] = useState<boolean>(false)
+    const [isLoading, setLoading] = useState<boolean>( false )
 
-    const [isingredientCreateChanged, setingredientCreateChanged] = useState<boolean>(false)
-    const [isNutrientChanged, setNutrientChanged] = useState<boolean>(false)
-    const [isErrorDataNotChanged, setErrorDataNotChanged] = useState<string>("")
+    const [isingredientCreateChanged, setingredientCreateChanged] = useState<boolean>( false )
+    const [isNutrientChanged, setNutrientChanged] = useState<boolean>( false )
+    const [isError, setError] = useState<string>( "" )
 
     const getNutrients = useCallback( async () => {
         try {
-                setLoading(true)
-                const responseNutrient = await axios.get<Nutrients[]>("/eyf/ingredients/daily/nutrients");
-            setNutrientArray(mapNutrientsToCreateNutrientArray(responseNutrient));
+                setLoading( true )
+                const responseNutrient = await axios.get<Nutrients[]>( "/eyf/ingredients/daily/nutrients" );
+            setNutrientArray( mapNutrientsToCreateNutrientArray( responseNutrient ) );
         } catch (error) {
-            if (axios.isAxiosError(error)) {
+            if ( axios.isAxiosError( error ) ) {
                 console.error('Axios error:', error.response?.data || error.message);
             } else {
                 console.error('Unexpected error:', error);
             }
         } finally {
-            setLoading(false)
+            setLoading( false )
         }
-    }, [])
+    }, [] )
 
-    function handleChangeNutrient(e:ChangeEvent<HTMLInputElement>) {
+    function handleChangeNutrient( e:ChangeEvent<HTMLInputElement> ) {
         e.preventDefault();
-        const {name, value} = e.target
-        const updateNutrients:Nutrient[] = nutrientArray.map((n) =>
-            (n.name === name) && (n.unit !== "kJ")
-                ? { ...n, quantity: Number(value) } as Nutrient
+        const { name, value } = e.target
+        const updateNutrients:Nutrient[] = nutrientArray.map( ( n) =>
+            ( n.name === name ) && ( n.unit !== "kJ" )
+                ? { ...n, quantity: Number( value ) } as Nutrient
                 : n
         );
-        setNutrientArray(updateNutrients)
-        setNutrientChanged(true);
-        setErrorDataNotChanged( "" );
+        setNutrientArray( updateNutrients )
+        setNutrientChanged( true );
+        setError( "" );
     }
-
-    function handleChangeingredientCreate(e:ChangeEvent<HTMLInputElement>) {
+    function handleChangeingredientCreate( e:ChangeEvent<HTMLInputElement> ) {
         e.preventDefault();
         const { name, value } = e.target;
         const newValue:string|number = name === "price" ? Number (value) : String (value);
         setIngredientCreate(prevState => ( { ...prevState, [name]: newValue } as IngredientCreate ) );
         setingredientCreateChanged(true);
-        setErrorDataNotChanged( "" );
+        setError( "" );
     }
 
-    const submit = async (e:FormEvent<HTMLFormElement>)=> {
+    const submit = async ( e:FormEvent<HTMLFormElement> )=> {
         e.preventDefault();
-        if(ingredientCreate) {
+        let messages = { userMessage:"", logMessage:"" };
+        if( ingredientCreate ) {
             if ( isingredientCreateChanged || isNutrientChanged ) {
-                setErrorDataNotChanged( "" );
+                setError( "" );
                 const ingredientProfile:IngredientProfile = {
                     ingredientCreate:ingredientCreate,
                     nutrientsArray:nutrientArray
                 }
-
                 try {
                     await axios.post("/eyf/ingredients", ingredientProfile,
                         {
                             headers: {
                                 'Content-Type': 'application/json',
                             },
-                        });
-                    setingredientCreateChanged(false);
-                    setNutrientChanged(false);
-                } catch (error){
-                    if (axios.isAxiosError(error)) {
-                        console.error('Axios error:', error.response?.data || error.message);
-                    } else {
-                        console.error('Unexpected error:', error);
-                    }
+                        } );
+                    setingredientCreateChanged( false );
+                    setNutrientChanged( false );
+                } catch ( error ) {
+                    messages = handleAxiosFormError(
+                        error,
+                        refProduct,
+                        "product"
+                    );
+                    setError( messages.userMessage );
+                    console.error( messages.logMessage );
                 }
-
-                routeTo("/recipeplan");
-
+                if( messages.userMessage === "" ) {
+                    routeTo( "/recipeplan" );
+                }
             } else {
-                setErrorDataNotChanged( "Es wurde nichts geändert. Speichern abgebrochen." )
+                setError( "Es wurde nichts geändert. Speichern abgebrochen." )
             }
         }
     }
-    useEffect(() => {
-        if(product) {
+
+    useEffect( () => {
+        if( product ) {
             const fetchIngredientCreate = async () => {
                 const newingredientCreate: IngredientCreate = {
                     product: product,
@@ -106,16 +114,16 @@ export default function IngredientCreate(){
                 return newingredientCreate
             }
             fetchIngredientCreate()
-                .then((response:IngredientCreate) => setIngredientCreate(response))
-                .catch((error) => console.error('Error while fetching ingredientCreate:', error))
+                .then( ( response:IngredientCreate ) => setIngredientCreate( response ) )
+                .catch( ( error) => console.error( 'Error while fetching ingredientCreate:', error ) )
         }
-    }, [product]);
-
+    }, [product] );
     useEffect( () => {
-        (async () => {
+        ( async () => {
             await getNutrients();
-        })();
+        } ) ();
     }, [getNutrients] );
+
     return(
         <>
             <div>
@@ -123,13 +131,27 @@ export default function IngredientCreate(){
                     <h1> Einen Moment bitte Zutat wird geladen ...</h1>
                 ) }
                 {ingredientCreate && (
-                    <h1> Hier kannst Du {ingredientCreate.product} erstellen:  </h1>
-                )}
-                <form  onSubmit={(e)=>submit(e)}>
-                    { ingredientCreate && (<IngredientLayout ingredient={ ingredientCreate } onChange={ handleChangeingredientCreate }/>) }
-                    { nutrientArray && (<NutrientLayout nutrients={ nutrientArray } onChange={ handleChangeNutrient }/>) }
-                    { isErrorDataNotChanged !== "" && (
-                        <span>{ isErrorDataNotChanged }</span>
+                    <h1> Hier kannst Du { ingredientCreate.product } erstellen:  </h1>
+                ) }
+                { isError !== "" && (
+                    <ShowError message = { isError } />
+                ) }
+                <form  onSubmit={ ( e)=>submit( e ) } >
+                    { ingredientCreate && (
+                        <IngredientLayout
+                            ingredient = { ingredientCreate }
+                            onChange = { handleChangeingredientCreate }
+                            ref = { refProduct }
+                        />
+                    ) }
+                    { nutrientArray && (
+                        <NutrientLayout
+                            nutrients={ nutrientArray }
+                            onChange={ handleChangeNutrient }
+                        />
+                    ) }
+                    { isError !== "" && (
+                        <ShowError message = { isError } />
                     ) }
                     <button className="border pt-2 pb-2 w-full" type="submit" >
                         Speichern
