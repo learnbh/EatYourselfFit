@@ -140,16 +140,12 @@ public class IngredientService {
     public Ingredient updateIngredient(String id, IngredientDto ingredientDto) {
         String product = ingredientDto.product();
         String variation = ingredientDto.variation();
-        if (ingredientRepository
-                .getIngredientByProductAndVariationContainsIgnoreCase(
-                        product,
-                        variation)
-                .isPresent()
+        Optional<Ingredient> ingredientOptional = ingredientRepository.getIngredientByProductAndVariationContainsIgnoreCase(
+                product,
+                variation);
+        if (ingredientOptional.isPresent()
         ) {
-            Ingredient ingredient = ingredientRepository
-                    .getIngredientByProductAndVariationContainsIgnoreCase(
-                            product,
-                            variation).get();
+            Ingredient ingredient = ingredientOptional.get();
             if (id.equals(ingredient.id())){
                 Ingredient ingredientUpgedated = new Ingredient(
                         ingredient.id(),
