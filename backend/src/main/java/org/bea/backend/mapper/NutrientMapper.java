@@ -10,21 +10,70 @@ import java.util.Map;
 @Component
 public class NutrientMapper {
 
+    public Nutrients createNutrients(String id, Nutrient[] nutrientsArray) {
+
+        Map<String, Nutrient> nutrientMap = mapNutrientArrayToMap(nutrientsArray);
+
+        return new Nutrients (
+                id,
+                nutrientMap.get("energyKcal"),
+                nutrientMap.get("energyKJ"),
+                nutrientMap.get(Macronutrient.FAT.getInGerman()),
+                nutrientMap.get(Macronutrient.PROTEIN.getInGerman()),
+                nutrientMap.get(Macronutrient.CARBOHYDRATE.getInGerman()),
+                nutrientMap.get(Macronutrient.FIBER.getInGerman()),
+                nutrientMap.get(Macronutrient.WATER.getInGerman()),
+                nutrientMap.get(Vitamin.A.getInGerman()),
+                nutrientMap.get(Vitamin.B1_THIAMIN.getInGerman()),
+                nutrientMap.get(Vitamin.B2_RIBOFLAVIN.getInGerman()),
+                nutrientMap.get(Vitamin.B3.getInGerman()),
+                nutrientMap.get(Vitamin.B5_PANTONTHETICACID.getInGerman()),
+                nutrientMap.get(Vitamin.B6_PYRIDOXIN.getInGerman()),
+                nutrientMap.get(Vitamin.B7_BIOTIN.getInGerman()),
+                nutrientMap.get(Vitamin.B9_FOLICACID_TOTAL.getInGerman()),
+                nutrientMap.get(Vitamin.B12_COBALAMIN.getInGerman()),
+                nutrientMap.get(Vitamin.C_ASCORBINACID.getInGerman()),
+                nutrientMap.get(Vitamin.D_CALCIFEROL.getInGerman()),
+                nutrientMap.get(Vitamin.E.getInGerman()),
+                nutrientMap.get(Vitamin.K.getInGerman()),
+                nutrientMap.get(MajorElement.SALT.getInGerman()),
+                nutrientMap.get(MajorElement.PRAL.getInGerman()),
+                nutrientMap.get(MajorElement.SODIUM.getInGerman()),
+                nutrientMap.get(MajorElement.POTASSIUM.getInGerman()),
+                nutrientMap.get(MajorElement.CALCIUM.getInGerman()),
+                nutrientMap.get(MajorElement.MAGNESIUM.getInGerman()),
+                nutrientMap.get(MajorElement.PHOSPHORUS.getInGerman()),
+                nutrientMap.get(MajorElement.SULFUR.getInGerman()),
+                nutrientMap.get(MajorElement.CHLORIDE.getInGerman()),
+                nutrientMap.get(TraceElement.IRON.getInGerman()),
+                nutrientMap.get(TraceElement.ZINC.getInGerman()),
+                nutrientMap.get(TraceElement.COPPER.getInGerman()),
+                nutrientMap.get(TraceElement.MANGANESE.getInGerman()),
+                nutrientMap.get(TraceElement.FLUORIDE.getInGerman()),
+                nutrientMap.get(TraceElement.IODIDE.getInGerman()),
+                nutrientMap.get(AminoacidEssential.ISOLEUCIN.getInGerman()),
+                nutrientMap.get(AminoacidEssential.LEUCIN.getInGerman()),
+                nutrientMap.get(AminoacidEssential.LYSIN.getInGerman()),
+                nutrientMap.get(AminoacidEssential.METHIONIN.getInGerman()),
+                nutrientMap.get(AminoacidEssential.CYSTEIN.getInGerman()),
+                nutrientMap.get(AminoacidEssential.PHENYLALANIN.getInGerman()),
+                nutrientMap.get(AminoacidEssential.TYROSIN.getInGerman()),
+                nutrientMap.get(AminoacidEssential.THREONIN.getInGerman()),
+                nutrientMap.get(AminoacidEssential.TRYPTOPHAN.getInGerman()),
+                nutrientMap.get(AminoacidEssential.VALIN.getInGerman()),
+                nutrientMap.get(AminoacidEssential.ARGININ.getInGerman()),
+                nutrientMap.get(AminoacidEssential.HISTIDIN.getInGerman()),
+                nutrientMap.get(Aminoacid.ALANIN.getInGerman()),
+                nutrientMap.get(Aminoacid.ASPARAGINACID.getInGerman()),
+                nutrientMap.get(Aminoacid.GLUTAMINACID.getInGerman()),
+                nutrientMap.get(Aminoacid.GLYCIN.getInGerman()),
+                nutrientMap.get(Aminoacid.PROLIN.getInGerman()),
+                nutrientMap.get(Aminoacid.SERIN.getInGerman()));
+    }
+
     public Nutrients updateNutrients(Nutrients currentNutrients, Nutrient[] updatedNutrients){
-        // Erstelle eine Map von Nutrient-Name zu Nutrient
-        Map<String, Nutrient> updatedMap = new HashMap<>();
-        for (Nutrient nutrient : updatedNutrients) {
-            switch (nutrient.unit()){
-                case "kcal":
-                    updatedMap.put("energyKcal", nutrient);
-                    break;
-                case "kJ":
-                    updatedMap.put("energyKJ", nutrient);
-                    break;
-                default:
-                    updatedMap.put(nutrient.name(), nutrient);
-            }
-        }
+
+        Map<String, Nutrient> updatedMap = mapNutrientArrayToMap(updatedNutrients);
         // Durchlaufe alle Nutrients und aktualisiere die Menge (quantity)
         currentNutrients = currentNutrients.withEnergyKcal(updateNutrientQuantity(currentNutrients.energyKcal(), updatedMap.get("energyKcal")));
         currentNutrients = currentNutrients.withEnergyKJ(updateNutrientQuantity(currentNutrients.energyKJ(), updatedMap.get("energyKJ")));
@@ -88,5 +137,27 @@ public class NutrientMapper {
             return currentNutrient.withQuantity(updatedNutrient.quantity());
         }
         return currentNutrient;
+    }
+
+    public Map<String, Nutrient> mapNutrientArrayToMap(Nutrient[] nutrientArray) {
+        Map<String, Nutrient> nutrientMap = new HashMap<>();
+
+        for (Nutrient nutrient : nutrientArray) {
+            addNutrientToMap(nutrientMap, nutrient);
+        }
+        return nutrientMap;
+    }
+
+    private static void addNutrientToMap(Map<String, Nutrient> nutrientMap, Nutrient nutrient) {
+        switch (nutrient.unit()) {
+            case "kcal":
+                nutrientMap.put("energyKcal", nutrient);
+                break;
+            case "kJ":
+                nutrientMap.put("energyKJ", nutrient);
+                break;
+            default:
+                nutrientMap.put(nutrient.name(), nutrient);
+        }
     }
 }

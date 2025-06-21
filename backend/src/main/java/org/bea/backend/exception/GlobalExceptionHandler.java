@@ -17,7 +17,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionMessage> handleUnknownException(Exception e){
         ExceptionMessage error = new ExceptionMessage("Error: "+e.getMessage(),
@@ -25,6 +24,7 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR.name());
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR );
     }
+
     @ExceptionHandler(IdNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ExceptionMessage> handleIdNotFoundException(IdNotFoundException e){
@@ -34,15 +34,16 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND.name());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
-    @ExceptionHandler(ProductVariationNotFound.class)
+    @ExceptionHandler(ProductVariationNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ExceptionMessage> handleIdNotFoundException(ProductVariationNotFound e){
+    public ResponseEntity<ExceptionMessage> handleIdNotFoundException(ProductVariationNotFoundException e){
         ExceptionMessage error = new ExceptionMessage(
                 "Error: "+e.getMessage(),
                 Instant.now(),
                 HttpStatus.NOT_FOUND.name());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ValidationErrorResponse> handleValidationException(MethodArgumentNotValidException e) {
@@ -58,10 +59,28 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(CreateIngredientException.class)
+    public ResponseEntity<ExceptionMessage> handleCreateIngredientException(CreateIngredientException e) {
+        ExceptionMessage error = new ExceptionMessage(
+                "Error: "+e.getMessage(),
+                Instant.now(),
+                HttpStatus.BAD_REQUEST.name());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(OpenAiNotFoundIngredientException.class)
+    public ResponseEntity<ExceptionMessage> handleOpenAiNotFoundIngredientException(OpenAiNotFoundIngredientException e) {
+        ExceptionMessage error = new ExceptionMessage(
+                "Error: "+e.getMessage(),
+                Instant.now(),
+                HttpStatus.BAD_REQUEST.name());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(DuplicateKeyException.class)
     public ResponseEntity<ExceptionMessage> handleDuplicateKeyException() {
         ExceptionMessage error = new ExceptionMessage(
-                "Error: A ingredient with this product-variation combination already exists",
+                "Error: Eine Zutat mit dieser Produkt-Variation existiert bereits.",
                 Instant.now(),
                 HttpStatus.CONFLICT.name());
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
@@ -74,14 +93,5 @@ public class GlobalExceptionHandler {
                 Instant.now(),
                 HttpStatus.CONFLICT.name());
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(OpenAiNotFoundIngredientException.class)
-    public ResponseEntity<ExceptionMessage> handleOpenAiNotFoundIngredientException(OpenAiNotFoundIngredientException e) {
-        ExceptionMessage error = new ExceptionMessage(
-                "Error: "+e.getMessage(),
-                Instant.now(),
-                HttpStatus.BAD_REQUEST.name());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }
