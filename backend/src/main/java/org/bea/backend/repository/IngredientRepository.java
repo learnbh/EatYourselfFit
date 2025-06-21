@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface IngredientRepository extends MongoRepository<Ingredient, String> {
-    Optional<Ingredient> getIngredientByProductAndVariation(String product, String variation);
+    Optional<Ingredient> getIngredientByProductAndVariationContainsIgnoreCase(String product, String variation);
     List<Ingredient> findIngredientsByProductContainsIgnoreCase(String product);
     List<Ingredient> findIngredientsByVariationContainsIgnoreCase(String variation);
 }

@@ -90,7 +90,8 @@ public class OpenAiConfig {
                 """;
 
        public static final String ingredientResponseTest = """
-        {"ingredientDto": {
+        {
+            "ingredientDto": {
                 "product": "Rindfleisch",
                         "variation": "Rinderhack 20% Fett",
                         "quantity": 100,

@@ -12,6 +12,7 @@ import org.bea.backend.model.*;
 import org.bea.backend.openai.IngredientOpenAiDto;
 import org.bea.backend.openai.NutrientOpenAiService;
 import org.bea.backend.repository.IngredientRepository;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -70,7 +71,7 @@ public class IngredientService {
         String product = ingredientOpenAiDto.product();
         String variation = ingredientOpenAiDto.variation();
 
-        if (ingredientRepository.getIngredientByProductAndVariation(product, variation).isEmpty()) {
+        if (ingredientRepository.getIngredientByProductAndVariationContainsIgnoreCase(product, variation).isEmpty()) {
             ObjectMapper objectMapper = new ObjectMapper();
             String contentString = nutrientOpenAiService.getNutrients(product, variation);
 
@@ -83,15 +84,13 @@ public class IngredientService {
                 }
                 JsonNode contentNode = objectMapper.readTree(contentString);
                 ObjectNode ingredientNode = (ObjectNode) contentNode.get("ingredientDto");
-                if (!( ingredientNode.get("product").toString().equals(product)
-                    || !(ingredientNode.get("variation").toString().equals(variation))
-                    || !(ingredientNode.get("quantity").asInt() == 100)
-                    || !(ingredientNode.get("unit").toString().equals("g")))
+                if (!(ingredientNode.get("quantity").asInt() ==100)
+                    || !(ingredientNode.get("unit").asText().equals("g"))
                 ){
                     throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Ingredient ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
                 }
                 // add Ingredient and Nutrient
-                if (ingredientRepository.getIngredientByProductAndVariation(ingredientNode.get("product").asText(), ingredientNode.get("variation").asText()).isEmpty()){
+                if (ingredientRepository.getIngredientByProductAndVariationContainsIgnoreCase(ingredientNode.get("product").asText(), ingredientNode.get("variation").asText()).isEmpty()){
                     // Nutrients:
                     ObjectNode nutrientsNode = (ObjectNode) contentNode.get("nutrientsDto");
                     if (nutrientsNode == null || nutrientsNode.get("energyKcal") == null) {
@@ -109,9 +108,12 @@ public class IngredientService {
                     Ingredient ingredient = objectMapper.readValue(objectMapper.writeValueAsString(ingredientNode), Ingredient.class);
                     ingredientRepository.save(ingredient);
                     return ingredient;
+                } else {
+                    throw new DuplicateKeyException("Error: Eine Zutat mit dieser Produkt-Variation existiert bereits.");
                 }
+        } else {
+            throw new DuplicateKeyException("Error: Eine Zutat mit dieser Produkt-Variation existiert bereits.");
         }
-        return null;
     }
 
     public Set<Ingredient> getIngredientByName(String name) {
@@ -128,24 +130,49 @@ public class IngredientService {
 
     public Nutrients getNutrientsDaily() {
         Ingredient ingredient = ingredientRepository
-                .getIngredientByProductAndVariation("Nährstoffe", "Täglicher Bedarf")
+                .getIngredientByProductAndVariationContainsIgnoreCase("Nährstoffe", "Täglicher Bedarf")
                 .orElseThrow(() -> new ProductVariationNotFoundException("Produkt, Variation: Nährstoffe, Täglicher Bedarf existiert nicht."));
         return nutrientService.getNutrientsById(ingredient.nutrientsId());
     }
 
     public Ingredient updateIngredient(String id, IngredientDto ingredientDto) {
-        Ingredient ingredient = getIngredientById(id);
-        Ingredient ingredientUpgedated = new Ingredient(
-            ingredient.id(),
-            ingredientDto.product(),
-            ingredientDto.variation(),
-            ingredientDto.quantity(),
-            ingredientDto.unit(),
-            ingredientDto.prices(),
-            ingredient.nutrientsId()
-        );
-        ingredientRepository.save(ingredientUpgedated);
-        return ingredientUpgedated;
+        String product = ingredientDto.product();
+        String variation = ingredientDto.variation();
+        Optional<Ingredient> ingredientOptional = ingredientRepository.getIngredientByProductAndVariationContainsIgnoreCase(
+                product,
+                variation);
+        if (ingredientOptional.isPresent()
+        ) {
+            Ingredient ingredient = ingredientOptional.get();
+            if (id.equals(ingredient.id())){
+                Ingredient ingredientUpgedated = new Ingredient(
+                        ingredient.id(),
+                        product,
+                        variation,
+                        ingredientDto.quantity(),
+                        ingredientDto.unit(),
+                        ingredientDto.prices(),
+                        ingredient.nutrientsId()
+                );
+                ingredientRepository.save(ingredientUpgedated);
+                return ingredientUpgedated;
+            } else {
+                throw new DuplicateKeyException("Error: Eine Zutat mit dieser Produkt-Variation existiert bereits.");
+            }
+        } else {
+            Ingredient ingredient = getIngredientById(id);
+            Ingredient ingredientUpgedated = new Ingredient(
+                    ingredient.id(),
+                    product,
+                    variation,
+                    ingredientDto.quantity(),
+                    ingredientDto.unit(),
+                    ingredientDto.prices(),
+                    ingredient.nutrientsId()
+            );
+            ingredientRepository.save(ingredientUpgedated);
+            return ingredientUpgedated;
+        }
     }
 
 }

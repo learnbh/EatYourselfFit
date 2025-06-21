@@ -4,7 +4,7 @@ import Footer from "./component/Footer.tsx";
 import HeaderImg from "./assets/nutritionist_header.jpg";
 import Home from "./page/home.tsx";
 import Recipe from "./page/recipe.tsx";
-import {Route, Routes} from "react-router-dom";
+import {Navigate, Route, Routes} from "react-router-dom";
 import Recipeplan from "./page/recipeplan.tsx";
 import Weekplan from "./page/weekplan.tsx";
 import Shoppinglist from "./page/shoppinglist.tsx";
@@ -28,6 +28,7 @@ function App() {
                     <Route path="/weekplan" element={<Weekplan/>}/>
                     <Route path="/shoppinglist" element={<Shoppinglist/>}/>
                     <Route path="/ingredient/" element={<IngredientDetails/>}/>
+                    <Route path="/ingredient/*" element={<Navigate to="/ingredient" />}/>
                     <Route path="/ingredient/add/:product" element={<IngredientCreate/>}/>
                 </Routes>
             </main>

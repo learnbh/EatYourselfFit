@@ -28,7 +28,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.not;
@@ -60,6 +62,7 @@ public class IngredientControllerTest {
     ObjectMapper mapper = new ObjectMapper();
 
     Ingredient milkOrig = new Ingredient("milk", "milch", "fat", 90.0, "g", 1.09, "egal");
+    Ingredient milkFindByName = new Ingredient("milkFindByName", "milk", "Vollmilch", 90.0, "g", 1.09, "egal");
     Ingredient milk = new Ingredient("milk", "milk", "low fat", 100.0, "ml", 1.29, "egal");
     IngredientDto milkDto = new IngredientDto("milk", "low fat", 100.0, "ml", 1.29, "egal");
     IngredientDto milkDtoDuplicate = new IngredientDto("milk", "low fat", 100.0, "ml", 1.09, "good");
@@ -158,6 +161,22 @@ public class IngredientControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/eyf/ingredients/ingredient/detail/"+milk.id()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string(mapper.writeValueAsString(milk)));
+    }
+
+    @Test
+    void getIngredientByName_shouldReturnSetOfIngredients_whenNameIsInProductnameOrVariationnameOfStoredIngredientsInDB() throws Exception {
+        // given
+        Set<Ingredient> expected = new LinkedHashSet<>();
+        expected.add(milkOrig);
+        expected.add(milkFindByName);
+
+        mockIngredientRepository.save(milkOrig);
+        mockIngredientRepository.save(milkFindByName);
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.get("/eyf/ingredients/name/"+milkOrig.product()))
+        // then
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(mapper.writeValueAsString(expected)));
     }
 
     @Test

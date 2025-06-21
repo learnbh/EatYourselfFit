@@ -1,32 +1,48 @@
-import type {Ingredient, IngredientCreate} from "../types.ts";
-import type {ChangeEvent} from "react";
-import InputNumber from "../component/InputNumber.tsx";
+import type {Ingredient, IngredientCreate, IngredientProductRef, InputRef} from "../types.ts";
+import React, {type ChangeEvent, forwardRef, useImperativeHandle, useRef} from "react";
 import InputText from "../component/InputText.tsx";
+import InputNumber from "../component/InputNumber.tsx";
 
 type Props = {
     ingredient:Ingredient | IngredientCreate | undefined
     onChange: (e:ChangeEvent<HTMLInputElement>)=>void
 }
 
-export default function IngredientLayout(props:Readonly<Props>){
+function IngredientLayout( props:Readonly<Props>, ref: React.Ref<IngredientProductRef> ){
+    const refProduct = useRef<InputRef>(null);
+    const refVariation = useRef<InputRef>(null);
 
-    function handleChange(e:ChangeEvent<HTMLInputElement>){
-        props.onChange(e);
+    useImperativeHandle(ref, () => ({
+        focusField: (fieldName: string) => {
+            if (fieldName === 'product') {
+                refProduct.current?.focus();
+            } else
+            if (fieldName === 'variation') {
+                refProduct.current?.focus();
+            }
+        },
+    }));
+
+    function handleChange( e:ChangeEvent<HTMLInputElement> ){
+        props.onChange( e );
     }
+
     return(
         <>
             {props.ingredient && (
                 <div>
                     <div className="flex flex-row gap-2 justify-center items-center border p-2 mb-2 mt-2">
                         <InputText
-                        label="Produkt"
-                        name="product"
-                        value={String(props.ingredient.product)}
-                        onChange={handleChange}
+                            label="Produkt"
+                            name="product"
+                            ref = { refProduct }
+                            value={String(props.ingredient.product)}
+                            onChange={handleChange}
                         />
                         <InputText
                             label="Variation"
                             name="variation"
+                            ref = { refVariation }
                             value={String(props.ingredient.variation)}
                             onChange={handleChange}
                         />
@@ -54,3 +70,4 @@ export default function IngredientLayout(props:Readonly<Props>){
         </>
     )
 }
+export default forwardRef(IngredientLayout);
