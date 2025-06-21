@@ -245,7 +245,7 @@ class IngredientServiceTest {
                 );
     }
     @Test
-    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenNodeNutrientsDtoInJson(){
+    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenNoNutrientsDtoInJson(){
         // when
         Mockito.when(mockNutrientOpenAiService
                         .getNutrients(ingredientOpenAiDto.product(),
