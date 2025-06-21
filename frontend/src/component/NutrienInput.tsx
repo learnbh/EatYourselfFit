@@ -24,7 +24,7 @@ export default function NutrientInput(props:Readonly<Props>){
                         defaultValue={ props.value }
                         type="number"
                         min="0"
-                        step="0.01"
+                        step="0.001"
                         onKeyDown={ handleKeyDownNumber }
                         onChange={ handleChange }
                     />
