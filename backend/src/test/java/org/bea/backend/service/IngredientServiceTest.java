@@ -49,6 +49,7 @@ class IngredientServiceTest {
 
     Ingredient milkOrig;
     Ingredient milkFindByName;
+    Ingredient milkDouble;
     Ingredient milk;
     IngredientDto milkDto;
     IngredientOpenAiDto ingredientOpenAiDto;
@@ -86,6 +87,7 @@ class IngredientServiceTest {
 
         milkOrig = new Ingredient("milk", "milch", "fat", 90.0, "g", 1.09, "egal");
         milkFindByName = new Ingredient("milk", "milch", "milch fat", 90.0, "g", 1.09, "egal");
+        milkDouble = new Ingredient("milkDouble", "milk", "low fat", 90.0, "g", 1.09, "egal");
         milk = new Ingredient("milk", "milk", "low fat", 100.0, "ml", 1.29, "egal");
         milkDto = new IngredientDto("milk", "low fat", 100.0, "ml", 1.29, "egal");
         ingredientOpenAiDto = new IngredientOpenAiDto("rindehack", "");
@@ -120,24 +122,6 @@ class IngredientServiceTest {
         assertEquals(milk, ingredientService.getIngredientById(milk.id()));
         Mockito.verify(mockIngredientRepository, Mockito.times(1)).findById(milk.id());
     }
-
-//    @Test
-//    void getIngredientByName_shouldThrowProductVariationNotFoundException_whenNameIsNotFoundInProductnameOrVariationnameOfStoredIngredientsInDB() {
-//        // when
-//        Mockito.when(mockIngredientRepository.
-//                findIngredientsByProductContainsIgnoreCase(milkOrig.product()))
-//                .thenReturn(Collections.emptyList());
-//        Mockito.when(mockIngredientRepository
-//                .findIngredientsByVariationContainsIgnoreCase(milkOrig.product()))
-//                .thenReturn(Collections.emptyList());
-//        // then
-//        assertThrows(ProductVariationNotFoundException.class, () -> ingredientService.getIngredientByName(milkOrig.product()));
-//        // verify
-//        Mockito.verify(mockIngredientRepository, Mockito.times(1))
-//                .findIngredientsByProductContainsIgnoreCase(milkOrig.product());
-//        Mockito.verify(mockIngredientRepository, Mockito.times(1))
-//                .findIngredientsByVariationContainsIgnoreCase(milkOrig.product());
-//    }
     @Test
     void getIngredientByName_shouldReturnSetOfIngredients_whenNameIsInProductnameOrVariationnameOfStoredIngredientsInDB() {
         // given
@@ -246,6 +230,72 @@ class IngredientServiceTest {
                 );
     }
     @Test
+    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenNoIngredientOrNutrientsDtoInJson(){
+        // when
+        Mockito.when(mockNutrientOpenAiService
+                        .getNutrients(ingredientOpenAiDto.product(),
+                                ingredientOpenAiDto.variation()))
+                .thenReturn("{}");
+        OpenAiNotFoundIngredientException ex = assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
+        assertTrue(ex.getMessage().contains("ist leer"));
+        Mockito.verify(mockNutrientOpenAiService, Mockito.times(1))
+                .getNutrients(
+                        ingredientOpenAiDto.product(),
+                        ingredientOpenAiDto.variation()
+                );
+    }
+    @Test
+    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenNodeNutrientsDtoInJson(){
+        // when
+        Mockito.when(mockNutrientOpenAiService
+                        .getNutrients(ingredientOpenAiDto.product(),
+                                ingredientOpenAiDto.variation()))
+                .thenReturn("""
+                        {
+                            "ingredientDto": {
+                                "product": "Banane",
+                                "variation": "Frisch",
+                                "quantity": 100,
+                                "unit": "g"
+                            }
+                        }
+                        """);
+        OpenAiNotFoundIngredientException ex = assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
+        assertTrue(ex.getMessage().contains("Antwort von OpenAI für Nutrients ist leer"));
+        Mockito.verify(mockNutrientOpenAiService, Mockito.times(1))
+                .getNutrients(
+                        ingredientOpenAiDto.product(),
+                        ingredientOpenAiDto.variation()
+                );
+    }
+    @Test
+    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenIngredientFieldsAreInvalid(){
+        // when
+        Mockito.when(mockNutrientOpenAiService
+                        .getNutrients(ingredientOpenAiDto.product(),
+                                ingredientOpenAiDto.variation()))
+                .thenReturn("""
+                                {
+                                    "ingredientDto": {
+                                         "product": "Apfel",
+                                         "variation": "Getrocknet",
+                                         "quantity": 50,
+                                         "unit": "ml"
+                                    },
+                                    "nutrientsDto": {
+                                        "energyKcal": 52
+                                    }
+                                }
+                                """);
+        OpenAiNotFoundIngredientException ex = assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
+        assertTrue(ex.getMessage().contains("Antwort von OpenAI für Ingredient ist unbrauchbar"));
+        Mockito.verify(mockNutrientOpenAiService, Mockito.times(1))
+                .getNutrients(
+                        ingredientOpenAiDto.product(),
+                        ingredientOpenAiDto.variation()
+                );
+    }
+    @Test
     public void addIngredientByOpenAi_shouldOpenAiNotFoundIngredientException_whenNutrientsNotFound(){
         // when
         Mockito.when(mockNutrientOpenAiService
@@ -323,6 +373,18 @@ class IngredientServiceTest {
         // verify
         Mockito.verify(mockIngredientRepository, Mockito.times(1)).findById(milkOrig.id());
         Mockito.verify(mockIngredientRepository, Mockito.times(1)).save(milk);
+    }
+    @Test
+    public void updateIngredient_shouldThrowDuplicateKeyException_whenProductVariationExists(){
+        // when
+        Mockito.when(mockIngredientRepository
+                .getIngredientByProductAndVariationContainsIgnoreCase(milkDto.product(),milkDto.variation()))
+                .thenReturn(Optional.of(milkDouble));
+        // then
+        assertThrows(DuplicateKeyException.class,() -> ingredientService.updateIngredient(milkOrig.id(), milkDto));
+        // verify
+        Mockito.verify(mockIngredientRepository, Mockito.times(1))
+                .getIngredientByProductAndVariationContainsIgnoreCase(milkDto.product(),milkDto.variation());
     }
 
     @Test

@@ -84,10 +84,10 @@ public class IngredientService {
                 }
                 JsonNode contentNode = objectMapper.readTree(contentString);
                 ObjectNode ingredientNode = (ObjectNode) contentNode.get("ingredientDto");
-                if (!( ingredientNode.get("product").toString().equals(product)
+                if (! ingredientNode.get("product").toString().equals(product)
                     || !(ingredientNode.get("variation").toString().equals(variation))
                     || !(ingredientNode.get("quantity").asInt() == 100)
-                    || !(ingredientNode.get("unit").toString().equals("g")))
+                    || !(ingredientNode.get("unit").toString().equals("g"))
                 ){
                     throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Ingredient ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
                 }

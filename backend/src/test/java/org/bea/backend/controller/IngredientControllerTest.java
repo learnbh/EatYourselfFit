@@ -178,16 +178,6 @@ public class IngredientControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string(mapper.writeValueAsString(expected)));
     }
-//    @Test
-//    void getIngredientByName_shouldThrowProductVariationNotFoundException_whenNameIsNotFoundInProductnameOrVariationnameOfStoredIngredientsInDB() throws Exception {
-//        // given
-//        String search = "nkdgsldg";
-//        mockMvc.perform(MockMvcRequestBuilders.get("/eyf/ingredients/name/"+search))
-//                .andExpect(MockMvcResultMatchers
-//                        .status().isNotFound())
-//                .andExpect(MockMvcResultMatchers
-//                        .jsonPath("$.error").value("Error: Es konnte keine Zutat mit " +search+ " im Namen gefunden werden."));
-//    }
 
     @Test
     public void addIngredient_shouldThrowMethodArgumentNotValidException_forSizeAndMax_withInvalidIngredientCreate() throws Exception {
