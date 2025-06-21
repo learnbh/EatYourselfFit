@@ -144,25 +144,12 @@ public class IngredientService {
                 .getIngredientByProductAndVariationContainsIgnoreCase(
                         product,
                         variation)
-                .isEmpty()
+                .isPresent()
         ) {
-            Ingredient ingredient = getIngredientById(id);
-            Ingredient ingredientUpgedated = new Ingredient(
-                    ingredient.id(),
-                    product,
-                    variation,
-                    ingredientDto.quantity(),
-                    ingredientDto.unit(),
-                    ingredientDto.prices(),
-                    ingredient.nutrientsId()
-            );
-            ingredientRepository.save(ingredientUpgedated);
-            return ingredientUpgedated;
-        } else {
             Ingredient ingredient = ingredientRepository
-                .getIngredientByProductAndVariationContainsIgnoreCase(
-                        product,
-                        variation).get();
+                    .getIngredientByProductAndVariationContainsIgnoreCase(
+                            product,
+                            variation).get();
             if (id.equals(ingredient.id())){
                 Ingredient ingredientUpgedated = new Ingredient(
                         ingredient.id(),
@@ -178,6 +165,19 @@ public class IngredientService {
             } else {
                 throw new DuplicateKeyException("Error: Eine Zutat mit dieser Produkt-Variation existiert bereits.");
             }
+        } else {
+            Ingredient ingredient = getIngredientById(id);
+            Ingredient ingredientUpgedated = new Ingredient(
+                    ingredient.id(),
+                    product,
+                    variation,
+                    ingredientDto.quantity(),
+                    ingredientDto.unit(),
+                    ingredientDto.prices(),
+                    ingredient.nutrientsId()
+            );
+            ingredientRepository.save(ingredientUpgedated);
+            return ingredientUpgedated;
         }
     }
 
