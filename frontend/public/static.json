@@ -1,8 +1,0 @@
-{
-  "rewrites": [
-    {
-      "source": "/ingredient/*",
-      "destination": "/index.html"
-    }
-  ]
-}

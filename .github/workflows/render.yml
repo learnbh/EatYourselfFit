@@ -1,4 +1,0 @@
-# Rewrite all /ingredient/* requests to /ingredient
-- type: rewrite
-  source: /ingredient/*
-  destination: /ingredient
