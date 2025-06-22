@@ -1,15 +1,24 @@
 import { useNavigate, useParams } from "react-router-dom";
 import {type ChangeEvent, type FormEvent, useCallback, useEffect, useRef, useState} from "react";
 import axios from "axios";
-import type {IngredientCreate, IngredientProductRef, IngredientProfile, Nutrient, Nutrients} from "../types.ts";
+import type {
+    Ingredient,
+    IngredientCreate,
+    IngredientProductRef,
+    IngredientProfile,
+    Nutrient,
+    Nutrients
+} from "../types.ts";
 import IngredientLayout from "../layout/ingredient_layout.tsx";
 import NutrientLayout from "../layout/nutrient_layout.tsx";
 import { handleAxiosFormError,
     mapNutrientsToCreateNutrientArray
 } from "../helper.ts";
 import ShowError from "../component/ShowError.tsx";
+import {useRecipeCart} from "../context/CardRecipeContext.tsx";
 
 export default function IngredientCreate(){
+    const { addToRecipe } = useRecipeCart()
     const {product} = useParams<string>()
     const routeTo = useNavigate();
 
@@ -23,8 +32,6 @@ export default function IngredientCreate(){
 
     const [isLoading, setLoading] = useState<boolean>( false )
 
-    const [isingredientCreateChanged, setingredientCreateChanged] = useState<boolean>( false )
-    const [isNutrientChanged, setNutrientChanged] = useState<boolean>( false )
     const [isError, setError] = useState<string>( "" )
 
     const getNutrients = useCallback( async () => {
@@ -43,6 +50,9 @@ export default function IngredientCreate(){
         }
     }, [] )
 
+    function handleAddToRecipe(ingredient:Ingredient){
+        addToRecipe(ingredient);
+    }
     function handleChangeNutrient( e:ChangeEvent<HTMLInputElement> ) {
         e.preventDefault();
         const { name, value } = e.target
@@ -52,15 +62,13 @@ export default function IngredientCreate(){
                 : n
         );
         setNutrientArray( updateNutrients )
-        setNutrientChanged( true );
         setError( "" );
     }
-    function handleChangeingredientCreate( e:ChangeEvent<HTMLInputElement> ) {
+    function handleChangeIngredientCreate( e:ChangeEvent<HTMLInputElement> ) {
         e.preventDefault();
         const { name, value } = e.target;
         const newValue:string|number = name === "price" ? Number (value) : String (value);
         setIngredientCreate(prevState => ( { ...prevState, [name]: newValue } as IngredientCreate ) );
-        setingredientCreateChanged(true);
         setError( "" );
     }
 
@@ -68,35 +76,30 @@ export default function IngredientCreate(){
         e.preventDefault();
         let messages = { userMessage:"", logMessage:"" };
         if( ingredientCreate ) {
-            if ( isingredientCreateChanged || isNutrientChanged ) {
-                setError( "" );
-                const ingredientProfile:IngredientProfile = {
-                    ingredientCreate:ingredientCreate,
-                    nutrientsArray:nutrientArray
-                }
-                try {
-                    await axios.post("/eyf/ingredients", ingredientProfile,
-                        {
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        } );
-                    setingredientCreateChanged( false );
-                    setNutrientChanged( false );
-                } catch ( error ) {
-                    messages = handleAxiosFormError(
-                        error,
-                        refProduct,
-                        "product"
-                    );
-                    setError( messages.userMessage );
-                    console.error( messages.logMessage );
-                }
-                if( messages.userMessage === "" ) {
-                    routeTo( "/recipeplan" );
-                }
-            } else {
-                setError( "Es wurde nichts geändert. Speichern abgebrochen." )
+            setError( "" );
+            const ingredientProfile:IngredientProfile = {
+                ingredientCreate:ingredientCreate,
+                nutrientsArray:nutrientArray
+            }
+            try {
+                const response = await axios.post("/eyf/ingredients", ingredientProfile,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    } );
+                handleAddToRecipe(response.data)
+            } catch ( error ) {
+                messages = handleAxiosFormError(
+                    error,
+                    refProduct,
+                    "product"
+                );
+                setError( messages.userMessage );
+                console.error( messages.logMessage );
+            }
+            if( messages.userMessage === "" ) {
+                routeTo( "/recipeplan" );
             }
         }
     }
@@ -104,14 +107,14 @@ export default function IngredientCreate(){
     useEffect( () => {
         if( product ) {
             const fetchIngredientCreate = async () => {
-                const newingredientCreate: IngredientCreate = {
+                const newIngredientCreate: IngredientCreate = {
                     product: product,
                     variation: "",
                     quantity: 100,
                     unit: "g",
                     prices: 0
                 }
-                return newingredientCreate
+                return newIngredientCreate
             }
             fetchIngredientCreate()
                 .then( ( response:IngredientCreate ) => setIngredientCreate( response ) )
@@ -140,7 +143,7 @@ export default function IngredientCreate(){
                     { ingredientCreate && (
                         <IngredientLayout
                             ingredient = { ingredientCreate }
-                            onChange = { handleChangeingredientCreate }
+                            onChange = { handleChangeIngredientCreate }
                             ref = { refProduct }
                         />
                     ) }

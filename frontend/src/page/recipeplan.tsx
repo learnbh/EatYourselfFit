@@ -1,33 +1,28 @@
 import type {Ingredient} from "../types.ts";
 import AddRecipe_layout from "../layout/addRecipe_layout.tsx";
 import IngredientRecipe from "../component/IngredientRecipe.tsx";
+import {useRecipeCart} from "../context/CardRecipeContext.tsx";
 
-type Props = {
-    dishname:string
-    ingredients:Ingredient[]
-    handleChangeDishName: (dishname:string) => void
-    addIngredientToRecipe: (ingredient:Ingredient) => void
-    removeIngredientFromRecipe: (ingredient:Ingredient) => void
-    handleQuantity: (ingredient:Ingredient) => void
-}
 
-export default function Recipeplan(props:Readonly<Props>){
-
+export default function Recipeplan(){
+    const { dishName, recipeItems, addToRecipe, removeFromRecipe, clearRecipe, changeDishName, changeQuantity } = useRecipeCart()
 
     function handleChangeDishName(dishName:string){
-        props.handleChangeDishName(dishName);
+        changeDishName(dishName)
     }
 
-    function addIngredientToRecipe(ingredient:Ingredient){
-        props.addIngredientToRecipe(ingredient);
+    function handleAddToRecipe(ingredient:Ingredient){
+        addToRecipe(ingredient);
     }
 
-    function removeIngredientFromRecipe(ingredient:Ingredient){
-        props.removeIngredientFromRecipe(ingredient);
+    function handleRemoveFromRecipe(ingredient:Ingredient){
+        removeFromRecipe(ingredient);
     }
-
-    function handleQuantity(ingredient:Ingredient){
-        props.handleQuantity(ingredient);
+    function handleClearRecipe(){
+        clearRecipe();
+    }
+    function handleChangeQuantity(ingredient:Ingredient){
+        changeQuantity(ingredient)
     }
 
     function saveRecipe(){
@@ -42,25 +37,31 @@ export default function Recipeplan(props:Readonly<Props>){
                     <div>
                         <AddRecipe_layout
                             handleChangeDishName={handleChangeDishName}
-                            addIngredientToRecipe={addIngredientToRecipe}
-                            removeIngredientFromRecipe={removeIngredientFromRecipe}
-                            handleQuantity={handleQuantity}
+                            addIngredientToRecipe={handleAddToRecipe}
+                            removeIngredientFromRecipe={handleRemoveFromRecipe}
+                            handleQuantity={handleChangeQuantity}
                         />
                     </div>
-                    <div className="flex flex-col border rounded shadow p-2 font-serif h-full w-96">
-                        <h2 className="text-xl">{props.dishname}</h2>
+                    <div className="flex flex-col border rounded shadow p-2 font-serif h-full min-w-sm">
+                        <h2 className="text-xl">{dishName}</h2>
                         <div className="flex-1 overflow-auto my-4">
-                            {props.ingredients.map(i =>
+                            { recipeItems.map(i =>
                                 <IngredientRecipe
                                     key = {i.id}
                                     ingredient={i}
-                                    removeIngredientFromRecipe={removeIngredientFromRecipe}
+                                    handleQuantity={handleChangeQuantity}
+                                    removeIngredientFromRecipe={handleRemoveFromRecipe}
                                 />)
                             }
                         </div>
-                        <button className="border p-2 font-sans mt-auto" type="submit" onClick={saveRecipe}>
-                            Rezept Speichern
-                        </button>
+                        <div className="grid grid-cols-2">
+                            <button className="border p-2 font-sans mt-auto" type="submit" onClick={saveRecipe}>
+                                Rezept Speichern
+                            </button>
+                            <button className="border p-2 font-sans mt-auto" type="submit" onClick={handleClearRecipe}>
+                                Rezept leeren
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

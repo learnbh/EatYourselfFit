@@ -38,7 +38,7 @@ public class IngredientController {
     }
 
     @PostMapping
-    public String addIngredient(@Valid @RequestBody IngredientProfile ingredientProfile) {
+    public Ingredient addIngredient(@Valid @RequestBody IngredientProfile ingredientProfile) {
         return ingredientService.addIngredient(ingredientProfile);
     }
     @PutMapping("/{id}")

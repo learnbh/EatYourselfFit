@@ -9,7 +9,7 @@ export default function Header(){
         <>
             <header className="header">
                 <Navbar />
-                <div className={"hide"}>
+                <div className="hide">
                     <GiCook />
                     <GrScheduleNew />
                     <GrSchedule />

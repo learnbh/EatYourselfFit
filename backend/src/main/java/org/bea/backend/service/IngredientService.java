@@ -44,7 +44,7 @@ public class IngredientService {
         return ingredientRepository.findAll();
     }
 
-    public String addIngredient(IngredientProfile ingredientProfile) {
+    public Ingredient addIngredient(IngredientProfile ingredientProfile) {
         String product = ingredientProfile.ingredientCreate().product();
         String variation = ingredientProfile.ingredientCreate().variation();
 
@@ -64,7 +64,7 @@ public class IngredientService {
             ingredientRepository.save(newIngredient);
             nutrientService.addNutrients(newNutrients);
 
-            return ingredientId;
+            return newIngredient;
     }
 
     public Ingredient addIngredientByOpenAi(IngredientOpenAiDto ingredientOpenAiDto) throws JsonProcessingException {

@@ -6,8 +6,11 @@ import NutrientLayout from "../layout/nutrient_layout.tsx";
 import { handleAxiosFormError, ingredientToDto, mapNutrientsToNutrientArray } from "../helper.ts";
 import ShowError from "../component/ShowError.tsx";
 import {useNavigate} from "react-router-dom";
+import {useRecipeCart} from "../context/CardRecipeContext.tsx";
 
 export default function IngredientDetails() {
+    const { addToRecipe } = useRecipeCart()
+
     const routeTo = useNavigate();
     const refProduct = useRef<IngredientProductRef>({
         focusField: () => {}
@@ -46,6 +49,9 @@ export default function IngredientDetails() {
         }
     }, [])
 
+    function handleAddToRecipe(ingredient:Ingredient){
+        addToRecipe(ingredient);
+    }
     function handleChangeNutrient(e:ChangeEvent<HTMLInputElement>) {
         e.preventDefault();
         const {name, value} = e.target
@@ -77,6 +83,7 @@ export default function IngredientDetails() {
                     try {
                         const response = await axios.put("/eyf/ingredients/"+ingredientId, ingredientToDto(ingredient));
                         setIngredient(response.data);
+                        handleAddToRecipe(response.data)
                         setIngredientChanged(false);
                     } catch ( error ) {
                         messages = handleAxiosFormError(

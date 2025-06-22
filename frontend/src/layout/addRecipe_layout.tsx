@@ -4,6 +4,7 @@ import {type ChangeEvent, useCallback, useEffect, useState} from "react";
 import axios from "axios";
 import IngredientNotFound from "../component/IngredientNotFound.tsx";
 import {useNavigate} from "react-router-dom";
+import {useRecipeCart} from "../context/CardRecipeContext.tsx";
 
 type Props = {
     handleChangeDishName: (dishName:string) => void
@@ -13,6 +14,7 @@ type Props = {
 }
 
 export default function AddRecipe_layout(props:Readonly<Props>) {
+    const { recipeItems } = useRecipeCart()
     const routeTo =useNavigate()
 
     const [ingredientSearch, setIngredientSearch] = useState<string>("");
@@ -32,7 +34,11 @@ export default function AddRecipe_layout(props:Readonly<Props>) {
             setIsLoading(true);
             const response = await axios.get("/eyf/ingredients/name/" + search);
             if (response.data.length > 0) {
-                setIngredientsSearch(response.data);
+                const searchResponse:Ingredient[] = response.data;
+                console.log(recipeItems)
+                const searchResponseNotInRecipe:Ingredient[] = searchResponse
+                    .filter((i:Ingredient) => recipeItems.some((r:Ingredient) =>r.id === i.id )? null : i);
+                setIngredientsSearch(searchResponseNotInRecipe);
                 setIngredientNotFoundVisible(false);
             } else {
                 setIngredientsSearch([]);
@@ -47,7 +53,7 @@ export default function AddRecipe_layout(props:Readonly<Props>) {
         }finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [recipeItems]);
     const editIngredientGeneratedByOpenAi = useCallback(async (search:string) => {
         if(search.trim() === ""){
             setIngredientsSearch([]);
@@ -93,6 +99,10 @@ export default function AddRecipe_layout(props:Readonly<Props>) {
     }
 
     function addIngredientToRecipe(ingredient:Ingredient){
+        setIngredientsSearch(prev => prev.filter(item => item.id !== ingredient.id));
+        if (ingredientsSearch.length == 1){
+            setIngredientSearch("");
+        }
         props.addIngredientToRecipe(ingredient);
     }
     function removeIngredientFromRecipe(ingredient:Ingredient){
@@ -103,6 +113,7 @@ export default function AddRecipe_layout(props:Readonly<Props>) {
         setIngredientSearch("");
         setIngredientsSearch([]);
     }
+
     const addPerOpenAiIngredient = async () => {
         try {
             setIngredientNotFoundVisible(false);
