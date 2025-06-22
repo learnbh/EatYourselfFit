@@ -49,9 +49,6 @@ export default function IngredientDetails() {
         }
     }, [])
 
-    function handleAddToRecipe(ingredient:Ingredient){
-        addToRecipe(ingredient);
-    }
     function handleChangeNutrient(e:ChangeEvent<HTMLInputElement>) {
         e.preventDefault();
         const {name, value} = e.target
@@ -79,21 +76,19 @@ export default function IngredientDetails() {
         if(ingredient) {
             if ( isIngredientChanged || isNutrientChanged ) {
                 setError( "" );
-                if ( isIngredientChanged ) {
-                    try {
-                        const response = await axios.put("/eyf/ingredients/"+ingredientId, ingredientToDto(ingredient));
-                        setIngredient(response.data);
-                        handleAddToRecipe(response.data)
-                        setIngredientChanged(false);
-                    } catch ( error ) {
-                        messages = handleAxiosFormError(
-                            error,
-                            refProduct,
-                            "product"
-                        );
-                        setError( messages.userMessage );
-                        console.error( messages.logMessage );
-                    }
+                try {
+                    const response = await axios.put("/eyf/ingredients/"+ingredientId, ingredientToDto(ingredient));
+                    setIngredient(response.data);
+                    addToRecipe(response.data)
+                    setIngredientChanged(false);
+                } catch ( error ) {
+                    messages = handleAxiosFormError(
+                        error,
+                        refProduct,
+                        "product"
+                    );
+                    setError( messages.userMessage );
+                    console.error( messages.logMessage );
                 }
                 if ( isNutrientChanged ) {
                     try {

@@ -2,7 +2,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import {type ChangeEvent, type FormEvent, useCallback, useEffect, useRef, useState} from "react";
 import axios from "axios";
 import type {
-    Ingredient,
     IngredientCreate,
     IngredientProductRef,
     IngredientProfile,
@@ -50,9 +49,6 @@ export default function IngredientCreate(){
         }
     }, [] )
 
-    function handleAddToRecipe(ingredient:Ingredient){
-        addToRecipe(ingredient);
-    }
     function handleChangeNutrient( e:ChangeEvent<HTMLInputElement> ) {
         e.preventDefault();
         const { name, value } = e.target
@@ -88,7 +84,7 @@ export default function IngredientCreate(){
                             'Content-Type': 'application/json',
                         },
                     } );
-                handleAddToRecipe(response.data)
+                addToRecipe(response.data)
             } catch ( error ) {
                 messages = handleAxiosFormError(
                     error,

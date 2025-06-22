@@ -35,7 +35,6 @@ export default function AddRecipe_layout(props:Readonly<Props>) {
             const response = await axios.get("/eyf/ingredients/name/" + search);
             if (response.data.length > 0) {
                 const searchResponse:Ingredient[] = response.data;
-                console.log(recipeItems)
                 const searchResponseNotInRecipe:Ingredient[] = searchResponse
                     .filter((i:Ingredient) => recipeItems.some((r:Ingredient) =>r.id === i.id )? null : i);
                 setIngredientsSearch(searchResponseNotInRecipe);
