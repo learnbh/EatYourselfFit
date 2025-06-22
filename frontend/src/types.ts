@@ -47,5 +47,15 @@ export type InputRef = {
     focus: () => void;
 };
 
+export type RecipeContextType  = {
+    recipeItems: Ingredient[]
+    dishName:string
+    changeDishName: (dishname:string) => void
+    changeQuantity: (ingredient:Ingredient) => void
+    addToRecipe: (ingredient:Ingredient) => void
+    removeFromRecipe: (ingredient:Ingredient) => void
+    clearRecipe: () => void;
+}
+
 
 

@@ -152,7 +152,7 @@ class IngredientServiceTest {
         Mockito.when(mockNutrientMapper.createNutrients(expectedNutrients.id(), ingredientProfile.nutrientsArray())).thenReturn(expectedNutrients);
         Mockito.when(mockNutrientService.addNutrients(expectedNutrients)).thenReturn(expectedNutrients);
         // then
-        assertEquals(expectedIngredient.id(), ingredientService.addIngredient(ingredientProfile));
+        assertEquals(expectedIngredient, ingredientService.addIngredient(ingredientProfile));
         //verify
         Mockito.verify(mockServiceId, Mockito.times(2)).generateId();
         Mockito.verify(mockIngredientRepository, Mockito.times(1)).save(expectedIngredient);

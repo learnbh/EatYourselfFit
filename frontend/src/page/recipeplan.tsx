@@ -1,46 +1,28 @@
-import {useState} from "react";
 import type {Ingredient} from "../types.ts";
 import AddRecipe_layout from "../layout/addRecipe_layout.tsx";
 import IngredientRecipe from "../component/IngredientRecipe.tsx";
+import {useRecipeCart} from "../context/CardRecipeContext.tsx";
+
 
 export default function Recipeplan(){
-
-    const [dishname, setDishname] = useState<string>("");
-    const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-
+    const { dishName, recipeItems, addToRecipe, removeFromRecipe, clearRecipe, changeDishName, changeQuantity } = useRecipeCart()
 
     function handleChangeDishName(dishName:string){
-        setDishname(dishName)
+        changeDishName(dishName)
     }
 
-    function addIngredientToRecipe(ingredient:Ingredient){
-        if(!ingredients.some((i:Ingredient) =>i.id === ingredient.id )){
-            setIngredients(prevArr => [...prevArr, ingredient]);
-        }
+    function handleAddToRecipe(ingredient:Ingredient){
+        addToRecipe(ingredient);
     }
 
-    function removeIngredientFromRecipe(ingredient:Ingredient){
-        if(ingredients.some((i:Ingredient) =>i.id === ingredient.id )){
-            setIngredients(prevArr => {
-                const changedIngredients:Ingredient[] = [];
-                prevArr.map(i =>
-                    i.id !== ingredient.id
-                        ? changedIngredients.push(i)
-                        : null
-                );
-                return changedIngredients;
-            });
-        }
+    function handleRemoveFromRecipe(ingredient:Ingredient){
+        removeFromRecipe(ingredient);
     }
-    function handleQuantity(ingredient:Ingredient){
-        setIngredients(prevArr => {
-            const changedIngredients:Ingredient[] = prevArr.map(i =>
-            i.id === ingredient.id
-                ? {...i, quantity: ingredient.quantity}
-                : i
-            );
-            return changedIngredients;
-        });
+    function handleClearRecipe(){
+        clearRecipe();
+    }
+    function handleChangeQuantity(ingredient:Ingredient){
+        changeQuantity(ingredient)
     }
 
     function saveRecipe(){
@@ -55,27 +37,31 @@ export default function Recipeplan(){
                     <div>
                         <AddRecipe_layout
                             handleChangeDishName={handleChangeDishName}
-                            addIngredientToRecipe={addIngredientToRecipe}
-                            removeIngredientFromRecipe={removeIngredientFromRecipe}
-                            handleQuantity={handleQuantity}
+                            addIngredientToRecipe={handleAddToRecipe}
+                            removeIngredientFromRecipe={handleRemoveFromRecipe}
+                            handleQuantity={handleChangeQuantity}
                         />
                     </div>
-                    <div className="flex flex-col border rounded shadow p-2 font-serif h-full w-96">
-                        <h2 className="text-xl">{dishname}</h2>
+                    <div className="flex flex-col border rounded shadow p-2 font-serif h-full min-w-sm">
+                        <h2 className="text-xl">{dishName}</h2>
                         <div className="flex-1 overflow-auto my-4">
-                            {ingredients.map(i =>
+                            { recipeItems.map(i =>
                                 <IngredientRecipe
                                     key = {i.id}
-                                    product = {i.product}
-                                    variation = {i.variation}
-                                    quantity = {i.quantity}
-                                    unit = {i.unit}
+                                    ingredient={i}
+                                    handleQuantity={handleChangeQuantity}
+                                    removeIngredientFromRecipe={handleRemoveFromRecipe}
                                 />)
                             }
                         </div>
-                        <button className="border p-2 font-sans mt-auto" type="submit" onClick={saveRecipe}>
-                            Rezept Speichern
-                        </button>
+                        <div className="grid grid-cols-2">
+                            <button className="border p-2 font-sans mt-auto" type="submit" onClick={saveRecipe}>
+                                Rezept Speichern
+                            </button>
+                            <button className="border p-2 font-sans mt-auto" type="submit" onClick={handleClearRecipe}>
+                                Rezept leeren
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

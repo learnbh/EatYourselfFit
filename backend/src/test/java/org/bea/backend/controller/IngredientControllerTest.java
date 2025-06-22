@@ -242,7 +242,20 @@ public class IngredientControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(ingredientProfile)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(not(emptyOrNullString())));
+                .andExpectAll(
+                        MockMvcResultMatchers.jsonPath("$.id").exists(),
+                        MockMvcResultMatchers.jsonPath("$.product")
+                                .value(IngredientCreateFakeData.ingredientCreate.product()),
+                        MockMvcResultMatchers.jsonPath("$.variation")
+                                .value(IngredientCreateFakeData.ingredientCreate.variation()),
+                        MockMvcResultMatchers.jsonPath("$.quantity")
+                                .value(IngredientCreateFakeData.ingredientCreate.quantity()),
+                        MockMvcResultMatchers.jsonPath("$.unit")
+                                .value(IngredientCreateFakeData.ingredientCreate.unit()),
+                        MockMvcResultMatchers.jsonPath("$.prices")
+                                .value(IngredientCreateFakeData.ingredientCreate.prices()),
+                        MockMvcResultMatchers.jsonPath("$.nutrientsId").exists()
+                );
     }
 
     @Test

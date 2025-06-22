@@ -1,8 +1,7 @@
 import type {Ingredient} from "../types.ts";
-import {handleKeyDownNumber} from "../helper.ts";
+//import {handleKeyDownNumber} from "../helper.ts";
 import HideDetailIdLink from "./HideDetailIdLink.tsx";
 import React, {useState} from "react";
-import RemoveButton from "./RemoveButton.tsx";
 import AddButton from "./AddButton.tsx";
 
 type Props = {
@@ -21,42 +20,33 @@ export default function IngredientSearch(props:Readonly<Props>) {
         setIsIngredientAdded(!isIngredientAdded);
     }
 
-    function removeIngredientFromRecipe(e: React.MouseEvent<HTMLButtonElement>){
-        e.preventDefault()
-        props.removeIngredientFromRecipe(props.ingredient);
-        setIsIngredientAdded(!isIngredientAdded);
-    }
-
-    function handleQuantity(e:React.FormEvent<HTMLInputElement>){
-        e.preventDefault()
-        props.ingredient.quantity = Number(e.currentTarget.value);
-        props.handleQuantity(props.ingredient);
-    }
+    // function handleQuantity(e:React.FormEvent<HTMLInputElement>){
+    //     e.preventDefault()
+    //     props.ingredient.quantity = Number(e.currentTarget.value);
+    //     props.handleQuantity(props.ingredient);
+    // }
 
     return (
         <>
-            <div className="grid  grid-cols-10  items-center gap-2 w-full border pl-2">
+            <div className="grid  grid-cols-6  items-center gap-2 w-full border pl-2">
                 <HideDetailIdLink
                     class="col-span-2 text-left"
-                    to="/ingredient"
+                    to={"/ingredient/"+props.ingredient.id}
                     id= {props.ingredient.id}
                 >
-                <span>{props.ingredient.product}</span>
+                    <span>{props.ingredient.product}</span>
                 </HideDetailIdLink>
-                <span className="text-left col-span-3">{props.ingredient.variation}</span>
-                <input className="col-span-2 border w-20"
-                       defaultValue={props.ingredient.quantity}
-                       onChange={handleQuantity}
-                       type="number"
-                       min="0"
-                       pattern="\d*"
-                       onKeyDown={handleKeyDownNumber}
-                />
-                <span className="col-span-1 ">{props.ingredient.unit}</span>
-                { isIngredientAdded
-                    ? <RemoveButton remove={removeIngredientFromRecipe}/>
-                    : <AddButton add={addIngredientToRecipe}/>
-                }
+                <span className="text-left col-span-3 ">{props.ingredient.variation}</span>
+                {/*<input className="col-span-2 border w-20"*/}
+                {/*       defaultValue={props.ingredient.quantity}*/}
+                {/*       onChange={handleQuantity}*/}
+                {/*       type="number"*/}
+                {/*       min="0"*/}
+                {/*       pattern="\d*"*/}
+                {/*       onKeyDown={handleKeyDownNumber}*/}
+                {/*/>*/}
+                {/*<span className="col-span-1 ">{props.ingredient.unit}</span>*/}
+                <div  className="col-span-1"><AddButton add={addIngredientToRecipe}/></div>
             </div>
         </>
     );

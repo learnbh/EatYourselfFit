@@ -6,8 +6,11 @@ import NutrientLayout from "../layout/nutrient_layout.tsx";
 import { handleAxiosFormError, ingredientToDto, mapNutrientsToNutrientArray } from "../helper.ts";
 import ShowError from "../component/ShowError.tsx";
 import {useNavigate} from "react-router-dom";
+import {useRecipeCart} from "../context/CardRecipeContext.tsx";
 
 export default function IngredientDetails() {
+    const { addToRecipe } = useRecipeCart()
+
     const routeTo = useNavigate();
     const refProduct = useRef<IngredientProductRef>({
         focusField: () => {}
@@ -73,20 +76,19 @@ export default function IngredientDetails() {
         if(ingredient) {
             if ( isIngredientChanged || isNutrientChanged ) {
                 setError( "" );
-                if ( isIngredientChanged ) {
-                    try {
-                        const response = await axios.put("/eyf/ingredients/"+ingredientId, ingredientToDto(ingredient));
-                        setIngredient(response.data);
-                        setIngredientChanged(false);
-                    } catch ( error ) {
-                        messages = handleAxiosFormError(
-                            error,
-                            refProduct,
-                            "product"
-                        );
-                        setError( messages.userMessage );
-                        console.error( messages.logMessage );
-                    }
+                try {
+                    const response = await axios.put("/eyf/ingredients/"+ingredientId, ingredientToDto(ingredient));
+                    setIngredient(response.data);
+                    addToRecipe(response.data)
+                    setIngredientChanged(false);
+                } catch ( error ) {
+                    messages = handleAxiosFormError(
+                        error,
+                        refProduct,
+                        "product"
+                    );
+                    setError( messages.userMessage );
+                    console.error( messages.logMessage );
                 }
                 if ( isNutrientChanged ) {
                     try {

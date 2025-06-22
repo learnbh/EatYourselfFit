@@ -19,7 +19,7 @@ export default function NutrientInput(props:Readonly<Props>){
                 <div className="grid grid-cols-5 justify-items-start items-center">
                     <label>{ props.name[0].toUpperCase() + props.name.slice(1) }:</label>
                     <input
-                        className="max-w-24"
+                        className="max-w-32"
                         name={ props.name }
                         defaultValue={ props.value }
                         type="number"

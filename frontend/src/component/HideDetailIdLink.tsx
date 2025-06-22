@@ -1,5 +1,5 @@
 import React, {useCallback} from "react";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 type Props = {
     class:string,
@@ -9,11 +9,14 @@ type Props = {
 }
 
 export default function HideDetailIdLink(props:Readonly<Props>){
+    const routeTo = useNavigate();
+
     const handleClick = useCallback((e: React.MouseEvent) => {
         e.preventDefault(); // Verhindert den Standard-Link-Klick
         sessionStorage.setItem('detailId', props.id);
-        window.open(props.to, '_blank'); // Öffnet den Link im neuen Tab
-    }, [props.id, props.to]);
+        routeTo(props.to);
+        //window.open(props.to, "_self"); // Öffnet den Link im neuen Tab
+    }, [props.id, props.to, routeTo]);
     return(
         <>
             <Link
