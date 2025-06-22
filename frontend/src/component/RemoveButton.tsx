@@ -3,6 +3,7 @@ import React from "react";
 
 type Props = {
     remove: (e: React.MouseEvent<HTMLButtonElement>) => void
+    class:string
 }
 export default function RemoveButton(props:Readonly<Props>){
 
@@ -12,7 +13,7 @@ export default function RemoveButton(props:Readonly<Props>){
 
     return(
         <>
-            <button className=" col-span-2 border-delete addbtn w-12"
+            <button className ={props.class}
                     onClick={removeIngredientFromRecipe}
             >
                 <MdOutlinePlaylistRemove/>

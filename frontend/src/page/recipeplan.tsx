@@ -1,46 +1,33 @@
-import {useState} from "react";
 import type {Ingredient} from "../types.ts";
 import AddRecipe_layout from "../layout/addRecipe_layout.tsx";
 import IngredientRecipe from "../component/IngredientRecipe.tsx";
 
-export default function Recipeplan(){
+type Props = {
+    dishname:string
+    ingredients:Ingredient[]
+    handleChangeDishName: (dishname:string) => void
+    addIngredientToRecipe: (ingredient:Ingredient) => void
+    removeIngredientFromRecipe: (ingredient:Ingredient) => void
+    handleQuantity: (ingredient:Ingredient) => void
+}
 
-    const [dishname, setDishname] = useState<string>("");
-    const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+export default function Recipeplan(props:Readonly<Props>){
 
 
     function handleChangeDishName(dishName:string){
-        setDishname(dishName)
+        props.handleChangeDishName(dishName);
     }
 
     function addIngredientToRecipe(ingredient:Ingredient){
-        if(!ingredients.some((i:Ingredient) =>i.id === ingredient.id )){
-            setIngredients(prevArr => [...prevArr, ingredient]);
-        }
+        props.addIngredientToRecipe(ingredient);
     }
 
     function removeIngredientFromRecipe(ingredient:Ingredient){
-        if(ingredients.some((i:Ingredient) =>i.id === ingredient.id )){
-            setIngredients(prevArr => {
-                const changedIngredients:Ingredient[] = [];
-                prevArr.map(i =>
-                    i.id !== ingredient.id
-                        ? changedIngredients.push(i)
-                        : null
-                );
-                return changedIngredients;
-            });
-        }
+        props.removeIngredientFromRecipe(ingredient);
     }
+
     function handleQuantity(ingredient:Ingredient){
-        setIngredients(prevArr => {
-            const changedIngredients:Ingredient[] = prevArr.map(i =>
-            i.id === ingredient.id
-                ? {...i, quantity: ingredient.quantity}
-                : i
-            );
-            return changedIngredients;
-        });
+        props.handleQuantity(ingredient);
     }
 
     function saveRecipe(){
@@ -61,15 +48,13 @@ export default function Recipeplan(){
                         />
                     </div>
                     <div className="flex flex-col border rounded shadow p-2 font-serif h-full w-96">
-                        <h2 className="text-xl">{dishname}</h2>
+                        <h2 className="text-xl">{props.dishname}</h2>
                         <div className="flex-1 overflow-auto my-4">
-                            {ingredients.map(i =>
+                            {props.ingredients.map(i =>
                                 <IngredientRecipe
                                     key = {i.id}
-                                    product = {i.product}
-                                    variation = {i.variation}
-                                    quantity = {i.quantity}
-                                    unit = {i.unit}
+                                    ingredient={i}
+                                    removeIngredientFromRecipe={removeIngredientFromRecipe}
                                 />)
                             }
                         </div>
