@@ -28,7 +28,7 @@ export default function IngredientSearch(props:Readonly<Props>) {
 
     return (
         <>
-            <div className="grid  grid-cols-6  items-center gap-2 w-full border pl-2">
+            <div className="grid grid-cols-6  items-center gap-2 w-full border pl-2">
                 <HideDetailIdLink
                     class="col-span-2 text-left"
                     to={"/ingredient/"+props.ingredient.id}
@@ -46,7 +46,7 @@ export default function IngredientSearch(props:Readonly<Props>) {
                 {/*       onKeyDown={handleKeyDownNumber}*/}
                 {/*/>*/}
                 {/*<span className="col-span-1 ">{props.ingredient.unit}</span>*/}
-                <div  className="col-span-1"><AddButton add={addIngredientToRecipe}/></div>
+                <div  className="text-end"><AddButton add={addIngredientToRecipe}/></div>
             </div>
         </>
     );

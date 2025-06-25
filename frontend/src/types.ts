@@ -57,5 +57,19 @@ export type RecipeContextType  = {
     clearRecipe: () => void;
 }
 
+export type RecipeIngredientType = {
+    ingredientId:string,
+    quantity:number
+}
+export type RecipeType = {
+    id:string,
+    title:string,
+    recipeIngredients: RecipeIngredientType[]
+}
+export type RecipeDtoType = {
+    title:string,
+    recipeIngredients: RecipeIngredientType[]
+}
+
 
 

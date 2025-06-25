@@ -23,9 +23,9 @@ export default function IngredientRecipe(props:Readonly<Props>){
     return(
       <>
           <div className="grid  grid-cols-10  items-center gap-2 w-full border pl-2">
-              <RemoveButton remove={removeIngredientFromRecipe} class="border-delete col-span-2 border addbtn w-12"/>
+              <RemoveButton remove={removeIngredientFromRecipe} class="border-delete col-span-1 pl-2 pt-2 pb-2"/>
               <span className="text-left col-span-2">{props.ingredient.product}</span>
-              <span className="text-left col-span-3">{props.ingredient.variation}</span>
+              <span className="text-left col-span-4 pl-3">{props.ingredient.variation}</span>
               <input className="col-span-2 border w-20"
                      defaultValue={props.ingredient.quantity}
                      onChange={handleQuantity}
@@ -34,7 +34,7 @@ export default function IngredientRecipe(props:Readonly<Props>){
                      pattern="\d*"
                      onKeyDown={handleKeyDownNumber}
               />
-              <span className="text-left col-span-1">{props.ingredient.unit}</span>
+              <span className="text-left col-span-1 ml-2">{props.ingredient.unit}</span>
           </div>
       </>
     );
