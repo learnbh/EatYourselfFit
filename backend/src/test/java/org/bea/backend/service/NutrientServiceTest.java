@@ -31,8 +31,6 @@ class NutrientServiceTest {
         mockNutrientMapper = Mockito.mock(NutrientMapper.class);
         nutrientService = new NutrientService(mockNutrientsRepository, mockNutrientMapper);
 
-
-
         nutrients = new Nutrients("milk", nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient, nutrient);
         nutrient = new Nutrient("name", NutrientType.AMINOACID, 100.0, "g");
     }
@@ -44,21 +42,17 @@ class NutrientServiceTest {
 
     @Test
     void getNutrientsById_shouldReturn_IngredientMilkForMilkId() {
-        // given
-        mockNutrientsRepository.save(nutrients);
         // when
         Mockito.when(mockNutrientsRepository.findById(nutrients.id()))
                 .thenReturn(Optional.of(nutrients));
         // then
         assertEquals(nutrients, nutrientService.getNutrientsById(nutrients.id()));
+        // verify
         Mockito.verify(mockNutrientsRepository, Mockito.times(1)).findById(nutrients.id());
     }
 
     @Test
     void addNutrients_shouldAddAndReturn_IngredientMilk() {
-        // when
-        Mockito.when(mockNutrientsRepository.save(nutrients))
-                .thenReturn(nutrients);
         //then
         assertEquals(nutrients, nutrientService.addNutrients(nutrients));
         Mockito.verify(mockNutrientsRepository, Mockito.times(1)).save(nutrients);
@@ -77,7 +71,6 @@ class NutrientServiceTest {
         // when
         Mockito.when(mockNutrientsRepository.findById(nutrients.id())).thenReturn(Optional.of(nutrients));
         Mockito.when(mockNutrientMapper.updateNutrients(nutrients, changeArr)).thenReturn(expected);
-        Mockito.when(mockNutrientsRepository.save(expected)).thenReturn(expected);
         Nutrients actual = nutrientService.updateNutrients(nutrients.id(), changeArr);
         // then
         assertEquals(expected, actual);
