@@ -60,9 +60,6 @@ button:hover{
   border-radius:var(--border-site-radius);
   box-shadow: 0 2px 8px var(--border-site-color);
 }
-img{
-  height:200px;
-}
 .a {
   text-decoration: none;
   font-weight: 500;
@@ -98,7 +95,8 @@ img{
 
 /* === Navbar === */
 .navbar {
-  position: relative;
+  display: flex;
+  flex-direction: row;
 }
 
 .hamburger {
@@ -114,6 +112,7 @@ img{
   display: flex;
   gap: 1rem;
   padding: 0;
+  margin: 8px 0 0 5px;
 }
 
 .nav-links li a {
@@ -149,26 +148,20 @@ img{
 }
 
 /* === Responsive Navigation === */
-@media (max-width: 0px) {
+@media (min-width: 0px) {
   .hamburger {
     display: block;
   }
 
   .nav-links {
     display: none;
-    flex-direction: column;
+    flex-direction: row;
     background-color: var(--color-site-secondary);
-    position: absolute;
-    padding: 2px;
-    top: 32px;
-    left: -17px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   }
 
   .nav-links.open {
     display: flex;
   }
-
 }
 /* === Dark Mode === */
 @media (prefers-color-scheme: light) {
