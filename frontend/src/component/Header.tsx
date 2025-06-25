@@ -1,21 +1,12 @@
 import Navbar from "./Navbar.tsx";
-import {GiCook} from "react-icons/gi";
-import { GrScheduleNew } from "react-icons/gr";
-import { GrSchedule } from "react-icons/gr";
-import { AiOutlineSchedule  } from "react-icons/ai";
+import {Link} from "react-router-dom";
 
 export default function Header(){
     return (
         <>
             <header className="header">
                 <Navbar />
-                <div className="hide">
-                    <GiCook />
-                    <GrScheduleNew />
-                    <GrSchedule />
-                    <AiOutlineSchedule />
-                </div>
-                <div className="logo">🍏 Ess dich fit</div>
+                <Link to="/"><div className="logo">🍏 Ess dich fit</div></Link>
             </header>
         </>
     );
