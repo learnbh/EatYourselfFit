@@ -15,9 +15,9 @@ export default function Tile(props:Readonly<Props>){
     return(
         <>
             <div className="border pt-2">
-                <div className="tileHeader">
+                <div className="tileHeader h-5">
                     {props.element}
-                    <span>{props.title}</span>
+                    <span className="pt-0.5">{props.title}</span>
                 </div>
                 <Link to={props.to}>
                     <img className="tile" src={props.img} alt={props.imgAlt} width={props.imgWidth} height={props.imgHeight}/>

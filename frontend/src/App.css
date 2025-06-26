@@ -22,12 +22,13 @@
 }
 
 .tile{
-  margin-top: 0.5rem;
+  margin-top: 0.7rem;
 }
 .tileHeader{
   display: flex;
   flex-direction: row;
   justify-content: center;
+  text-align: center;
   gap: 5px;
 }
 .hide{
@@ -40,8 +41,8 @@
   margin-left: 5px;
 }
 .addbtn{
-  padding: 14px;
-  margin-left: 5px;
+  padding: 10px;
+  margin: 1px;
 }
 .border{
   box-shadow: 0 2px 8px var(--color-site-secondary);

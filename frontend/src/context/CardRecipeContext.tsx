@@ -26,6 +26,7 @@ export function RecipeProvider({children}:{children: ReactNode}){
 
     function clearRecipe(): void {
         setRecipeItems([]);
+        setDishname("Rezeptname anpassen !")
     }
 
     function changeQuantity(ingredient:Ingredient){
