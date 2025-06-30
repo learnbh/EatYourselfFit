@@ -35,10 +35,11 @@ export default function Recipe(){
         <>
             <div className="flex flex-col gap-2">
                 <h1>Rezepte</h1>
-                <div className="flex flex-row flex-wrap overflow-auto gap-5 text-center justify-center">
+                <div className="flex flex-row flex-wrap overflow-auto gap-5 justify-center">
                     { recipes && (
                         recipes.map(recipe =>
                             <RecipeItem
+                                key = {recipe.id}
                                 recipe={recipe}
                                 img={meatskewer}
                                 imgAlt="picture shows a meat skewer dish from pixabay.com"

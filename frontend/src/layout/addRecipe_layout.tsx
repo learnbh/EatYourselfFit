@@ -7,7 +7,8 @@ import {useNavigate} from "react-router-dom";
 import {useRecipeCart} from "../context/CardRecipeContext.tsx";
 
 type Props = {
-    handleChangeDishName: (dishName:string) => void
+    recipeName?: string
+    handleChangeRecipeName: (recipeName:string) => void
     addIngredientToRecipe: (ingredient:Ingredient) => void
     removeIngredientFromRecipe: (ingredient:Ingredient) => void
     handleQuantity:(ingredient:Ingredient) =>  void
@@ -84,9 +85,9 @@ export default function AddRecipe_layout(props:Readonly<Props>) {
         }
     }, []);
 
-    function handleChangeDishName(e:ChangeEvent<HTMLInputElement>){
+    function handleChangeRecipeName(e:ChangeEvent<HTMLInputElement>){
         e.preventDefault();
-        props.handleChangeDishName(e.target.value);
+        props.handleChangeRecipeName(e.target.value);
     }
     function handleChangeIngredient(e:ChangeEvent<HTMLInputElement>){
         e.preventDefault();
@@ -153,10 +154,10 @@ export default function AddRecipe_layout(props:Readonly<Props>) {
                         <label>Name für das Rezept hinzufügen: </label>
                         <input
                             placeholder="Hier kann der Name für's Rezept rein"
-                            defaultValue=""
+                            value={props.recipeName}
                             name="dishname"
                             id="dishname"
-                            onChange={handleChangeDishName}
+                            onChange={handleChangeRecipeName}
                         />
                     </div>
                     <div className="flex flex-col">

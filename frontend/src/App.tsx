@@ -10,7 +10,7 @@ import Weekplan from "./page/weekplan.tsx";
 import Shoppinglist from "./page/shoppinglist.tsx";
 import IngredientDetails from "./page/ingredient_details.tsx";
 import IngredientCreate from "./page/ingredient_create.tsx";
-import RecipeShow from "./page/recipe_show.tsx";
+import RecipeDetails from "./page/recipe_details.tsx";
 
 function App() {
 
@@ -26,7 +26,7 @@ function App() {
                     <Route path="/" element={<Home/>}/>
                     <Route path="/recipe" element={<Recipe/>}/>
                     <Route path="/recipe/*" element={<Navigate to="/recipe/show"/>}/>
-                    <Route path="/recipe/show" element={<RecipeShow/>}/>
+                    <Route path="/recipe/show" element={<RecipeDetails/>}/>
                     <Route path="/recipeplan" element={ <Recipeplan /> }/>
                     <Route path="/weekplan" element={<Weekplan/>}/>
                     <Route path="/shoppinglist" element={<Shoppinglist/>}/>

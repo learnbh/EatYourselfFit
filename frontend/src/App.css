@@ -21,15 +21,13 @@
   justify-self: end; /* Das letzte Element (zweite Spalte) nach rechts ausrichten */
 }
 
-.tile{
-  margin-top: 0.7rem;
-}
 .tileHeader{
   display: flex;
   flex-direction: row;
   justify-content: center;
   text-align: center;
   gap: 5px;
+  margin-bottom: 0.8rem;
 }
 .hide{
   display: none;
