@@ -1,18 +1,10 @@
 import { useNavigate, useParams } from "react-router-dom";
 import {type ChangeEvent, type FormEvent, useCallback, useEffect, useRef, useState} from "react";
 import axios from "axios";
-import type {
-    IngredientCreate,
-    IngredientProductRef,
-    IngredientProfile,
-    Nutrient,
-    Nutrients
-} from "../types.ts";
+import type { IngredientCreate, IngredientProductRef, IngredientProfile, Nutrient, Nutrients } from "../types.ts";
 import IngredientLayout from "../layout/ingredient_layout.tsx";
 import NutrientLayout from "../layout/nutrient_layout.tsx";
-import { handleAxiosFormError,
-    mapNutrientsToCreateNutrientArray
-} from "../helper.ts";
+import { handleAxiosFormError, mapNutrientsToCreateNutrientArray } from "../helper.ts";
 import ShowError from "../component/ShowError.tsx";
 import {useRecipeCart} from "../context/CardRecipeContext.tsx";
 
@@ -70,6 +62,7 @@ export default function IngredientCreate(){
 
     const submit = async ( e:FormEvent<HTMLFormElement> )=> {
         e.preventDefault();
+        const detailId: string|null = sessionStorage.getItem("detailId");
         let messages = { userMessage:"", logMessage:"" };
         if( ingredientCreate ) {
             setError( "" );
@@ -84,7 +77,9 @@ export default function IngredientCreate(){
                             'Content-Type': 'application/json',
                         },
                     } );
-                addToRecipe(response.data)
+                if(!detailId) {
+                    addToRecipe(response.data)
+                }
             } catch ( error ) {
                 messages = handleAxiosFormError(
                     error,
@@ -95,7 +90,11 @@ export default function IngredientCreate(){
                 console.error( messages.logMessage );
             }
             if( messages.userMessage === "" ) {
-                routeTo( "/recipeplan" );
+                if(detailId){
+                    routeTo("/recipe/" + sessionStorage.getItem("detailId"));
+                } else {
+                    routeTo("/recipeplan");
+                }
             }
         }
     }
