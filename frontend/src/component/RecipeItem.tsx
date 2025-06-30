@@ -13,15 +13,15 @@ export default function RecipeItem(props:Readonly<Props>){
 
     return (
         <>
-            <div className="border grid grid-cols-1 items-end w-1/3 sm:w-1/4">
+            <div className="border flex flex-col justify-between w-1/3 sm:w-1/4 p-1">
                 <HideDetailIdLink
                     class=""
                     to={"/recipe/"+props.recipe.id}
                     id= {props.recipe.id}
                 >
-                    <span className="pl-2">{ props.recipe.title }</span>
+                    <span className="">{ props.recipe.title }</span>
                 </HideDetailIdLink>
-                <img className="tile" src={props.img} alt={props.imgAlt} width={props.imgWidth} height={props.imgHeight}/>
+                <img className="" src={props.img} alt={props.imgAlt} width={props.imgWidth} height={props.imgHeight}/>
             </div>
         </>
     );
