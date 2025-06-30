@@ -7,7 +7,7 @@ export default function ShowError(props: Readonly<Props>){
 
     return(
         <>
-            <span className="text-red-800">{ props.message }</span>
+            <p className="text-red-800">{ props.message }</p>
         </>
     )
 }
