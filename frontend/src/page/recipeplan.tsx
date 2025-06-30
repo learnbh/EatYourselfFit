@@ -92,7 +92,7 @@ export default function Recipeplan(){
                             <ShowError message = { isError } />
                         ) }
                         <AddRecipe_layout
-                            handleChangeDishName={handleChangeDishName}
+                            handleChangeRecipeName={handleChangeDishName}
                             addIngredientToRecipe={handleAddToRecipe}
                             removeIngredientFromRecipe={handleRemoveFromRecipe}
                             handleQuantity={handleChangeQuantity}
