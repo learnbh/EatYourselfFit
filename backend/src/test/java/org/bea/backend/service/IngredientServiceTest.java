@@ -170,7 +170,7 @@ class IngredientServiceTest {
         Mockito.verify(mockIngredientRepository, Mockito.times(1)).save(expectedIngredient);
         Mockito.verify(mockNutrientService, Mockito.times(1)).addNutrients(expectedNutrients);
     }
-
+    // addIngredientByOpenAi
     @Test
     public void addIngredientByOpenAi_shouldAddCorrectIngredientAndTheirNutrients() throws JsonProcessingException {
         // given
@@ -221,6 +221,7 @@ class IngredientServiceTest {
                 );
         Mockito.verify(mockNutrientService, Mockito.times(1)).addNutrients(nutrients);
     }
+
     @Test
     public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenJsonIsWrong(){
         // when
@@ -240,6 +241,7 @@ class IngredientServiceTest {
                         ingredientOpenAiDto.variation()
                 );
     }
+
     @Test
     public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenNoIngredientDtoInJson(){
         // when
@@ -270,9 +272,35 @@ class IngredientServiceTest {
             }
         """);
         OpenAiNotFoundIngredientException ex = assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
-        assertTrue(ex.getMessage().contains("Antwort von OpenAI für nutrients"));
+        assertTrue(ex.getMessage().contains("Antwort von OpenAI für Nährstoffe von "));
         Mockito.verify(mockNutrientOpenAiService, Mockito.times(1))
                 .getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation());
+    }
+
+    @Test
+    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenIngredientFieldQuantityIsInvalid(){
+        // when
+        Mockito.when(mockNutrientOpenAiService.getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation())
+        ).thenReturn("""
+            {
+                "ingredientDto": {
+                     "product": "Apfel",
+                     "variation": "Getrocknet",
+                     "quantity": 50,
+                     "unit": "g"
+                },
+                "nutrientsDto": {
+                    "energyKcal": 52
+                }
+            }
+        """);
+        OpenAiNotFoundIngredientException ex = assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
+        assertTrue(ex.getMessage().contains("Antwort von OpenAI für Zutat-Menge ist unbrauchbar. Änderne die Anfrage und versuche es erneut."));
+        Mockito.verify(mockNutrientOpenAiService, Mockito.times(1))
+                .getNutrients(
+                        ingredientOpenAiDto.product(),
+                        ingredientOpenAiDto.variation()
+                );
     }
     @Test
     public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenIngredientFieldsAreInvalid(){
@@ -283,7 +311,7 @@ class IngredientServiceTest {
                 "ingredientDto": {
                      "product": "Apfel",
                      "variation": "Getrocknet",
-                     "quantity": 50,
+                     "quantity": 100,
                      "unit": "ml"
                 },
                 "nutrientsDto": {
@@ -292,13 +320,14 @@ class IngredientServiceTest {
             }
         """);
         OpenAiNotFoundIngredientException ex = assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
-        assertTrue(ex.getMessage().contains("Antwort von OpenAI für Ingredient ist unbrauchbar"));
+        assertTrue(ex.getMessage().contains("Antwort von OpenAI für Zutat-Einheit ist unbrauchbar. Änderne die Anfrage und versuche es erneut."));
         Mockito.verify(mockNutrientOpenAiService, Mockito.times(1))
                 .getNutrients(
                         ingredientOpenAiDto.product(),
                         ingredientOpenAiDto.variation()
                 );
     }
+
     @Test
     public void addIngredientByOpenAi_shouldOpenAiNotFoundIngredientException_whenNutrientsNotFound(){
         // when

@@ -306,7 +306,7 @@ public class IngredientControllerTest {
                 .andExpectAll(
                         MockMvcResultMatchers
                                 .jsonPath("$.error")
-                                .value("Error: Antwort von OpenAI für Ingredient rindehack ist leer. Änderne die Anfrage und versuche es erneut.")
+                                .value("Error: Antwort von OpenAI für Zutat rindehack ist leer. Änderne die Anfrage und versuche es erneut.")
                 );
         mockRestServer.verify();
     }
@@ -327,7 +327,7 @@ public class IngredientControllerTest {
                 .andExpectAll(
                         MockMvcResultMatchers
                                 .jsonPath("$.error")
-                                .value("Error: Antwort von OpenAI für Ingredient rindehack ist leer. Änderne die Anfrage und versuche es erneut.")
+                                .value("Error: Antwort von OpenAI für Zutat rindehack ist leer. Änderne die Anfrage und versuche es erneut.")
                 );
         mockRestServer.verify();
     }

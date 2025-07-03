@@ -81,25 +81,26 @@ public class IngredientService {
                 }
 
                 if (!contentString.contains("ingredientDto")) {
-                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für ingredient "+product+" ist leer. Änderne die Anfrage und versuche es erneut.");
+                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Zutat "+product+" ist leer. Änderne die Anfrage und versuche es erneut.");
                 }
 
                 if (!contentString.contains("nutrientsDto")) {
-                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für nutrients "+product+" ist leer. Änderne die Anfrage und versuche es erneut.");
+                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe von "+product+" ist leer. Änderne die Anfrage und versuche es erneut.");
                 }
                 JsonNode contentNode = objectMapper.readTree(contentString);
                 ObjectNode ingredientNode = (ObjectNode) contentNode.get("ingredientDto");
-                if (!(ingredientNode.get("quantity").asInt() ==100)
-                    || !(ingredientNode.get("unit").asText().equals("g"))
-                ){
-                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Ingredient ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                if (!(ingredientNode.get("quantity").asInt() == 100)){
+                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Zutat-Menge ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                }
+                if (!(ingredientNode.get("unit").asText().equals("g"))){
+                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Zutat-Einheit ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
                 }
                 // add Ingredient and Nutrient
                 if (ingredientRepository.getIngredientByProductAndVariationContainsIgnoreCase(ingredientNode.get("product").asText(), ingredientNode.get("variation").asText()).isEmpty()){
                     // Nutrients:
                     ObjectNode nutrientsNode = (ObjectNode) contentNode.get("nutrientsDto");
                     if (nutrientsNode == null || nutrientsNode.get("energyKcal") == null) {
-                        throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nutrients ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                        throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut.");
                     }
 
                     String nutrientsId = serviceId.generateId();
