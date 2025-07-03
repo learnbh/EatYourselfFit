@@ -101,8 +101,6 @@ public class IngredientService {
                 if (ingredientRepository.getIngredientByProductAndVariationContainsIgnoreCase(ingredientNode.get("product").asText(), ingredientNode.get("variation").asText()).isEmpty()){
                     // Nutrients:
                     ObjectNode nutrientsNode = (ObjectNode) contentNode.get("nutrientsDto");
-                    System.out.println("nutrientsNode: ");
-                    System.out.println(objectMapper.writeValueAsString(nutrientsNode));
                     if (nutrientsNode.isEmpty()) {
                         throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut.");
                     }
