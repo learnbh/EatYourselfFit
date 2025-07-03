@@ -79,9 +79,13 @@ public class IngredientService {
                 if (Objects.equals(contentString, "Es konnten keine Nährstoffe gefunden werden. Änderne die Anfrage und versuche es erneut.")) {
                     throw new OpenAiNotFoundIngredientException(contentString);
                 }
-                // is ingedientNode valid
-                if (!(contentString.contains("ingredientDto") || contentString.contains("nutrientsDto"))) {
-                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Ingredient "+product+" ist leer. Änderne die Anfrage und versuche es erneut.");
+
+                if (!contentString.contains("ingredientDto")) {
+                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für ingredient "+product+" ist leer. Änderne die Anfrage und versuche es erneut.");
+                }
+
+                if (!contentString.contains("nutrientsDto")) {
+                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für nutrients "+product+" ist leer. Änderne die Anfrage und versuche es erneut.");
                 }
                 JsonNode contentNode = objectMapper.readTree(contentString);
                 ObjectNode ingredientNode = (ObjectNode) contentNode.get("ingredientDto");

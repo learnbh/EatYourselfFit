@@ -241,7 +241,7 @@ class IngredientServiceTest {
                 );
     }
     @Test
-    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenNoIngredientOrNutrientsDtoInJson(){
+    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenNoIngredientDtoInJson(){
         // when
         Mockito.when(mockNutrientOpenAiService
                 .getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation())
@@ -270,7 +270,7 @@ class IngredientServiceTest {
             }
         """);
         OpenAiNotFoundIngredientException ex = assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
-        assertTrue(ex.getMessage().contains("Antwort von OpenAI für Nutrients ist leer"));
+        assertTrue(ex.getMessage().contains("Antwort von OpenAI für nutrients"));
         Mockito.verify(mockNutrientOpenAiService, Mockito.times(1))
                 .getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation());
     }
