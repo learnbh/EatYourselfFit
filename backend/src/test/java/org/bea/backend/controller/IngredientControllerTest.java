@@ -61,9 +61,9 @@ public class IngredientControllerTest {
 
     ObjectMapper mapper = new ObjectMapper();
 
-    Ingredient milkOrig = new Ingredient("milk", "milch", "fat", 90.0, "g", 1.09, "egal");
-    Ingredient milkFindByName = new Ingredient("milkFindByName", "milk", "Vollmilch", 90.0, "g", 1.09, "egal");
-    Ingredient milk = new Ingredient("milk", "milk", "low fat", 100.0, "ml", 1.29, "egal");
+    Ingredient milkOrig = new Ingredient("milk", "milch", "fat", "slug", 90.0, "g", 1.09, "egal");
+    Ingredient milkFindByName = new Ingredient("milkFindByName", "milk", "Vollmilch", "slug", 90.0, "g", 1.09, "egal");
+    Ingredient milk = new Ingredient("milk", "milk", "low fat", "slug", 100.0, "ml", 1.29, "egal");
     IngredientDto milkDto = new IngredientDto("milk", "low fat", 100.0, "ml", 1.29, "egal");
     IngredientDto milkDtoDuplicate = new IngredientDto("milk", "low fat", 100.0, "ml", 1.09, "good");
     IngredientDto milkDto2 = new IngredientDto("milk", "fat", 100.0, "ml", 1.59, "bad");
@@ -364,7 +364,7 @@ public class IngredientControllerTest {
     @Test
     void getNutrientsDaily_shouldReturn_NutrientsDaily() throws Exception {
         // given
-        Ingredient ingredient = new Ingredient("ingredientId","Nährstoffe", "Täglicher Bedarf", 0.0, "g", 0.0,"nutrientId");
+        Ingredient ingredient = new Ingredient("ingredientId","Nährstoffe", "Täglicher Bedarf", "slug", 0.0, "g", 0.0,"nutrientId");
         Nutrients expected = Instancio.of(Nutrients.class)
                 .set(field(Nutrients::id), "nutrientId")
                 .create();

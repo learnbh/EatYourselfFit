@@ -79,16 +79,17 @@ class IngredientServiceTest {
                 "ingredientId",
                 IngredientCreateFakeData.ingredientCreate.product(),
                 IngredientCreateFakeData.ingredientCreate.variation(),
+                "slug",
                 IngredientCreateFakeData.ingredientCreate.quantity(),
                 IngredientCreateFakeData.ingredientCreate.unit(),
                 IngredientCreateFakeData.ingredientCreate.prices(),
                 expectedNutrients.id()
         );
 
-        milkOrig = new Ingredient("milk", "milch", "fat", 90.0, "g", 1.09, "egal");
-        milkFindByName = new Ingredient("milk", "milch", "milch fat", 90.0, "g", 1.09, "egal");
-        milkDouble = new Ingredient("milkDouble", "milk", "low fat", 90.0, "g", 1.09, "egal");
-        milk = new Ingredient("milk", "milk", "low fat", 100.0, "ml", 1.29, "egal");
+        milkOrig = new Ingredient("milk", "milch", "fat", "slug", 90.0, "g", 1.09, "egal");
+        milkFindByName = new Ingredient("milk", "milch", "milch fat", "slug", 90.0, "g", 1.09, "egal");
+        milkDouble = new Ingredient("milkDouble", "milk", "low fat", "slug", 90.0, "g", 1.09, "egal");
+        milk = new Ingredient("milk", "milk", "low fat", "slug", 100.0, "ml", 1.29, "egal");
         milkDto = new IngredientDto("milk", "low fat", 100.0, "ml", 1.29, "egal");
         ingredientOpenAiDto = new IngredientOpenAiDto("rindehack", "");
 
@@ -152,6 +153,8 @@ class IngredientServiceTest {
         Mockito.when(mockServiceId
                 .generateId()
         ).thenReturn(expectedNutrients.id(), expectedIngredient.id());
+        Mockito.when(mockServiceId.generateSlug(expectedIngredient.product() + "-" + expectedIngredient.variation()))
+                        .thenReturn(expectedIngredient.slug());
         Mockito.when(mockNutrientMapper
                 .createNutrients(expectedNutrients.id(), ingredientProfile.nutrientsArray())
         ).thenReturn(expectedNutrients);
@@ -162,6 +165,8 @@ class IngredientServiceTest {
         assertEquals(expectedIngredient, ingredientService.addIngredient(ingredientProfile));
         //verify
         Mockito.verify(mockServiceId, Mockito.times(2)).generateId();
+        Mockito.verify(mockServiceId, Mockito.times(1))
+                .generateSlug(expectedIngredient.product() + "-" + expectedIngredient.variation());
         Mockito.verify(mockIngredientRepository, Mockito.times(1)).save(expectedIngredient);
         Mockito.verify(mockNutrientService, Mockito.times(1)).addNutrients(expectedNutrients);
     }
@@ -392,7 +397,7 @@ class IngredientServiceTest {
     @Test
     void getNutrientsDaily_shouldReturn_NutrientsDaily() {
         // given
-        Ingredient ingredient = new Ingredient("ingredientId","Nährstoffe", "Täglicher Bedarf", 0.0, "g", 0.0,"nutrientId");
+        Ingredient ingredient = new Ingredient("ingredientId","Nährstoffe", "Täglicher Bedarf", "slug", 0.0, "g", 0.0,"nutrientId");
         Nutrients expected = Instancio.of(Nutrients.class)
                         .set(field(Nutrients::id), "nutrientId")
                         .create();

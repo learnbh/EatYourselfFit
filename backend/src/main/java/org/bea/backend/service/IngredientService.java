@@ -56,6 +56,7 @@ public class IngredientService {
                     ingredientId,
                     product,
                     variation,
+                    serviceId.generateSlug(product + "-" + variation),
                     ingredientProfile.ingredientCreate().quantity(),
                     ingredientProfile.ingredientCreate().unit(),
                     ingredientProfile.ingredientCreate().prices(),
@@ -103,10 +104,15 @@ public class IngredientService {
                     nutrientService.addNutrients(nutrients);
 
                     // Ingredient:
+                    String slug = serviceId.generateSlug(ingredientNode.get("product").asText() + "-" + ingredientNode.get("variation").asText());
+
                     ingredientNode.put("id", serviceId.generateId());
+                    ingredientNode.put("slug", slug);
                     ingredientNode.put("nutrientsId", nutrientsId);
+
                     Ingredient ingredient = objectMapper.readValue(objectMapper.writeValueAsString(ingredientNode), Ingredient.class);
                     ingredientRepository.save(ingredient);
+
                     return ingredient;
                 } else {
                     throw new DuplicateKeyException("Error: Eine Zutat mit dieser Produkt-Variation existiert bereits.");
@@ -149,6 +155,7 @@ public class IngredientService {
                         ingredient.id(),
                         product,
                         variation,
+                        ingredient.slug(),
                         ingredientDto.quantity(),
                         ingredientDto.unit(),
                         ingredientDto.prices(),
@@ -165,6 +172,7 @@ public class IngredientService {
                     ingredient.id(),
                     product,
                     variation,
+                    ingredient.slug(),
                     ingredientDto.quantity(),
                     ingredientDto.unit(),
                     ingredientDto.prices(),
