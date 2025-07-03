@@ -16,6 +16,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 import org.springframework.http.HttpMethod;
 
+import static org.bea.backend.FakeTestData.IngredientCreateFakeData.ingredientResponseTest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -57,7 +58,7 @@ class NutrientOpenAiServiceTest {
                     {
                       "message": {
                         "role": "assistant",
-                        "content": %s}}]}""", objectMapper.writeValueAsString(OpenAiConfig.ingredientResponseTest));
+                        "content": %s}}]}""", objectMapper.writeValueAsString(ingredientResponseTest));
 
         mockServer.expect(requestTo(baseUrl + "/v1/chat/completions"))
                 .andExpect(method(org.springframework.http.HttpMethod.POST))
@@ -67,7 +68,7 @@ class NutrientOpenAiServiceTest {
         String result = nutrientOpenAiService.getNutrients("rindehack", "");
 
         assertNotNull(result);
-        assertEquals(OpenAiConfig.ingredientResponseTest, result);
+        assertEquals(ingredientResponseTest, result);
 
         mockServer.verify();
     }

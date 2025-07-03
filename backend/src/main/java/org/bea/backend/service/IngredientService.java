@@ -87,7 +87,9 @@ public class IngredientService {
                 if (!contentString.contains("nutrientsDto")) {
                     throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe von "+product+" ist leer. Änderne die Anfrage und versuche es erneut.");
                 }
+
                 JsonNode contentNode = objectMapper.readTree(contentString);
+
                 ObjectNode ingredientNode = (ObjectNode) contentNode.get("ingredientDto");
                 if (!(ingredientNode.get("quantity").asInt() == 100)){
                     throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Zutat-Menge ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
@@ -99,14 +101,28 @@ public class IngredientService {
                 if (ingredientRepository.getIngredientByProductAndVariationContainsIgnoreCase(ingredientNode.get("product").asText(), ingredientNode.get("variation").asText()).isEmpty()){
                     // Nutrients:
                     ObjectNode nutrientsNode = (ObjectNode) contentNode.get("nutrientsDto");
-                    if (nutrientsNode == null || nutrientsNode.get("energyKcal") == null) {
+                    System.out.println("nutrientsNode: ");
+                    System.out.println(objectMapper.writeValueAsString(nutrientsNode));
+                    if (nutrientsNode.isEmpty()) {
+                        throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                    }
+
+                    ObjectNode nutrientNode = (ObjectNode) nutrientsNode.get("energyKcal");
+                    if ( nutrientsNode.get("energyKcal") == null) {
+                        throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                    }
+                    if ( nutrientNode.isEmpty()) {
                         throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut.");
                     }
 
                     String nutrientsId = serviceId.generateId();
                     nutrientsNode.put("id", nutrientsId);
-                    Nutrients nutrients = objectMapper.treeToValue(nutrientsNode, Nutrients.class);
-                    nutrientService.addNutrients(nutrients);
+                    try {
+                        Nutrients nutrients = objectMapper.treeToValue(nutrientsNode, Nutrients.class);
+                        nutrientService.addNutrients(nutrients);
+                    } catch (JsonProcessingException e) {
+                        throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                    }
 
                     // Ingredient:
                     String slug = serviceId.generateSlug(ingredientNode.get("product").asText() + "-" + ingredientNode.get("variation").asText());
@@ -115,10 +131,13 @@ public class IngredientService {
                     ingredientNode.put("slug", slug);
                     ingredientNode.put("nutrientsId", nutrientsId);
 
-                    Ingredient ingredient = objectMapper.readValue(objectMapper.writeValueAsString(ingredientNode), Ingredient.class);
-                    ingredientRepository.save(ingredient);
-
-                    return ingredient;
+                    try {
+                        Ingredient ingredient = objectMapper.treeToValue(ingredientNode, Ingredient.class);
+                        ingredientRepository.save(ingredient);
+                        return ingredient;
+                    } catch (JsonProcessingException e) {
+                        throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Zutat ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                    }
                 } else {
                     throw new DuplicateKeyException("Error: Eine Zutat mit dieser Produkt-Variation existiert bereits.");
                 }

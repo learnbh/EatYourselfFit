@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bea.backend.FakeTestData.IngredientCreateFakeData;
 import org.bea.backend.model.*;
 import org.bea.backend.openai.IngredientOpenAiDto;
-import org.bea.backend.openai.OpenAiConfig;
 import org.bea.backend.repository.IngredientRepository;
 
 import org.bea.backend.repository.NutrientsRepository;
@@ -32,6 +31,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.bea.backend.FakeTestData.IngredientCreateFakeData.ingredientResponseTest;
+import static org.bea.backend.FakeTestData.IngredientCreateFakeData.responseWithoutIngredientNode;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.instancio.Select.field;
@@ -261,10 +262,10 @@ public class IngredientControllerTest {
     @Test
     void addIngredientByOpenAi_shouldAddCorrectIngredientAndTheirNutrients() throws Exception{
         // given
-        String response = String.format(openAiResponse, mapper.writeValueAsString(OpenAiConfig.ingredientResponseTest));
+        String response = String.format(openAiResponse, mapper.writeValueAsString(ingredientResponseTest));
 
         IngredientDto ingredientDto = mapper
-                .readTree(OpenAiConfig.ingredientResponseTest)
+                .readTree(ingredientResponseTest)
                 .path("ingredientDto")
                 .traverse(mapper)
                 .readValueAs(IngredientDto.class);
@@ -291,7 +292,7 @@ public class IngredientControllerTest {
     }
     @Test
     void addIngredientByOpenAi_shouldThrowResponseStatusException_whenJsonIsWrong() throws Exception{
-        String response = String.format(openAiResponse, mapper.writeValueAsString(OpenAiConfig.responseWithoutIngredientNode));
+        String response = String.format(openAiResponse, mapper.writeValueAsString(responseWithoutIngredientNode));
 
         System.out.println(response);
         mockRestServer.expect(requestTo(baseUrl+"/v1/chat/completions"))
@@ -312,7 +313,7 @@ public class IngredientControllerTest {
     }
     @Test
     void addIngredientByOpenAi_shouldOpenAiNotFoundIngredientException_whenNutrientsNotFound() throws Exception{
-        String response = String.format(openAiResponse, mapper.writeValueAsString(OpenAiConfig.responseWithoutIngredientNode));
+        String response = String.format(openAiResponse, mapper.writeValueAsString(responseWithoutIngredientNode));
 
         System.out.println(response);
         mockRestServer.expect(requestTo(baseUrl+"/v1/chat/completions"))
