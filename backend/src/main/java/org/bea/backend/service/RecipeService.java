@@ -36,6 +36,7 @@ public class RecipeService {
         Recipe newRecipe = new Recipe(
                 serviceId.generateId(),
                 recipeDto.title(),
+                serviceId.generateSlug(recipeDto.title()),
                 recipeDto.recipeIngredients()
         );
         recipeRepository.save(newRecipe);
@@ -43,10 +44,11 @@ public class RecipeService {
     }
 
     public Recipe updateRecipe( String id, RecipeDto recipeDto) {
-        recipeRepository.findById(id).orElseThrow(() -> new IdNotFoundException("Recipe with Id: " + id + " not found"));
+        Recipe oldRecipe = findRecipeById(id).orElseThrow(() -> new IdNotFoundException("Recipe with Id: " + id + " not found."));
         Recipe updatedRecipe = new Recipe(
                 id,
                 recipeDto.title(),
+                oldRecipe.slug(),
                 recipeDto.recipeIngredients()
         );
         recipeRepository.save(updatedRecipe);

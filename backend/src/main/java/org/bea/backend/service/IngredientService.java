@@ -56,6 +56,7 @@ public class IngredientService {
                     ingredientId,
                     product,
                     variation,
+                    serviceId.generateSlug(product + "-" + variation),
                     ingredientProfile.ingredientCreate().quantity(),
                     ingredientProfile.ingredientCreate().unit(),
                     ingredientProfile.ingredientCreate().prices(),
@@ -78,36 +79,63 @@ public class IngredientService {
                 if (Objects.equals(contentString, "Es konnten keine Nährstoffe gefunden werden. Änderne die Anfrage und versuche es erneut.")) {
                     throw new OpenAiNotFoundIngredientException(contentString);
                 }
-                // is ingedientNode valid
-                if (!(contentString.contains("ingredientDto") || contentString.contains("nutrientsDto"))) {
-                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Ingredient "+product+" ist leer. Änderne die Anfrage und versuche es erneut.");
+
+                if (!contentString.contains("ingredientDto")) {
+                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Zutat "+product+" ist leer. Änderne die Anfrage und versuche es erneut.");
                 }
+
+                if (!contentString.contains("nutrientsDto")) {
+                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe von "+product+" ist leer. Änderne die Anfrage und versuche es erneut.");
+                }
+
                 JsonNode contentNode = objectMapper.readTree(contentString);
+
                 ObjectNode ingredientNode = (ObjectNode) contentNode.get("ingredientDto");
-                if (!(ingredientNode.get("quantity").asInt() ==100)
-                    || !(ingredientNode.get("unit").asText().equals("g"))
-                ){
-                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Ingredient ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                if (!(ingredientNode.get("quantity").asInt() == 100)){
+                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Zutat-Menge ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                }
+                if (!(ingredientNode.get("unit").asText().equals("g"))){
+                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Zutat-Einheit ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
                 }
                 // add Ingredient and Nutrient
                 if (ingredientRepository.getIngredientByProductAndVariationContainsIgnoreCase(ingredientNode.get("product").asText(), ingredientNode.get("variation").asText()).isEmpty()){
                     // Nutrients:
                     ObjectNode nutrientsNode = (ObjectNode) contentNode.get("nutrientsDto");
-                    if (nutrientsNode == null || nutrientsNode.get("energyKcal") == null) {
-                        throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nutrients ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                    if (nutrientsNode.isEmpty()) {
+                        throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                    }
+
+                    ObjectNode nutrientNode = (ObjectNode) nutrientsNode.get("energyKcal");
+                    if ( nutrientsNode.get("energyKcal") == null) {
+                        throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                    }
+                    if ( nutrientNode.isEmpty()) {
+                        throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut.");
                     }
 
                     String nutrientsId = serviceId.generateId();
                     nutrientsNode.put("id", nutrientsId);
-                    Nutrients nutrients = objectMapper.treeToValue(nutrientsNode, Nutrients.class);
-                    nutrientService.addNutrients(nutrients);
+                    try {
+                        Nutrients nutrients = objectMapper.treeToValue(nutrientsNode, Nutrients.class);
+                        nutrientService.addNutrients(nutrients);
+                    } catch (JsonProcessingException e) {
+                        throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                    }
 
                     // Ingredient:
+                    String slug = serviceId.generateSlug(ingredientNode.get("product").asText() + "-" + ingredientNode.get("variation").asText());
+
                     ingredientNode.put("id", serviceId.generateId());
+                    ingredientNode.put("slug", slug);
                     ingredientNode.put("nutrientsId", nutrientsId);
-                    Ingredient ingredient = objectMapper.readValue(objectMapper.writeValueAsString(ingredientNode), Ingredient.class);
-                    ingredientRepository.save(ingredient);
-                    return ingredient;
+
+                    try {
+                        Ingredient ingredient = objectMapper.treeToValue(ingredientNode, Ingredient.class);
+                        ingredientRepository.save(ingredient);
+                        return ingredient;
+                    } catch (JsonProcessingException e) {
+                        throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Zutat ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                    }
                 } else {
                     throw new DuplicateKeyException("Error: Eine Zutat mit dieser Produkt-Variation existiert bereits.");
                 }
@@ -149,6 +177,7 @@ public class IngredientService {
                         ingredient.id(),
                         product,
                         variation,
+                        ingredient.slug(),
                         ingredientDto.quantity(),
                         ingredientDto.unit(),
                         ingredientDto.prices(),
@@ -165,6 +194,7 @@ public class IngredientService {
                     ingredient.id(),
                     product,
                     variation,
+                    ingredient.slug(),
                     ingredientDto.quantity(),
                     ingredientDto.unit(),
                     ingredientDto.prices(),

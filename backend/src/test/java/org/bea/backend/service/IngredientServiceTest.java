@@ -16,7 +16,6 @@ import org.bea.backend.model.IngredientProfile;
 import org.bea.backend.openai.IngredientOpenAiDto;
 import org.bea.backend.model.Nutrients;
 import org.bea.backend.openai.NutrientOpenAiService;
-import org.bea.backend.openai.OpenAiConfig;
 import org.bea.backend.repository.IngredientRepository;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.*;
 
+import static org.bea.backend.FakeTestData.IngredientCreateFakeData.*;
 import static org.instancio.Select.field;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -79,16 +79,17 @@ class IngredientServiceTest {
                 "ingredientId",
                 IngredientCreateFakeData.ingredientCreate.product(),
                 IngredientCreateFakeData.ingredientCreate.variation(),
+                "slug",
                 IngredientCreateFakeData.ingredientCreate.quantity(),
                 IngredientCreateFakeData.ingredientCreate.unit(),
                 IngredientCreateFakeData.ingredientCreate.prices(),
                 expectedNutrients.id()
         );
 
-        milkOrig = new Ingredient("milk", "milch", "fat", 90.0, "g", 1.09, "egal");
-        milkFindByName = new Ingredient("milk", "milch", "milch fat", 90.0, "g", 1.09, "egal");
-        milkDouble = new Ingredient("milkDouble", "milk", "low fat", 90.0, "g", 1.09, "egal");
-        milk = new Ingredient("milk", "milk", "low fat", 100.0, "ml", 1.29, "egal");
+        milkOrig = new Ingredient("milk", "milch", "fat", "slug", 90.0, "g", 1.09, "egal");
+        milkFindByName = new Ingredient("milk", "milch", "milch fat", "slug", 90.0, "g", 1.09, "egal");
+        milkDouble = new Ingredient("milkDouble", "milk", "low fat", "slug", 90.0, "g", 1.09, "egal");
+        milk = new Ingredient("milk", "milk", "low fat", "slug", 100.0, "ml", 1.29, "egal");
         milkDto = new IngredientDto("milk", "low fat", 100.0, "ml", 1.29, "egal");
         ingredientOpenAiDto = new IngredientOpenAiDto("rindehack", "");
 
@@ -152,6 +153,8 @@ class IngredientServiceTest {
         Mockito.when(mockServiceId
                 .generateId()
         ).thenReturn(expectedNutrients.id(), expectedIngredient.id());
+        Mockito.when(mockServiceId.generateSlug(expectedIngredient.product() + "-" + expectedIngredient.variation()))
+                        .thenReturn(expectedIngredient.slug());
         Mockito.when(mockNutrientMapper
                 .createNutrients(expectedNutrients.id(), ingredientProfile.nutrientsArray())
         ).thenReturn(expectedNutrients);
@@ -162,16 +165,18 @@ class IngredientServiceTest {
         assertEquals(expectedIngredient, ingredientService.addIngredient(ingredientProfile));
         //verify
         Mockito.verify(mockServiceId, Mockito.times(2)).generateId();
+        Mockito.verify(mockServiceId, Mockito.times(1))
+                .generateSlug(expectedIngredient.product() + "-" + expectedIngredient.variation());
         Mockito.verify(mockIngredientRepository, Mockito.times(1)).save(expectedIngredient);
         Mockito.verify(mockNutrientService, Mockito.times(1)).addNutrients(expectedNutrients);
     }
-
+    // addIngredientByOpenAi
     @Test
     public void addIngredientByOpenAi_shouldAddCorrectIngredientAndTheirNutrients() throws JsonProcessingException {
         // given
         ObjectMapper objectMapper = new ObjectMapper();
 
-        JsonNode contentNode = objectMapper.readTree(OpenAiConfig.ingredientResponseTest);
+        JsonNode contentNode = objectMapper.readTree(ingredientResponseTest);
         ObjectNode nutrientsNode = (ObjectNode) contentNode.get("nutrientsDto");
         nutrientsNode.put("id", "nutrientId");
         Nutrients nutrients = objectMapper.treeToValue(nutrientsNode, Nutrients.class);
@@ -182,7 +187,7 @@ class IngredientServiceTest {
         // when
         Mockito.when(mockNutrientOpenAiService
                 .getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation())
-        ).thenReturn(OpenAiConfig.ingredientResponseTest);
+        ).thenReturn(ingredientResponseTest);
         Mockito.when(mockServiceId
                 .generateId()
         ).thenReturn("nutrientId", "ingredientId");
@@ -216,6 +221,23 @@ class IngredientServiceTest {
                 );
         Mockito.verify(mockNutrientService, Mockito.times(1)).addNutrients(nutrients);
     }
+
+    @Test
+    public void addIngredientByOpenAi_shouldOpenAiNotFoundIngredientException_whenNutrientsNotFound(){
+        // when
+        Mockito.when(mockNutrientOpenAiService
+                .getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation())
+        ).thenReturn("Es konnten keine Nährstoffe gefunden werden. Änderne die Anfrage und versuche es erneut.");
+        // then
+        assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
+        // verify
+        Mockito.verify(mockNutrientOpenAiService, Mockito.times(1))
+                .getNutrients(
+                        ingredientOpenAiDto.product(),
+                        ingredientOpenAiDto.variation()
+                );
+    }
+
     @Test
     public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenJsonIsWrong(){
         // when
@@ -235,8 +257,9 @@ class IngredientServiceTest {
                         ingredientOpenAiDto.variation()
                 );
     }
+
     @Test
-    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenNoIngredientOrNutrientsDtoInJson(){
+    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenNoIngredientDtoInJson(){
         // when
         Mockito.when(mockNutrientOpenAiService
                 .getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation())
@@ -265,12 +288,13 @@ class IngredientServiceTest {
             }
         """);
         OpenAiNotFoundIngredientException ex = assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
-        assertTrue(ex.getMessage().contains("Antwort von OpenAI für Nutrients ist leer"));
+        assertTrue(ex.getMessage().contains("Antwort von OpenAI für Nährstoffe von "));
         Mockito.verify(mockNutrientOpenAiService, Mockito.times(1))
                 .getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation());
     }
+
     @Test
-    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenIngredientFieldsAreInvalid(){
+    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenIngredientFieldQuantityIsInvalid(){
         // when
         Mockito.when(mockNutrientOpenAiService.getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation())
         ).thenReturn("""
@@ -279,6 +303,31 @@ class IngredientServiceTest {
                      "product": "Apfel",
                      "variation": "Getrocknet",
                      "quantity": 50,
+                     "unit": "g"
+                },
+                "nutrientsDto": {
+                    "energyKcal": 52
+                }
+            }
+        """);
+        OpenAiNotFoundIngredientException ex = assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
+        assertTrue(ex.getMessage().contains("Antwort von OpenAI für Zutat-Menge ist unbrauchbar. Änderne die Anfrage und versuche es erneut."));
+        Mockito.verify(mockNutrientOpenAiService, Mockito.times(1))
+                .getNutrients(
+                        ingredientOpenAiDto.product(),
+                        ingredientOpenAiDto.variation()
+                );
+    }
+    @Test
+    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenIngredientFieldUnitIsInvalid(){
+        // when
+        Mockito.when(mockNutrientOpenAiService.getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation())
+        ).thenReturn("""
+            {
+                "ingredientDto": {
+                     "product": "Apfel",
+                     "variation": "Getrocknet",
+                     "quantity": 100,
                      "unit": "ml"
                 },
                 "nutrientsDto": {
@@ -287,34 +336,126 @@ class IngredientServiceTest {
             }
         """);
         OpenAiNotFoundIngredientException ex = assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
-        assertTrue(ex.getMessage().contains("Antwort von OpenAI für Ingredient ist unbrauchbar"));
+        assertTrue(ex.getMessage().contains("Antwort von OpenAI für Zutat-Einheit ist unbrauchbar. Änderne die Anfrage und versuche es erneut."));
         Mockito.verify(mockNutrientOpenAiService, Mockito.times(1))
                 .getNutrients(
                         ingredientOpenAiDto.product(),
                         ingredientOpenAiDto.variation()
                 );
     }
+
     @Test
-    public void addIngredientByOpenAi_shouldOpenAiNotFoundIngredientException_whenNutrientsNotFound(){
+    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenNutrientsDtoInResponseIsEmpty(){
         // when
-        Mockito.when(mockNutrientOpenAiService
-                .getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation())
-        ).thenReturn("Es konnten keine Nährstoffe gefunden werden. Änderne die Anfrage und versuche es erneut.");
-        // then
-        assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
-        // verify
+        Mockito.when(mockNutrientOpenAiService.getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation())
+        ).thenReturn("""
+            {
+                "ingredientDto": {
+                     "product": "Apfel",
+                     "variation": "Getrocknet",
+                     "quantity": 100,
+                     "unit": "g"
+                },
+                "nutrientsDto": {}
+            }
+        """);
+        OpenAiNotFoundIngredientException ex = assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
+        assertTrue(ex.getMessage().contains("Antwort von OpenAI für Nährstoffe ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut."));
         Mockito.verify(mockNutrientOpenAiService, Mockito.times(1))
                 .getNutrients(
                         ingredientOpenAiDto.product(),
                         ingredientOpenAiDto.variation()
                 );
     }
+
+    @Test
+    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenNutrientInNutrientsDtoOfResponseIsEmpty(){
+        // when
+        Mockito.when(mockNutrientOpenAiService.getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation())
+        ).thenReturn("""
+            {
+                "ingredientDto": {
+                     "product": "Apfel",
+                     "variation": "Getrocknet",
+                     "quantity": 100,
+                     "unit": "g"
+                },
+                "nutrientsDto": {
+                    "energyKcal": {
+                    }
+                }
+            }
+        """);
+        OpenAiNotFoundIngredientException ex = assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
+        assertTrue(ex.getMessage().contains("Antwort von OpenAI für Nährstoffe ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut."));
+        Mockito.verify(mockNutrientOpenAiService, Mockito.times(1))
+                .getNutrients(
+                        ingredientOpenAiDto.product(),
+                        ingredientOpenAiDto.variation()
+                );
+    }
+
+    @Test
+    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenNutrient_energyKcal_InNutrientsDtoOfResponseIsNull(){
+        // when
+        Mockito.when(mockNutrientOpenAiService.getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation())
+        ).thenReturn("""
+            {
+                "ingredientDto": {
+                     "product": "Apfel",
+                     "variation": "Getrocknet",
+                     "quantity": 100,
+                     "unit": "g"
+                },
+                "nutrientsDto": {
+                    "energykcal": {
+                    }
+                }
+            }
+        """);
+        OpenAiNotFoundIngredientException ex = assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
+        assertTrue(ex.getMessage().contains("Antwort von OpenAI für Nährstoffe ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut."));
+        Mockito.verify(mockNutrientOpenAiService, Mockito.times(1))
+                .getNutrients(
+                        ingredientOpenAiDto.product(),
+                        ingredientOpenAiDto.variation()
+                );
+    }
+
+    @Test
+    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenNutrientsDtoInResponseContainsInvalidNutrient(){
+        // when
+        Mockito.when(mockNutrientOpenAiService.getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation())
+        ).thenReturn(ingredientResponseNutrientsWithInvalidNutrient);
+        OpenAiNotFoundIngredientException ex = assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
+        assertTrue(ex.getMessage().contains("Antwort von OpenAI für Nährstoffe ist unbrauchbar. Änderne die Anfrage und versuche es erneut."));
+        Mockito.verify(mockNutrientOpenAiService, Mockito.times(1))
+                .getNutrients(
+                        ingredientOpenAiDto.product(),
+                        ingredientOpenAiDto.variation()
+                );
+    }
+
+    @Test
+    public void addIngredientByOpenAi_shouldThrowOpenAiNotFoundIngredientException_whenIngredientDtoInResponseContainsIsInvalid(){
+        // when
+        Mockito.when(mockNutrientOpenAiService.getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation())
+        ).thenReturn(ingredientResponseNutrientsWithInvalidIngredient);
+        OpenAiNotFoundIngredientException ex = assertThrows(OpenAiNotFoundIngredientException.class, () -> ingredientService.addIngredientByOpenAi(ingredientOpenAiDto));
+        assertTrue(ex.getMessage().contains("Antwort von OpenAI für Nährstoffe ist unbrauchbar. Änderne die Anfrage und versuche es erneut."));
+        Mockito.verify(mockNutrientOpenAiService, Mockito.times(1))
+                .getNutrients(
+                        ingredientOpenAiDto.product(),
+                        ingredientOpenAiDto.variation()
+                );
+    }
+
     @Test
     public void addIngredientByOpenAi_shouldThrowDuplicateKeyException_whenProductVariationFoundByOpenAiExists() throws JsonProcessingException {
         // given
         ObjectMapper objectMapper = new ObjectMapper();
 
-        JsonNode contentNode = objectMapper.readTree(OpenAiConfig.ingredientResponseTest);
+        JsonNode contentNode = objectMapper.readTree(ingredientResponseTest);
         ObjectNode nutrientsNode = (ObjectNode) contentNode.get("nutrientsDto");
         nutrientsNode.put("id", "nutrientId");
         ObjectNode ingredientNode = (ObjectNode) contentNode.get("ingredientDto");
@@ -325,7 +466,7 @@ class IngredientServiceTest {
         Mockito.when(mockNutrientOpenAiService.getNutrients(
                 ingredientOpenAiDto.product(),
                 ingredientOpenAiDto.variation()
-        )).thenReturn(OpenAiConfig.ingredientResponseTest);
+        )).thenReturn(ingredientResponseTest);
         Mockito.when(mockIngredientRepository.getIngredientByProductAndVariationContainsIgnoreCase(
                 ingredientOpenAiDto.product(),
                 ingredientOpenAiDto.variation()
@@ -392,7 +533,7 @@ class IngredientServiceTest {
     @Test
     void getNutrientsDaily_shouldReturn_NutrientsDaily() {
         // given
-        Ingredient ingredient = new Ingredient("ingredientId","Nährstoffe", "Täglicher Bedarf", 0.0, "g", 0.0,"nutrientId");
+        Ingredient ingredient = new Ingredient("ingredientId","Nährstoffe", "Täglicher Bedarf", "slug", 0.0, "g", 0.0,"nutrientId");
         Nutrients expected = Instancio.of(Nutrients.class)
                         .set(field(Nutrients::id), "nutrientId")
                         .create();

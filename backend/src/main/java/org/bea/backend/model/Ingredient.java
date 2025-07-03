@@ -18,6 +18,10 @@ public record Ingredient(
     String product,
     String variation,
 
+    @NotNull(message = "slug cannot be null")
+    @Size(min = 10, message = "slug must have at least 1 character")
+    String slug,
+
     @NotNull(message = "Quantity cannot be null")
     @DecimalMin(value = "0.01", message = "Quantity must be at least 0.01")
     Double quantity,

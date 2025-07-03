@@ -37,9 +37,9 @@ class RecipeServiceTest {
         RecipeIngredient pasta = new RecipeIngredient("ingredient1", 1.0);
         RecipeIngredient tomato = new RecipeIngredient("ingredient2", 2.0);
 
-        recipeActual = new Recipe("recipeExpected", "Spaghetti", List.of(pasta));
-        recipeExpected = new Recipe("recipeExpected", "Spaghetti Napoli", List.of(pasta, tomato));
-        recipeExpectedNoIngredient = new Recipe("recipeExpected", "Mystery Dish", Collections.emptyList());
+        recipeActual = new Recipe("recipeExpected", "Spaghetti", "slug", List.of(pasta));
+        recipeExpected = new Recipe("recipeExpected", "Spaghetti Napoli", "slug", List.of(pasta, tomato));
+        recipeExpectedNoIngredient = new Recipe("recipeExpected", "Mystery Dish", "slug", Collections.emptyList());
 
         recipeDto = new RecipeDto(recipeExpected.title(), recipeExpected.recipeIngredients());
     }
@@ -101,10 +101,12 @@ class RecipeServiceTest {
     void addRecipe_ShouldAddRecipeToDB() {
         // when
         Mockito.when(mockServiceId.generateId()).thenReturn(recipeExpected.id());
+        Mockito.when(mockServiceId.generateSlug(recipeExpected.title())).thenReturn(recipeExpected.slug());
         // then
         assertEquals(recipeExpected, recipeService.addRecipe(recipeDto));
         // verify
         Mockito.verify(mockServiceId, Mockito.times(1)).generateId();
+        Mockito.verify(mockServiceId, Mockito.times(1)).generateSlug(recipeExpected.title());
         Mockito.verify(mockRecipeRepository, Mockito.times(1)).save(recipeExpected);
     }
 
