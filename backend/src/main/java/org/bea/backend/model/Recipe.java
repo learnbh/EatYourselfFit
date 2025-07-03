@@ -16,5 +16,8 @@ public record Recipe(
         @Size(min = 1, message = "The recipe title must have at least 1 character")
         @Indexed(unique = true)
         String title,
+        @NotNull(message = "slug cannot be null")
+        @Size(min = 10, message = "slug must have at least 1 character")
+        String slug,
         List<RecipeIngredient> recipeIngredients
 ) {}
