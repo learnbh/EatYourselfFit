@@ -3,7 +3,7 @@ package org.bea.backend.openai;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.bea.backend.exception.OpenAiNotFoundIngredientException;
+import org.bea.backend.exception.OpenAiException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -50,14 +50,14 @@ public class NutrientOpenAiService {
                 .body(String.class);
 
         if (!StringUtils.hasText(messageResponse) || !messageResponse.trim().startsWith("{")) {
-            throw new OpenAiNotFoundIngredientException("OpenAI hat kein valides JSON zurückgegeben (vermutlich verweigert). Änderne die Anfrage und versuche es erneut.");
+            throw new OpenAiException("OpenAI hat kein valides JSON zurückgegeben (vermutlich verweigert). Änderne die Anfrage und versuche es erneut.");
         }
         try {
             JsonNode choiceNode =  objectMapper.readTree(messageResponse).get("choices");
             JsonNode messageNode = choiceNode.get(0).get("message");
             return messageNode.get("content").asText();
         } catch (JsonProcessingException e) {
-            throw new OpenAiNotFoundIngredientException("OpenAI-Antwort konnte nicht geparst werden (vermutlich kein gültiges JSON). Änderne die Anfrage und versuche es erneut.");
+            throw new OpenAiException("OpenAI-Antwort konnte nicht geparst werden (vermutlich kein gültiges JSON). Änderne die Anfrage und versuche es erneut.");
         }
     }
 }

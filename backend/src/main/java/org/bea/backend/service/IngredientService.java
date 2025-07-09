@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.bea.backend.exception.IdNotFoundException;
-import org.bea.backend.exception.OpenAiNotFoundIngredientException;
+import org.bea.backend.exception.OpenAiException;
 import org.bea.backend.exception.ProductVariationNotFoundException;
 import org.bea.backend.mapper.NutrientMapper;
 import org.bea.backend.model.*;
@@ -26,18 +26,21 @@ public class IngredientService {
 
     private final ServiceId serviceId;
     private final NutrientOpenAiService nutrientOpenAiService;
+    private final ObjectMapper objectMapper;
 
     public IngredientService(
             ServiceId serviceId,
             IngredientRepository ingredientRepository,
             NutrientService nutrientService,
             NutrientMapper nutrientMapper,
-            NutrientOpenAiService nutrientOpenAiService) {
+            NutrientOpenAiService nutrientOpenAiService,
+            ObjectMapper objectMapper) {
         this.ingredientRepository = ingredientRepository;
         this.nutrientService = nutrientService;
         this.serviceId = serviceId;
         this.nutrientOpenAiService = nutrientOpenAiService;
         this.nutrientMapper = nutrientMapper;
+        this.objectMapper = objectMapper;
     }
 
     public List<Ingredient> getIngredients() {
@@ -73,54 +76,54 @@ public class IngredientService {
         String variation = ingredientOpenAiDto.variation();
 
         if (ingredientRepository.getIngredientByProductAndVariationContainsIgnoreCase(product, variation).isEmpty()) {
-            ObjectMapper objectMapper = new ObjectMapper();
             String contentString = nutrientOpenAiService.getNutrients(product, variation);
 
                 if (Objects.equals(contentString, "Es konnten keine Nährstoffe gefunden werden. Änderne die Anfrage und versuche es erneut.")) {
-                    throw new OpenAiNotFoundIngredientException(contentString);
+                    throw new OpenAiException(contentString);
                 }
 
                 if (!contentString.contains("ingredientDto")) {
-                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Zutat "+product+" ist leer. Änderne die Anfrage und versuche es erneut.");
+                    throw new OpenAiException("Antwort von OpenAI für Zutat "+product+" ist leer. Änderne die Anfrage und versuche es erneut.");
                 }
 
                 if (!contentString.contains("nutrientsDto")) {
-                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe von "+product+" ist leer. Änderne die Anfrage und versuche es erneut.");
+                    throw new OpenAiException("Antwort von OpenAI für Nährstoffe von "+product+" ist leer. Änderne die Anfrage und versuche es erneut.");
                 }
 
                 JsonNode contentNode = objectMapper.readTree(contentString);
 
                 ObjectNode ingredientNode = (ObjectNode) contentNode.get("ingredientDto");
-                if (!(ingredientNode.get("quantity").asInt() == 100)){
-                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Zutat-Menge ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                if (ingredientNode.get("quantity").asInt() != 100){
+                    throw new OpenAiException("Antwort von OpenAI für Zutat-Menge ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
                 }
                 if (!(ingredientNode.get("unit").asText().equals("g"))){
-                    throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Zutat-Einheit ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                    throw new OpenAiException("Antwort von OpenAI für Zutat-Einheit ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
                 }
                 // add Ingredient and Nutrient
                 if (ingredientRepository.getIngredientByProductAndVariationContainsIgnoreCase(ingredientNode.get("product").asText(), ingredientNode.get("variation").asText()).isEmpty()){
                     // Nutrients:
                     ObjectNode nutrientsNode = (ObjectNode) contentNode.get("nutrientsDto");
                     if (nutrientsNode.isEmpty()) {
-                        throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                        throw new OpenAiException("Antwort von OpenAI für Nährstoffe ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut.");
                     }
 
                     ObjectNode nutrientNode = (ObjectNode) nutrientsNode.get("energyKcal");
                     if ( nutrientsNode.get("energyKcal") == null) {
-                        throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                        throw new OpenAiException("Antwort von OpenAI für Nährstoffe ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut.");
                     }
                     if ( nutrientNode.isEmpty()) {
-                        throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                        throw new OpenAiException("Antwort von OpenAI für Nährstoffe ist leer oder unbrauchbar. Änderne die Anfrage und versuche es erneut.");
                     }
 
                     String nutrientsId = serviceId.generateId();
                     nutrientsNode.put("id", nutrientsId);
+                    Nutrients nutrients;
                     try {
-                        Nutrients nutrients = objectMapper.treeToValue(nutrientsNode, Nutrients.class);
-                        nutrientService.addNutrients(nutrients);
+                        nutrients = objectMapper.treeToValue(nutrientsNode, Nutrients.class);
                     } catch (JsonProcessingException e) {
-                        throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Nährstoffe ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                        throw new OpenAiException("Antwort von OpenAI für Nährstoffe ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
                     }
+                    nutrientService.addNutrients(nutrients);
 
                     // Ingredient:
                     String slug = serviceId.generateSlug(ingredientNode.get("product").asText() + "-" + ingredientNode.get("variation").asText());
@@ -129,13 +132,15 @@ public class IngredientService {
                     ingredientNode.put("slug", slug);
                     ingredientNode.put("nutrientsId", nutrientsId);
 
+                    Ingredient ingredient;
                     try {
-                        Ingredient ingredient = objectMapper.treeToValue(ingredientNode, Ingredient.class);
-                        ingredientRepository.save(ingredient);
-                        return ingredient;
+                        ingredient = objectMapper.treeToValue(ingredientNode, Ingredient.class);
                     } catch (JsonProcessingException e) {
-                        throw new OpenAiNotFoundIngredientException("Antwort von OpenAI für Zutat ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
+                        throw new OpenAiException("Antwort von OpenAI für Zutat ist unbrauchbar. Änderne die Anfrage und versuche es erneut.");
                     }
+
+                    ingredientRepository.save(ingredient);
+                    return ingredient;
                 } else {
                     throw new DuplicateKeyException("Error: Eine Zutat mit dieser Produkt-Variation existiert bereits.");
                 }

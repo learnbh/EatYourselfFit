@@ -14,17 +14,56 @@ public class IngredientCreateFakeData {
             "g",
             7.99
     );
+    public static final String wrongIngredientUnit = """
+            {
+                "ingredientDto": {
+                     "product": "Apfel",
+                     "variation": "Getrocknet",
+                     "quantity": 100,
+                     "unit": "ml"
+                },
+                "nutrientsDto": {
+                    "energyKcal": 52
+                }
+            }
+        """;
+    public static final String wrongIngredientQuantity = """
+            {
+                "ingredientDto": {
+                     "product": "Apfel",
+                     "variation": "Getrocknet",
+                     "quantity": 500,
+                     "unit": "ml"
+                },
+                "nutrientsDto": {
+                    "energyKcal": 52
+                }
+            }
+        """;
+    public static final String wrongNutrientsEnergyKcal = """
+            {
+                "ingredientDto": {
+                     "product": "Apfel",
+                     "variation": "Getrocknet",
+                     "quantity": 100,
+                     "unit": "g"
+                },
+                "nutrientsDto": {
+                    "energyKcal": 52
+                }
+            }
+        """;
     public final static Nutrients nutrients = new Nutrients(
             "nutrientId",
             new Nutrient("Energie",MACRONUTRIENT,250.0,"kcal"),
-            new Nutrient("Energie",MACRONUTRIENT,250.0,"kJ"),
-            new Nutrient("Fett",MACRONUTRIENT,250.0,"g"),
-            new Nutrient("Eiweiß",MACRONUTRIENT,250.0,"g"),
-            new Nutrient("Kohlenhydrate",MACRONUTRIENT,250.0,"g"),
-            new Nutrient("Ballaststoffe",MACRONUTRIENT,250.0,"g"),
-            new Nutrient("Wasser",MACRONUTRIENT,250.0,"g"),
-            new Nutrient("Vitamin A",MACRONUTRIENT,250.0,"µg"),
-            new Nutrient("Vitamin B1",MACRONUTRIENT,250.0,"µg"),
+            new Nutrient("Energie",MACRONUTRIENT,1046.0,"kJ"),
+            new Nutrient("Fett",MACRONUTRIENT,20.0,"g"),
+            new Nutrient("Eiweiß",MACRONUTRIENT,26.0,"g"),
+            new Nutrient("Kohlenhydrate",MACRONUTRIENT,0.0,"g"),
+            new Nutrient("Ballaststoffe",MACRONUTRIENT,0.0,"g"),
+            new Nutrient("Wasser",MACRONUTRIENT,54.0,"g"),
+            new Nutrient("Vitamin A",MACRONUTRIENT,0.0,"µg"),
+            new Nutrient("Vitamin B1",MACRONUTRIENT,0.07,"µg"),
             new Nutrient("Vitamin B2",MACRONUTRIENT,250.0,"µg"),
             new Nutrient("Vitamin B3",MACRONUTRIENT,250.0,"µg"),
             new Nutrient("Vitamin B5",MACRONUTRIENT,250.0,"µg"),
@@ -126,7 +165,7 @@ public class IngredientCreateFakeData {
             nutrients.serin()
     };
 
-    public static final String ingredientResponseTest = """
+    public static final String correctResponse = """
         {
             "ingredientDto": {
                 "product": "Rindfleisch",
@@ -193,279 +232,279 @@ public class IngredientCreateFakeData {
                 "vitaminB2": {
                 "name": "Vitamin B2",
                         "type": "VITAMIN",
-                        "quantity": 0.2,
+                        "quantity": 250,
                         "unit": "mg"
                 },
                 "vitaminB3": {
                 "name": "Vitamin B3",
                         "type": "VITAMIN",
-                        "quantity": 5.5,
+                        "quantity": 250,
                         "unit": "mg"
                 },
                 "vitaminB5": {
                 "name": "Vitamin B5",
                         "type": "VITAMIN",
-                        "quantity": 0.7,
+                        "quantity": 250,
                         "unit": "mg"
                 },
                 "vitaminB6": {
                 "name": "Vitamin B6",
                         "type": "VITAMIN",
-                        "quantity": 0.5,
+                        "quantity": 250,
                         "unit": "mg"
                 },
                 "vitaminB7": {
                 "name": "Vitamin B7",
                         "type": "VITAMIN",
-                        "quantity": 0,
+                        "quantity": 250,
                         "unit": "µg"
                 },
                 "vitaminB9": {
                 "name": "Vitamin B9",
                         "type": "VITAMIN",
-                        "quantity": 6,
+                        "quantity": 250,
                         "unit": "µg"
                 },
                 "vitaminB12": {
                 "name": "Vitamin B12",
                         "type": "VITAMIN",
-                        "quantity": 2.5,
+                        "quantity": 250,
                         "unit": "µg"
                 },
                 "vitaminC": {
                 "name": "Vitamin C",
                         "type": "VITAMIN",
-                        "quantity": 0,
+                        "quantity": 250,
                         "unit": "mg"
                 },
                 "vitaminD": {
                 "name": "Vitamin D",
                         "type": "VITAMIN",
-                        "quantity": 0,
+                        "quantity": 250,
                         "unit": "µg"
                 },
                 "vitaminE": {
                 "name": "Vitamin E",
                         "type": "VITAMIN",
-                        "quantity": 0.2,
+                        "quantity": 250,
                         "unit": "mg"
                 },
                 "vitaminK": {
                 "name": "Vitamin K",
                         "type": "VITAMIN",
-                        "quantity": 0,
+                        "quantity": 250,
                         "unit": "µg"
                 },
                 "salt": {
                 "name": "Salz",
                         "type": "MAJORELEMENT",
-                        "quantity": 0.1,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "pral": {
                 "name": "PRAL",
                         "type": "MAJORELEMENT",
-                        "quantity": 0,
+                        "quantity": 250,
                         "unit": "mg"
                 },
                 "sodium": {
                 "name": "Natrium",
                         "type": "MAJORELEMENT",
-                        "quantity": 0.04,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "potassium": {
                 "name": "Kalium",
                         "type": "MAJORELEMENT",
-                        "quantity": 330,
+                        "quantity": 250,
                         "unit": "mg"
                 },
                 "calcium": {
                 "name": "Kalzium",
                         "type": "MAJORELEMENT",
-                        "quantity": 10,
+                        "quantity": 250,
                         "unit": "mg"
                 },
                 "magnesium": {
                 "name": "Magnesium",
                         "type": "MAJORELEMENT",
-                        "quantity": 20,
+                        "quantity": 250,
                         "unit": "mg"
                 },
                 "phosphorus": {
                 "name": "Phosphor",
                         "type": "MAJORELEMENT",
-                        "quantity": 180,
+                        "quantity": 250,
                         "unit": "mg"
                 },
                 "sulfur": {
                 "name": "Schwefel",
                         "type": "MAJORELEMENT",
-                        "quantity": 0,
+                        "quantity": 250,
                         "unit": "mg"
                 },
                 "chloride": {
                 "name": "Chlorid",
                         "type": "MAJORELEMENT",
-                        "quantity": 0.1,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "iron": {
                 "name": "Eisen",
                         "type": "TRACEELEMENT",
-                        "quantity": 2.5,
+                        "quantity": 250,
                         "unit": "mg"
                 },
                 "zinc": {
                 "name": "Zink",
                         "type": "TRACEELEMENT",
-                        "quantity": 5,
+                        "quantity": 250,
                         "unit": "mg"
                 },
                 "copper": {
                 "name": "Kupfer",
                         "type": "TRACEELEMENT",
-                        "quantity": 0.1,
+                        "quantity": 250,
                         "unit": "mg"
                 },
                 "manganese": {
                 "name": "Mangan",
                         "type": "TRACEELEMENT",
-                        "quantity": 0.01,
+                        "quantity": 250,
                         "unit": "mg"
                 },
                 "fluoride": {
                 "name": "Fluorid",
                         "type": "TRACEELEMENT",
-                        "quantity": 0,
+                        "quantity": 250,
                         "unit": "mg"
                 },
                 "ioide": {
                 "name": "Jod",
                         "type": "TRACEELEMENT",
-                        "quantity": 0,
+                        "quantity": 250,
                         "unit": "µg"
                 },
                 "isoleucin": {
                 "name": "Isoleucin",
                         "type": "ESSENTIALAMINOACID",
-                        "quantity": 1.5,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "leucin": {
                 "name": "Leucin",
                         "type": "ESSENTIALAMINOACID",
-                        "quantity": 2.5,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "lysin": {
                 "name": "Lysin",
                         "type": "ESSENTIALAMINOACID",
-                        "quantity": 2.2,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "methionin": {
                 "name": "Methionin",
                         "type": "ESSENTIALAMINOACID",
-                        "quantity": 0.9,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "cystein": {
                 "name": "Cystein",
                         "type": "ESSENTIALAMINOACID",
-                        "quantity": 0.4,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "phenylalanin": {
                 "name": "Phenylalanin",
                         "type": "ESSENTIALAMINOACID",
-                        "quantity": 1.0,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "tyrosin": {
                 "name": "Tyrosin",
                         "type": "ESSENTIALAMINOACID",
-                        "quantity": 0.5,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "threonin": {
                 "name": "Threonin",
                         "type": "ESSENTIALAMINOACID",
-                        "quantity": 1.0,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "tryptophan": {
                 "name": "Tryptophan",
                         "type": "ESSENTIALAMINOACID",
-                        "quantity": 0.3,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "valin": {
                 "name": "Valin",
                         "type": "ESSENTIALAMINOACID",
-                        "quantity": 1.5,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "arginin": {
                 "name": "Arginin",
                         "type": "ESSENTIALAMINOACID",
-                        "quantity": 1.0,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "histidin": {
                 "name": "Histidin",
                         "type": "ESSENTIALAMINOACID",
-                        "quantity": 0.5,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "alanin": {
                 "name": "Alanin",
                         "type": "AMINOACID",
-                        "quantity": 1.5,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "asparaginacid": {
                 "name": "Asparagin",
                         "type": "AMINOACID",
-                        "quantity": 1.0,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "glutaminacid": {
                 "name": "Glutamin",
                         "type": "AMINOACID",
-                        "quantity": 3.0,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "glycin": {
                 "name": "Glycin",
                         "type": "AMINOACID",
-                        "quantity": 1.0,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "prolin": {
                 "name": "Prolin",
                         "type": "AMINOACID",
-                        "quantity": 1.0,
+                        "quantity": 250,
                         "unit": "g"
                 },
                 "serin": {
                 "name": "Serin",
                         "type": "AMINOACID",
-                        "quantity": 0.8,
+                        "quantity": 250,
                         "unit": "g"
                 }
             }
         }
         """;
 
-    public static final String ingredientResponseNutrientsWithInvalidNutrient = """
+    public static final String responseNutrientsWithInvalidNutrient = """
         {
             "ingredientDto": {
                 "product": "Rindfleisch",
                         "variation": "Rinderhack 20% Fett",
                         "quantity": 100,
                         "unit": "g",
-                        "prices": 7.99
+                        "price": 7.99
             },
             "nutrientsDto": {
                 "energyKcal": {
@@ -529,75 +568,41 @@ public class IngredientCreateFakeData {
         }
         """;
 
-    public static final String ingredientResponseNutrientsWithInvalidIngredient = """
+    public static final String responseWithoutNutrientsNode = """
         {
             "ingredientDto": {
                 "product": "Rindfleisch",
                         "variation": "Rinderhack 20% Fett",
                         "quantity": 100,
                         "unit": "g",
-                        "prices": 7.99
-            },
-            "nutrientsDto": {
-                "energyKcal": {
-                    "type": "MACRONUTRIENT",
-                    "quantity": 250,
-                    "unit": "kcal"
-                },
-                "energyKJ": "Energie",
-                "fat": "Fett",
-                "protein": "Eiweiß",
-                "carbohydrate": "Kohlenhydrate",
-                "fiber": "Ballaststoffe",
-                "water": "Wasser",
-                "vitaminA": "Vitamin A",
-                "vitaminB1": "Vitamin B1",
-                "vitaminB2": "Vitamin B2",
-                "vitaminB3": "Vitamin B3",
-                "vitaminB5": "Vitamin B5",
-                "vitaminB6": "Vitamin B6",
-                "vitaminB7": "Vitamin B7",
-                "vitaminB9": "Vitamin B9",
-                "vitaminB12": "Vitamin B12",
-                "vitaminC": "Vitamin C",
-                "vitaminD": "Vitamin D",
-                "vitaminE": "Vitamin E",
-                "vitaminK": "Vitamin K",
-                "salt": "Salz",
-                "pral": "PRAL",
-                "sodium": "Natrium",
-                "potassium": "Kalium",
-                "calcium": "Kalzium",
-                "magnesium": "Magnesium",
-                "phosphorus": "Phosphor",
-                "sulfur": "Schwefel",
-                "chloride": "Chlorid",
-                "iron": "Eisen",
-                "zinc": "Zink",
-                "copper": "Kupfer",
-                "manganese": "Mangan",
-                "fluoride": "Fluorid",
-                "ioide": "Jod",
-                "isoleucin": "Isoleucin",
-                "leucin": "Leucin",
-                "lysin": "Lysin",
-                "methionin": "Methionin",
-                "cystein": "Cystein",
-                "phenylalanin": "Phenylalanin",
-                "tyrosin": "Tyrosin",
-                "threonin": "Threonin",
-                "tryptophan": "Tryptophan",
-                "valin": "Valin",
-                "arginin": "Arginin",
-                "histidin": "Histidin",
-                "alanin": "Alanin",
-                "asparaginacid": "Asparagin",
-                "glutaminacid": "Glutamin",
-                "glycin": "Glycin",
-                "prolin": "Prolin",
-                "serin": "Serin"
+                        "price": 7.99
             }
         }
+        """;
+    public static final String responseWithEmptyNutrientsNode = """
+            {
+                "ingredientDto": {
+                     "product": "Apfel",
+                     "variation": "Getrocknet",
+                     "quantity": 100,
+                     "unit": "g"
+                },
+                "nutrientsDto": {}
+            }
+        """;
+    public static final String responseWithEmptyNutrientInNutrientsNode = """
+            {
+                "ingredientDto": {
+                     "product": "Apfel",
+                     "variation": "Getrocknet",
+                     "quantity": 100,
+                     "unit": "g"
+                },
+                "nutrientsDto": {
+                    "energyKcal": {
+                    }
+                }
+            }
         """;
 
     public static final String responseWithoutIngredientNode = """
