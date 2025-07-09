@@ -174,6 +174,159 @@ public class IngredientCreateFakeData {
                         "unit": "g",
                         "prices": 7.99
             },
+        }
+        """;
+
+    public static final String responseNutrientsWithInvalidNutrient = """
+        {
+            "ingredientDto": {
+                "product": "Rindfleisch",
+                        "variation": "Rinderhack 20% Fett",
+                        "quantity": 100,
+                        "unit": "g",
+                        "price": 7.99
+            },
+            "nutrientsDto": {
+                "energyKcal": {
+                    "type": "MACRONUTRIENT",
+                    "quantity": 250,
+                    "unit": "kcal"
+                },
+                "energyKJ": "Energie",
+                "fat": "Fett",
+                "protein": "Eiweiß",
+                "carbohydrate": "Kohlenhydrate",
+                "fiber": "Ballaststoffe",
+                "water": "Wasser",
+                "vitaminA": "Vitamin A",
+                "vitaminB1": "Vitamin B1",
+                "vitaminB2": "Vitamin B2",
+                "vitaminB3": "Vitamin B3",
+                "vitaminB5": "Vitamin B5",
+                "vitaminB6": "Vitamin B6",
+                "vitaminB7": "Vitamin B7",
+                "vitaminB9": "Vitamin B9",
+                "vitaminB12": "Vitamin B12",
+                "vitaminC": "Vitamin C",
+                "vitaminD": "Vitamin D",
+                "vitaminE": "Vitamin E",
+                "vitaminK": "Vitamin K",
+                "salt": "Salz",
+                "pral": "PRAL",
+                "sodium": "Natrium",
+                "potassium": "Kalium",
+                "calcium": "Kalzium",
+                "magnesium": "Magnesium",
+                "phosphorus": "Phosphor",
+                "sulfur": "Schwefel",
+                "chloride": "Chlorid",
+                "iron": "Eisen",
+                "zinc": "Zink",
+                "copper": "Kupfer",
+                "manganese": "Mangan",
+                "fluoride": "Fluorid",
+                "ioide": "Jod",
+                "isoleucin": "Isoleucin",
+                "leucin": "Leucin",
+                "lysin": "Lysin",
+                "methionin": "Methionin",
+                "cystein": "Cystein",
+                "phenylalanin": "Phenylalanin",
+                "tyrosin": "Tyrosin",
+                "threonin": "Threonin",
+                "tryptophan": "Tryptophan",
+                "valin": "Valin",
+                "arginin": "Arginin",
+                "histidin": "Histidin",
+                "alanin": "Alanin",
+                "asparaginacid": "Asparagin",
+                "glutaminacid": "Glutamin",
+                "glycin": "Glycin",
+                "prolin": "Prolin",
+                "serin": "Serin"
+            }
+        }
+        """;
+
+    public static final String responseWithoutNutrientsNode = """
+        {
+            "ingredientDto": {
+                "product": "Rindfleisch",
+                        "variation": "Rinderhack 20% Fett",
+                        "quantity": 100,
+                        "unit": "g",
+                        "price": 7.99
+            }
+        }
+        """;
+    public static final String responseWithEmptyNutrientsNode = """
+            {
+                "ingredientDto": {
+                     "product": "Apfel",
+                     "variation": "Getrocknet",
+                     "quantity": 100,
+                     "unit": "g"
+                },
+                "nutrientsDto": {}
+            }
+        """;
+    public static final String responseWithEmptyNutrientInNutrientsNode = """
+            {
+                "ingredientDto": {
+                     "product": "Apfel",
+                     "variation": "Getrocknet",
+                     "quantity": 100,
+                     "unit": "g"
+                },
+                "nutrientsDto": {
+                    "energyKcal": {
+                    }
+                }
+            }
+        """;
+    public static final String responseWithoutNutrientEnergyKcal = """
+            {
+                "ingredientDto": {
+                     "product": "Apfel",
+                     "variation": "Getrocknet",
+                     "quantity": 100,
+                     "unit": "g"
+                },
+                "nutrientsDto": {
+                    "prolin": {
+                    "name": "Prolin",
+                            "type": "AMINOACID",
+                            "quantity": 250,
+                            "unit": "g"
+                    },
+                    "serin": {
+                    "name": "Serin",
+                            "type": "AMINOACID",
+                            "quantity": 250,
+                            "unit": "g"
+                    }
+                }
+            }
+        """;
+
+    public static final String responseWithoutIngredientNode = """
+                        {
+                            "product": "Rindfleisch",
+                            "variation": "Rinderhack 20% Fett",
+                            "quantity": 100,
+                            "unit": "g",
+                            "prices": 7.99
+                        }
+            """;
+    public static final String responseWithInvalidIngredient = """
+        {
+            "ingredientDto": {
+                "product": "Rindfleisch",
+                "variation": "Rinderhack 20% Fett",
+                "quantity": 100,
+                "unit": "g",
+                "prices": "7.99"
+            },
             "nutrientsDto": {
                 "energyKcal": {
                 "name": "Energie",
@@ -495,121 +648,5 @@ public class IngredientCreateFakeData {
                 }
             }
         }
-        """;
-
-    public static final String responseNutrientsWithInvalidNutrient = """
-        {
-            "ingredientDto": {
-                "product": "Rindfleisch",
-                        "variation": "Rinderhack 20% Fett",
-                        "quantity": 100,
-                        "unit": "g",
-                        "price": 7.99
-            },
-            "nutrientsDto": {
-                "energyKcal": {
-                    "type": "MACRONUTRIENT",
-                    "quantity": 250,
-                    "unit": "kcal"
-                },
-                "energyKJ": "Energie",
-                "fat": "Fett",
-                "protein": "Eiweiß",
-                "carbohydrate": "Kohlenhydrate",
-                "fiber": "Ballaststoffe",
-                "water": "Wasser",
-                "vitaminA": "Vitamin A",
-                "vitaminB1": "Vitamin B1",
-                "vitaminB2": "Vitamin B2",
-                "vitaminB3": "Vitamin B3",
-                "vitaminB5": "Vitamin B5",
-                "vitaminB6": "Vitamin B6",
-                "vitaminB7": "Vitamin B7",
-                "vitaminB9": "Vitamin B9",
-                "vitaminB12": "Vitamin B12",
-                "vitaminC": "Vitamin C",
-                "vitaminD": "Vitamin D",
-                "vitaminE": "Vitamin E",
-                "vitaminK": "Vitamin K",
-                "salt": "Salz",
-                "pral": "PRAL",
-                "sodium": "Natrium",
-                "potassium": "Kalium",
-                "calcium": "Kalzium",
-                "magnesium": "Magnesium",
-                "phosphorus": "Phosphor",
-                "sulfur": "Schwefel",
-                "chloride": "Chlorid",
-                "iron": "Eisen",
-                "zinc": "Zink",
-                "copper": "Kupfer",
-                "manganese": "Mangan",
-                "fluoride": "Fluorid",
-                "ioide": "Jod",
-                "isoleucin": "Isoleucin",
-                "leucin": "Leucin",
-                "lysin": "Lysin",
-                "methionin": "Methionin",
-                "cystein": "Cystein",
-                "phenylalanin": "Phenylalanin",
-                "tyrosin": "Tyrosin",
-                "threonin": "Threonin",
-                "tryptophan": "Tryptophan",
-                "valin": "Valin",
-                "arginin": "Arginin",
-                "histidin": "Histidin",
-                "alanin": "Alanin",
-                "asparaginacid": "Asparagin",
-                "glutaminacid": "Glutamin",
-                "glycin": "Glycin",
-                "prolin": "Prolin",
-                "serin": "Serin"
-            }
-        }
-        """;
-
-    public static final String responseWithoutNutrientsNode = """
-        {
-            "ingredientDto": {
-                "product": "Rindfleisch",
-                        "variation": "Rinderhack 20% Fett",
-                        "quantity": 100,
-                        "unit": "g",
-                        "price": 7.99
-            }
-        }
-        """;
-    public static final String responseWithEmptyNutrientsNode = """
-            {
-                "ingredientDto": {
-                     "product": "Apfel",
-                     "variation": "Getrocknet",
-                     "quantity": 100,
-                     "unit": "g"
-                },
-                "nutrientsDto": {}
-            }
-        """;
-    public static final String responseWithEmptyNutrientInNutrientsNode = """
-            {
-                "ingredientDto": {
-                     "product": "Apfel",
-                     "variation": "Getrocknet",
-                     "quantity": 100,
-                     "unit": "g"
-                },
-                "nutrientsDto": {
-                    "energyKcal": {
-                    }
-                }
-            }
-        """;
-
-    public static final String responseWithoutIngredientNode = """
-                        { "product": "Rindfleisch",
-                        "variation": "Rinderhack 20% Fett",
-                        "quantity": 100,
-                        "unit": "g",
-                        "prices": 7.99}
-            """;
+    """;
 }
