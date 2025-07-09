@@ -174,6 +174,326 @@ public class IngredientCreateFakeData {
                         "unit": "g",
                         "prices": 7.99
             },
+            "nutrientsDto": {
+                "energyKcal": {
+                "name": "Energie",
+                        "type": "MACRONUTRIENT",
+                        "quantity": 250,
+                        "unit": "kcal"
+                },
+                "energyKJ": {
+                "name": "Energie",
+                        "type": "MACRONUTRIENT",
+                        "quantity": 1046,
+                        "unit": "kJ"
+                },
+                "fat": {
+                "name": "Fett",
+                        "type": "MACRONUTRIENT",
+                        "quantity": 20,
+                        "unit": "g"
+                },
+                "protein": {
+                "name": "Eiweiß",
+                        "type": "MACRONUTRIENT",
+                        "quantity": 26,
+                        "unit": "g"
+                },
+                "carbohydrate": {
+                "name": "Kohlenhydrate",
+                        "type": "MACRONUTRIENT",
+                        "quantity": 0,
+                        "unit": "g"
+                },
+                "fiber": {
+                "name": "Ballaststoffe",
+                        "type": "MACRONUTRIENT",
+                        "quantity": 0,
+                        "unit": "g"
+                },
+                "water": {
+                "name": "Wasser",
+                        "type": "MACRONUTRIENT",
+                        "quantity": 54,
+                        "unit": "g"
+                },
+                "vitaminA": {
+                "name": "Vitamin A",
+                        "type": "VITAMIN",
+                        "quantity": 0,
+                        "unit": "µg"
+                },
+                "vitaminB1": {
+                "name": "Vitamin B1",
+                        "type": "VITAMIN",
+                        "quantity": 0.07,
+                        "unit": "mg"
+                },
+                "vitaminB2": {
+                "name": "Vitamin B2",
+                        "type": "VITAMIN",
+                        "quantity": 250,
+                        "unit": "mg"
+                },
+                "vitaminB3": {
+                "name": "Vitamin B3",
+                        "type": "VITAMIN",
+                        "quantity": 250,
+                        "unit": "mg"
+                },
+                "vitaminB5": {
+                "name": "Vitamin B5",
+                        "type": "VITAMIN",
+                        "quantity": 250,
+                        "unit": "mg"
+                },
+                "vitaminB6": {
+                "name": "Vitamin B6",
+                        "type": "VITAMIN",
+                        "quantity": 250,
+                        "unit": "mg"
+                },
+                "vitaminB7": {
+                "name": "Vitamin B7",
+                        "type": "VITAMIN",
+                        "quantity": 250,
+                        "unit": "µg"
+                },
+                "vitaminB9": {
+                "name": "Vitamin B9",
+                        "type": "VITAMIN",
+                        "quantity": 250,
+                        "unit": "µg"
+                },
+                "vitaminB12": {
+                "name": "Vitamin B12",
+                        "type": "VITAMIN",
+                        "quantity": 250,
+                        "unit": "µg"
+                },
+                "vitaminC": {
+                "name": "Vitamin C",
+                        "type": "VITAMIN",
+                        "quantity": 250,
+                        "unit": "mg"
+                },
+                "vitaminD": {
+                "name": "Vitamin D",
+                        "type": "VITAMIN",
+                        "quantity": 250,
+                        "unit": "µg"
+                },
+                "vitaminE": {
+                "name": "Vitamin E",
+                        "type": "VITAMIN",
+                        "quantity": 250,
+                        "unit": "mg"
+                },
+                "vitaminK": {
+                "name": "Vitamin K",
+                        "type": "VITAMIN",
+                        "quantity": 250,
+                        "unit": "µg"
+                },
+                "salt": {
+                "name": "Salz",
+                        "type": "MAJORELEMENT",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "pral": {
+                "name": "PRAL",
+                        "type": "MAJORELEMENT",
+                        "quantity": 250,
+                        "unit": "mg"
+                },
+                "sodium": {
+                "name": "Natrium",
+                        "type": "MAJORELEMENT",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "potassium": {
+                "name": "Kalium",
+                        "type": "MAJORELEMENT",
+                        "quantity": 250,
+                        "unit": "mg"
+                },
+                "calcium": {
+                "name": "Kalzium",
+                        "type": "MAJORELEMENT",
+                        "quantity": 250,
+                        "unit": "mg"
+                },
+                "magnesium": {
+                "name": "Magnesium",
+                        "type": "MAJORELEMENT",
+                        "quantity": 250,
+                        "unit": "mg"
+                },
+                "phosphorus": {
+                "name": "Phosphor",
+                        "type": "MAJORELEMENT",
+                        "quantity": 250,
+                        "unit": "mg"
+                },
+                "sulfur": {
+                "name": "Schwefel",
+                        "type": "MAJORELEMENT",
+                        "quantity": 250,
+                        "unit": "mg"
+                },
+                "chloride": {
+                "name": "Chlorid",
+                        "type": "MAJORELEMENT",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "iron": {
+                "name": "Eisen",
+                        "type": "TRACEELEMENT",
+                        "quantity": 250,
+                        "unit": "mg"
+                },
+                "zinc": {
+                "name": "Zink",
+                        "type": "TRACEELEMENT",
+                        "quantity": 250,
+                        "unit": "mg"
+                },
+                "copper": {
+                "name": "Kupfer",
+                        "type": "TRACEELEMENT",
+                        "quantity": 250,
+                        "unit": "mg"
+                },
+                "manganese": {
+                "name": "Mangan",
+                        "type": "TRACEELEMENT",
+                        "quantity": 250,
+                        "unit": "mg"
+                },
+                "fluoride": {
+                "name": "Fluorid",
+                        "type": "TRACEELEMENT",
+                        "quantity": 250,
+                        "unit": "mg"
+                },
+                "ioide": {
+                "name": "Jod",
+                        "type": "TRACEELEMENT",
+                        "quantity": 250,
+                        "unit": "µg"
+                },
+                "isoleucin": {
+                "name": "Isoleucin",
+                        "type": "ESSENTIALAMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "leucin": {
+                "name": "Leucin",
+                        "type": "ESSENTIALAMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "lysin": {
+                "name": "Lysin",
+                        "type": "ESSENTIALAMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "methionin": {
+                "name": "Methionin",
+                        "type": "ESSENTIALAMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "cystein": {
+                "name": "Cystein",
+                        "type": "ESSENTIALAMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "phenylalanin": {
+                "name": "Phenylalanin",
+                        "type": "ESSENTIALAMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "tyrosin": {
+                "name": "Tyrosin",
+                        "type": "ESSENTIALAMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "threonin": {
+                "name": "Threonin",
+                        "type": "ESSENTIALAMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "tryptophan": {
+                "name": "Tryptophan",
+                        "type": "ESSENTIALAMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "valin": {
+                "name": "Valin",
+                        "type": "ESSENTIALAMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "arginin": {
+                "name": "Arginin",
+                        "type": "ESSENTIALAMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "histidin": {
+                "name": "Histidin",
+                        "type": "ESSENTIALAMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "alanin": {
+                "name": "Alanin",
+                        "type": "AMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "asparaginacid": {
+                "name": "Asparagin",
+                        "type": "AMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "glutaminacid": {
+                "name": "Glutamin",
+                        "type": "AMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "glycin": {
+                "name": "Glycin",
+                        "type": "AMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "prolin": {
+                "name": "Prolin",
+                        "type": "AMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                },
+                "serin": {
+                "name": "Serin",
+                        "type": "AMINOACID",
+                        "quantity": 250,
+                        "unit": "g"
+                }
+            }
         }
         """;
 
