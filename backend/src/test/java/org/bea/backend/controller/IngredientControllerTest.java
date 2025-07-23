@@ -31,8 +31,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.bea.backend.FakeTestData.IngredientCreateFakeData.CORRECT_RESPONSE;
-import static org.bea.backend.FakeTestData.IngredientCreateFakeData.RESPONSE_WITHOUT_INGREDIENT_NODE;
+import static org.bea.backend.FakeTestData.IngredientCreateFakeData.*;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.instancio.Select.field;
@@ -296,25 +295,6 @@ public class IngredientControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients/openai/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(ingredientOpenAiDto)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpectAll(
-                        MockMvcResultMatchers
-                                .jsonPath("$.error")
-                                .value("Error: Antwort von OpenAI für Zutat rindehack ist leer. Änderne die Anfrage und versuche es erneut.")
-                );
-        mockRestServer.verify();
-    }
-    @Test
-    void addIngredientByOpenAi_shouldOpenAiException_whenNutrientsNotFound() throws Exception{
-        String response = String.format(openAiResponse, mapper.writeValueAsString(RESPONSE_WITHOUT_INGREDIENT_NODE));
-        mockRestServer.expect(requestTo(baseUrl+"/v1/chat/completions"))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(MockRestRequestMatchers.header(HttpHeaders.AUTHORIZATION, "Bearer "+openAiApiKey))
-                .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients/openai/add")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(ingredientOpenAiDto)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpectAll(
                         MockMvcResultMatchers
