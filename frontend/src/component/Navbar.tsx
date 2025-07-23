@@ -17,6 +17,7 @@ export default function Navbar(){
                 <li><Link to="/">Start</Link></li>
                 <li><Link to="/recipe">Rezepte</Link></li>
                 <li><Link to="/recipeplan">Rezepte erstellen ({recipeItems.length})</Link></li>
+                <li><Link to="/job/migrate/slugs">Jobs</Link></li>
             </ul>
             <div className={`nav-links ${!open ? 'open' : ''}`}>
                 <Link className="h-5" to="/recipe"><GiCook style = {{ width: "inherit", height:"inherit"}} /></Link>

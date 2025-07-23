@@ -60,11 +60,13 @@ button:hover{
   border-radius:var(--border-site-radius);
   box-shadow: 0 2px 8px var(--border-site-color);
 }
-.a {
+
+a {
   text-decoration: none;
   font-weight: 500;
   color: var(--text);
 }
+
 .app-container {
   max-width: 960px;
   margin: 0 auto;
