@@ -14,7 +14,7 @@ public class IngredientCreateFakeData {
             "g",
             7.99
     );
-    public static final String wrongIngredientUnit = """
+    public final static String wrongIngredientUnit = """
             {
                 "ingredientDto": {
                      "product": "Apfel",
@@ -27,7 +27,7 @@ public class IngredientCreateFakeData {
                 }
             }
         """;
-    public static final String wrongIngredientQuantity = """
+    public final static String wrongIngredientQuantity = """
             {
                 "ingredientDto": {
                      "product": "Apfel",
@@ -40,7 +40,7 @@ public class IngredientCreateFakeData {
                 }
             }
         """;
-    public static final String wrongNutrientsEnergyKcal = """
+    public final static String wrongNutrientsEnergyKcal = """
             {
                 "ingredientDto": {
                      "product": "Apfel",
@@ -165,7 +165,7 @@ public class IngredientCreateFakeData {
             nutrients.serin()
     };
 
-    public static final String correctResponse = """
+    public final static String correctResponse = """
         {
             "ingredientDto": {
                 "product": "Rindfleisch",
@@ -497,7 +497,7 @@ public class IngredientCreateFakeData {
         }
         """;
 
-    public static final String responseNutrientsWithInvalidNutrient = """
+    public final static String responseNutrientsWithInvalidNutrient = """
         {
             "ingredientDto": {
                 "product": "Rindfleisch",
@@ -568,7 +568,7 @@ public class IngredientCreateFakeData {
         }
         """;
 
-    public static final String responseWithoutNutrientsNode = """
+    public final static String responseWithoutNutrientsNode = """
         {
             "ingredientDto": {
                 "product": "Rindfleisch",
@@ -579,7 +579,7 @@ public class IngredientCreateFakeData {
             }
         }
         """;
-    public static final String responseWithEmptyNutrientsNode = """
+    public final static String responseWithEmptyNutrientsNode = """
             {
                 "ingredientDto": {
                      "product": "Apfel",
@@ -590,7 +590,7 @@ public class IngredientCreateFakeData {
                 "nutrientsDto": {}
             }
         """;
-    public static final String responseWithEmptyNutrientInNutrientsNode = """
+    public final static String responseWithEmptyNutrientInNutrientsNode = """
             {
                 "ingredientDto": {
                      "product": "Apfel",
@@ -604,7 +604,7 @@ public class IngredientCreateFakeData {
                 }
             }
         """;
-    public static final String responseWithoutNutrientEnergyKcal = """
+    public final static String responseWithoutNutrientEnergyKcal = """
             {
                 "ingredientDto": {
                      "product": "Apfel",
@@ -629,7 +629,7 @@ public class IngredientCreateFakeData {
             }
         """;
 
-    public static final String responseWithoutIngredientNode = """
+    public final static String responseWithoutIngredientNode = """
                         {
                             "product": "Rindfleisch",
                             "variation": "Rinderhack 20% Fett",
@@ -638,7 +638,7 @@ public class IngredientCreateFakeData {
                             "prices": 7.99
                         }
             """;
-    public static final String responseWithInvalidIngredient = """
+    public final static String responseWithInvalidIngredient = """
         {
             "ingredientDto": {
                 "product": "Rindfleisch",
