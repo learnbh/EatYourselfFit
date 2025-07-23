@@ -106,16 +106,16 @@ class IngredientServiceTest {
         milkDto = new IngredientDto("milk", "low fat", 100.0, "ml", 1.29, "egal");
         // OpenAi
         ingredientOpenAiDto = new IngredientOpenAiDto("rindehack", "");
-        correctResponse = IngredientCreateFakeData.correctResponse;
-        responseWrongIngredientUnit = IngredientCreateFakeData.wrongIngredientUnit;
-        responseWrongIngredientQuantity = IngredientCreateFakeData.wrongIngredientQuantity;
-        responseWrongNutrientsEnergyKcal = IngredientCreateFakeData.wrongNutrientsEnergyKcal;
-        responseNutrientsWithInvalidNutrient = IngredientCreateFakeData.responseNutrientsWithInvalidNutrient;
-        responseWithoutNutrientsNode = IngredientCreateFakeData.responseWithoutNutrientsNode;
-        responseWithEmptyNutrientsNode = IngredientCreateFakeData.responseWithEmptyNutrientsNode;
-        responseWithEmptyNutrientInNutrientsNode = IngredientCreateFakeData.responseWithEmptyNutrientInNutrientsNode;
-        responseWithoutNutrientEnergyKcal = IngredientCreateFakeData.responseWithoutNutrientEnergyKcal;
-        responseWithInvalidIngredient = IngredientCreateFakeData.responseWithInvalidIngredient;
+        correctResponse = IngredientCreateFakeData.CORRECT_RESPONSE;
+        responseWrongIngredientUnit = IngredientCreateFakeData.WRONG_INGREDIENT_UNIT;
+        responseWrongIngredientQuantity = IngredientCreateFakeData.WRONG_INGREDIENT_QUANTITY;
+        responseWrongNutrientsEnergyKcal = IngredientCreateFakeData.WRONG_NUTRIENTS_ENERGY_KCAL;
+        responseNutrientsWithInvalidNutrient = IngredientCreateFakeData.RESPONSE_NUTRIENTS_WITH_INVALID_NUTRIENT;
+        responseWithoutNutrientsNode = IngredientCreateFakeData.RESPONSE_WITHOUT_NUTRIENTS_NODE;
+        responseWithEmptyNutrientsNode = IngredientCreateFakeData.RESPONSE_WITH_EMPTY_NUTRIENTS_NODE;
+        responseWithEmptyNutrientInNutrientsNode = IngredientCreateFakeData.RESPONSE_WITH_EMPTY_NUTRIENT_IN_NUTRIENTS_NODE;
+        responseWithoutNutrientEnergyKcal = IngredientCreateFakeData.RESPONSE_WITHOUT_NUTRIENT_ENERGY_KCAL;
+        responseWithInvalidIngredient = IngredientCreateFakeData.RESPONSE_WITH_INVALID_INGREDIENT;
     }
 
     @Test

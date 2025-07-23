@@ -7,14 +7,14 @@ import org.bea.backend.model.Nutrients;
 import static org.bea.backend.enums.NutrientType.MACRONUTRIENT;
 
 public class IngredientCreateFakeData {
-    public final static IngredientCreate ingredientCreate = new IngredientCreate(
+    public static final IngredientCreate ingredientCreate = new IngredientCreate(
             "Rindfleisch",
             "Rinderhack 20% Fett",
             100.0,
             "g",
             7.99
     );
-    public final static String wrongIngredientUnit = """
+    public static final String WRONG_INGREDIENT_UNIT = """
             {
                 "ingredientDto": {
                      "product": "Apfel",
@@ -27,7 +27,7 @@ public class IngredientCreateFakeData {
                 }
             }
         """;
-    public final static String wrongIngredientQuantity = """
+    public static final String WRONG_INGREDIENT_QUANTITY = """
             {
                 "ingredientDto": {
                      "product": "Apfel",
@@ -40,7 +40,7 @@ public class IngredientCreateFakeData {
                 }
             }
         """;
-    public final static String wrongNutrientsEnergyKcal = """
+    public static final String WRONG_NUTRIENTS_ENERGY_KCAL = """
             {
                 "ingredientDto": {
                      "product": "Apfel",
@@ -53,7 +53,7 @@ public class IngredientCreateFakeData {
                 }
             }
         """;
-    public final static Nutrients nutrients = new Nutrients(
+    public static final Nutrients nutrients = new Nutrients(
             "nutrientId",
             new Nutrient("Energie",MACRONUTRIENT,250.0,"kcal"),
             new Nutrient("Energie",MACRONUTRIENT,1046.0,"kJ"),
@@ -109,7 +109,7 @@ public class IngredientCreateFakeData {
             new Nutrient("Prolin",MACRONUTRIENT,250.0,"mg"),
             new Nutrient("Serin",MACRONUTRIENT,250.0,"mg")
     );
-    public final static Nutrient[] nutrientsArray = {
+    public static final Nutrient[] nutrientsArray = {
             nutrients.energyKcal(),
             nutrients.energyKJ(),
             nutrients.fat(),
@@ -165,7 +165,7 @@ public class IngredientCreateFakeData {
             nutrients.serin()
     };
 
-    public final static String correctResponse = """
+    public static final String CORRECT_RESPONSE = """
         {
             "ingredientDto": {
                 "product": "Rindfleisch",
@@ -497,7 +497,7 @@ public class IngredientCreateFakeData {
         }
         """;
 
-    public final static String responseNutrientsWithInvalidNutrient = """
+    public static final String RESPONSE_NUTRIENTS_WITH_INVALID_NUTRIENT = """
         {
             "ingredientDto": {
                 "product": "Rindfleisch",
@@ -568,7 +568,7 @@ public class IngredientCreateFakeData {
         }
         """;
 
-    public final static String responseWithoutNutrientsNode = """
+    public static final String RESPONSE_WITHOUT_NUTRIENTS_NODE = """
         {
             "ingredientDto": {
                 "product": "Rindfleisch",
@@ -579,7 +579,7 @@ public class IngredientCreateFakeData {
             }
         }
         """;
-    public final static String responseWithEmptyNutrientsNode = """
+    public static final String RESPONSE_WITH_EMPTY_NUTRIENTS_NODE = """
             {
                 "ingredientDto": {
                      "product": "Apfel",
@@ -590,7 +590,7 @@ public class IngredientCreateFakeData {
                 "nutrientsDto": {}
             }
         """;
-    public final static String responseWithEmptyNutrientInNutrientsNode = """
+    public static final String RESPONSE_WITH_EMPTY_NUTRIENT_IN_NUTRIENTS_NODE = """
             {
                 "ingredientDto": {
                      "product": "Apfel",
@@ -604,7 +604,7 @@ public class IngredientCreateFakeData {
                 }
             }
         """;
-    public final static String responseWithoutNutrientEnergyKcal = """
+    public static final String RESPONSE_WITHOUT_NUTRIENT_ENERGY_KCAL = """
             {
                 "ingredientDto": {
                      "product": "Apfel",
@@ -629,7 +629,7 @@ public class IngredientCreateFakeData {
             }
         """;
 
-    public final static String responseWithoutIngredientNode = """
+    public static final String RESPONSE_WITHOUT_INGREDIENT_NODE = """
                         {
                             "product": "Rindfleisch",
                             "variation": "Rinderhack 20% Fett",
@@ -638,7 +638,7 @@ public class IngredientCreateFakeData {
                             "prices": 7.99
                         }
             """;
-    public final static String responseWithInvalidIngredient = """
+    public static final String RESPONSE_WITH_INVALID_INGREDIENT = """
         {
             "ingredientDto": {
                 "product": "Rindfleisch",

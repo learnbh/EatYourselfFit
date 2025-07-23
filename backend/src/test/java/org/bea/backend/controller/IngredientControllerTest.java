@@ -31,8 +31,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.bea.backend.FakeTestData.IngredientCreateFakeData.correctResponse;
-import static org.bea.backend.FakeTestData.IngredientCreateFakeData.responseWithoutIngredientNode;
+import static org.bea.backend.FakeTestData.IngredientCreateFakeData.CORRECT_RESPONSE;
+import static org.bea.backend.FakeTestData.IngredientCreateFakeData.RESPONSE_WITHOUT_INGREDIENT_NODE;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.instancio.Select.field;
@@ -264,7 +264,7 @@ public class IngredientControllerTest {
     @Test
     void addIngredientByOpenAi_shouldAddCorrectIngredientAndTheirNutrients() throws Exception{
         // given
-        String response = String.format(openAiResponse,  mapper.writeValueAsString(correctResponse));
+        String response = String.format(openAiResponse,  mapper.writeValueAsString(CORRECT_RESPONSE));
         // when
         mockRestServer.expect(requestTo(baseUrl+"/v1/chat/completions"))
                 .andExpect(method(HttpMethod.POST))
@@ -287,7 +287,7 @@ public class IngredientControllerTest {
     }
     @Test
     void addIngredientByOpenAi_shouldThrowResponseStatusException_whenJsonIsWrong() throws Exception{
-        String response = String.format(openAiResponse, mapper.writeValueAsString(responseWithoutIngredientNode));
+        String response = String.format(openAiResponse, mapper.writeValueAsString(RESPONSE_WITHOUT_INGREDIENT_NODE));
         mockRestServer.expect(requestTo(baseUrl+"/v1/chat/completions"))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(MockRestRequestMatchers.header(HttpHeaders.AUTHORIZATION, "Bearer "+openAiApiKey))
@@ -306,7 +306,7 @@ public class IngredientControllerTest {
     }
     @Test
     void addIngredientByOpenAi_shouldOpenAiException_whenNutrientsNotFound() throws Exception{
-        String response = String.format(openAiResponse, mapper.writeValueAsString(responseWithoutIngredientNode));
+        String response = String.format(openAiResponse, mapper.writeValueAsString(RESPONSE_WITHOUT_INGREDIENT_NODE));
         mockRestServer.expect(requestTo(baseUrl+"/v1/chat/completions"))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(MockRestRequestMatchers.header(HttpHeaders.AUTHORIZATION, "Bearer "+openAiApiKey))
