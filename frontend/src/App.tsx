@@ -11,6 +11,7 @@ import Shoppinglist from "./page/shoppinglist.tsx";
 import IngredientDetails from "./page/ingredient_details.tsx";
 import IngredientCreate from "./page/ingredient_create.tsx";
 import RecipeDetails from "./page/recipe_details.tsx";
+import Jobs from "./page/jobs.tsx";
 
 function App() {
 
@@ -33,6 +34,7 @@ function App() {
                     <Route path="/ingredient/" element={<IngredientDetails/>}/>
                     <Route path="/ingredient/*" element={<Navigate to="/ingredient" />}/>
                     <Route path="/ingredient/add/:product" element={<IngredientCreate/>}/>
+                    <Route path="/job/migrate/slugs" element={<Jobs/>}/>
                 </Routes>
             </main>
             <footer>

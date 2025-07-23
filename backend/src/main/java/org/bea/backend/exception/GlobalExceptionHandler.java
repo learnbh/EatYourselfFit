@@ -68,8 +68,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(OpenAiNotFoundIngredientException.class)
-    public ResponseEntity<ExceptionMessage> handleOpenAiNotFoundIngredientException(OpenAiNotFoundIngredientException e) {
+    @ExceptionHandler(OpenAiException.class)
+    public ResponseEntity<ExceptionMessage> handleOpenAiNotFoundIngredientException(OpenAiException e) {
         ExceptionMessage error = new ExceptionMessage(
                 "Error: "+e.getMessage(),
                 Instant.now(),

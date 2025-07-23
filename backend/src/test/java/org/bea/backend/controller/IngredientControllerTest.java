@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bea.backend.FakeTestData.IngredientCreateFakeData;
 import org.bea.backend.model.*;
 import org.bea.backend.openai.IngredientOpenAiDto;
-import org.bea.backend.openai.OpenAiConfig;
 import org.bea.backend.repository.IngredientRepository;
 
 import org.bea.backend.repository.NutrientsRepository;
@@ -32,6 +31,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.bea.backend.FakeTestData.IngredientCreateFakeData.*;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.instancio.Select.field;
@@ -61,14 +61,15 @@ public class IngredientControllerTest {
 
     ObjectMapper mapper = new ObjectMapper();
 
-    Ingredient milkOrig = new Ingredient("milk", "milch", "fat", 90.0, "g", 1.09, "egal");
-    Ingredient milkFindByName = new Ingredient("milkFindByName", "milk", "Vollmilch", 90.0, "g", 1.09, "egal");
-    Ingredient milk = new Ingredient("milk", "milk", "low fat", 100.0, "ml", 1.29, "egal");
+    Ingredient milkOrig = new Ingredient("milk", "milch", "fat", "slug", 90.0, "g", 1.09, "egal");
+    Ingredient milkFindByName = new Ingredient("milkFindByName", "milk", "Vollmilch", "slug", 90.0, "g", 1.09, "egal");
+    Ingredient milk = new Ingredient("milk", "milk", "low fat", "slug", 100.0, "ml", 1.29, "egal");
     IngredientDto milkDto = new IngredientDto("milk", "low fat", 100.0, "ml", 1.29, "egal");
     IngredientDto milkDtoDuplicate = new IngredientDto("milk", "low fat", 100.0, "ml", 1.09, "good");
     IngredientDto milkDto2 = new IngredientDto("milk", "fat", 100.0, "ml", 1.59, "bad");
     IngredientDto invalidDtoMaxSize = new IngredientDto("", "low fat", 0.0, "", 1.29, "egal");
     IngredientDto invalidDtoNull = new IngredientDto(null, "low fat", null, null, 1.29, "egal");
+    IngredientDto ingredientDto = new IngredientDto("Rindfleisch", "Rinderhack 20% Fett",100.0,"g",7.99, "egal");
 
     IngredientProfile ingredientProfile = new IngredientProfile(
             IngredientCreateFakeData.ingredientCreate,
@@ -111,6 +112,7 @@ public class IngredientControllerTest {
             IngredientCreateFakeData.nutrientsArray
     );
 
+    // OpenAi
     IngredientOpenAiDto ingredientOpenAiDto = new IngredientOpenAiDto("rindehack", "");
     String openAiResponse = """
                 {
@@ -130,13 +132,13 @@ public class IngredientControllerTest {
     }
 
     @Test
-    public void getIngredients_shouldReturn_EmptyList_whenDbIsEmpty() throws Exception {
+    void getIngredients_shouldReturn_EmptyList_whenDbIsEmpty() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/eyf/ingredients"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("[]"));
     }
     @Test
-    public void getIngredients_shouldReturn_IngredientsList_whenDbIsNotEmpty() throws Exception {
+    void getIngredients_shouldReturn_IngredientsList_whenDbIsNotEmpty() throws Exception {
         // Given
         mockIngredientRepository.save(milk);
         List<Ingredient> expected = Collections.singletonList(milk);
@@ -180,7 +182,7 @@ public class IngredientControllerTest {
     }
 
     @Test
-    public void addIngredient_shouldThrowMethodArgumentNotValidException_forSizeAndMax_withInvalidIngredientCreate() throws Exception {
+    void addIngredient_shouldThrowMethodArgumentNotValidException_forSizeAndMax_withInvalidIngredientCreate() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(mapper.writeValueAsString(ingredientProfileMaxSize)))
@@ -197,7 +199,7 @@ public class IngredientControllerTest {
                 );
     }
     @Test
-    public void addIngredient_shouldRThrowMethodArgumentNotValidException_forNull_withInvalidIngredientCreate() throws Exception {
+    void addIngredient_shouldRThrowMethodArgumentNotValidException_forNull_withInvalidIngredientCreate() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(ingredientProfileNull)))
@@ -237,7 +239,7 @@ public class IngredientControllerTest {
     }
 
     @Test
-    public void addIngredient_shouldReturn_createdIngredient() throws Exception {
+    void addIngredient_shouldReturn_createdIngredient() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(ingredientProfile)))
@@ -261,19 +263,12 @@ public class IngredientControllerTest {
     @Test
     void addIngredientByOpenAi_shouldAddCorrectIngredientAndTheirNutrients() throws Exception{
         // given
-        String response = String.format(openAiResponse, mapper.writeValueAsString(OpenAiConfig.ingredientResponseTest));
-
-        IngredientDto ingredientDto = mapper
-                .readTree(OpenAiConfig.ingredientResponseTest)
-                .path("ingredientDto")
-                .traverse(mapper)
-                .readValueAs(IngredientDto.class);
-
+        String response = String.format(openAiResponse,  mapper.writeValueAsString(CORRECT_RESPONSE));
+        // when
         mockRestServer.expect(requestTo(baseUrl+"/v1/chat/completions"))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(MockRestRequestMatchers.header(HttpHeaders.AUTHORIZATION, "Bearer "+openAiApiKey))
                 .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
-
         mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients/openai/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(ingredientOpenAiDto)))
@@ -291,9 +286,7 @@ public class IngredientControllerTest {
     }
     @Test
     void addIngredientByOpenAi_shouldThrowResponseStatusException_whenJsonIsWrong() throws Exception{
-        String response = String.format(openAiResponse, mapper.writeValueAsString(OpenAiConfig.responseWithoutIngredientNode));
-
-        System.out.println(response);
+        String response = String.format(openAiResponse, mapper.writeValueAsString(RESPONSE_WITHOUT_INGREDIENT_NODE));
         mockRestServer.expect(requestTo(baseUrl+"/v1/chat/completions"))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(MockRestRequestMatchers.header(HttpHeaders.AUTHORIZATION, "Bearer "+openAiApiKey))
@@ -306,28 +299,7 @@ public class IngredientControllerTest {
                 .andExpectAll(
                         MockMvcResultMatchers
                                 .jsonPath("$.error")
-                                .value("Error: Antwort von OpenAI für Ingredient rindehack ist leer. Änderne die Anfrage und versuche es erneut.")
-                );
-        mockRestServer.verify();
-    }
-    @Test
-    void addIngredientByOpenAi_shouldOpenAiNotFoundIngredientException_whenNutrientsNotFound() throws Exception{
-        String response = String.format(openAiResponse, mapper.writeValueAsString(OpenAiConfig.responseWithoutIngredientNode));
-
-        System.out.println(response);
-        mockRestServer.expect(requestTo(baseUrl+"/v1/chat/completions"))
-                .andExpect(method(HttpMethod.POST))
-                .andExpect(MockRestRequestMatchers.header(HttpHeaders.AUTHORIZATION, "Bearer "+openAiApiKey))
-                .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients/openai/add")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(ingredientOpenAiDto)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpectAll(
-                        MockMvcResultMatchers
-                                .jsonPath("$.error")
-                                .value("Error: Antwort von OpenAI für Ingredient rindehack ist leer. Änderne die Anfrage und versuche es erneut.")
+                                .value("Error: Antwort von OpenAI für Zutat rindehack ist leer. Änderne die Anfrage und versuche es erneut.")
                 );
         mockRestServer.verify();
     }
@@ -364,7 +336,7 @@ public class IngredientControllerTest {
     @Test
     void getNutrientsDaily_shouldReturn_NutrientsDaily() throws Exception {
         // given
-        Ingredient ingredient = new Ingredient("ingredientId","Nährstoffe", "Täglicher Bedarf", 0.0, "g", 0.0,"nutrientId");
+        Ingredient ingredient = new Ingredient("ingredientId","Nährstoffe", "Täglicher Bedarf", "slug", 0.0, "g", 0.0,"nutrientId");
         Nutrients expected = Instancio.of(Nutrients.class)
                 .set(field(Nutrients::id), "nutrientId")
                 .create();

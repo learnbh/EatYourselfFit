@@ -42,10 +42,10 @@ class RecipeControllerTest {
         RecipeIngredient pasta = new RecipeIngredient("pasta", 1.0);
         RecipeIngredient tomato = new RecipeIngredient("tomato", 2.0);
 
-        recipeActual = new Recipe("recipeExpected", "Spaghetti", List.of(pasta));
-        recipeDublicateTitle = new Recipe("recipeDublicateTitle", "Spaghetti Napoli", List.of(pasta));
-        recipeExpected = new Recipe("recipeExpected", "Spaghetti Napoli", List.of(pasta, tomato));
-        recipeExpectedNoIngredient = new Recipe("recipeExpectedNoIngredient", "Mystery Dish", Collections.emptyList());
+        recipeActual = new Recipe("recipeExpected", "Spaghetti", "slug", List.of(pasta));
+        recipeDublicateTitle = new Recipe("recipeDublicateTitle", "Spaghetti Napoli", "slug", List.of(pasta));
+        recipeExpected = new Recipe("recipeExpected", "Spaghetti Napoli", "slug", List.of(pasta, tomato));
+        recipeExpectedNoIngredient = new Recipe("recipeExpectedNoIngredient", "Mystery Dish", "slug", Collections.emptyList());
 
         recipeDto = new RecipeDto(recipeExpected.title(), recipeExpected.recipeIngredients());
     }
@@ -135,7 +135,7 @@ class RecipeControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers
                         .jsonPath("$.error")
-                        .value("Error: Recipe with Id: " + recipeActual.id() + " not found"));
+                        .value("Error: Recipe with Id: " + recipeActual.id() + " not found."));
     }
 
     @Test
