@@ -119,12 +119,12 @@ class IngredientServiceTest {
     }
 
     @Test
-    public void getIngredients_shouldReturn_EmptyList_whenMongoCollectionIsEmpty(){
+    void getIngredients_shouldReturn_EmptyList_whenMongoCollectionIsEmpty(){
         assertEquals(Collections.emptyList(), ingredientService.getIngredients());
         Mockito.verify(mockIngredientRepository, Mockito.times(1)).findAll();
     }
     @Test
-    public void getIngredients_shouldReturn_IngredientsList_whenAtLeastOneIngredientIsPresent() {
+    void getIngredients_shouldReturn_IngredientsList_whenAtLeastOneIngredientIsPresent() {
         // given
         List<Ingredient> expected = Collections.singletonList(milk);
         // when
@@ -171,7 +171,7 @@ class IngredientServiceTest {
     }
 
     @Test
-    public void addIngredient_shouldReturn_createdIngredient() {
+    void addIngredient_shouldReturn_createdIngredient() {
         // when
         Mockito.when(mockServiceId
                 .generateId()
@@ -195,7 +195,7 @@ class IngredientServiceTest {
     }
     // addIngredientByOpenAi
     @Test
-    public void addIngredientByOpenAi_shouldAddCorrectIngredientAndTheirNutrients() throws JsonProcessingException {
+    void addIngredientByOpenAi_shouldAddCorrectIngredientAndTheirNutrients() throws JsonProcessingException {
         // given
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode contentNode = objectMapper.readTree(correctResponse);
@@ -249,7 +249,7 @@ class IngredientServiceTest {
     }
 
     @Test
-    public void addIngredientByOpenAi_shouldOpenAiException_whenNutrientsNotFound(){
+    void addIngredientByOpenAi_shouldOpenAiException_whenNutrientsNotFound(){
         // when
         Mockito.when(mockNutrientOpenAiService
                 .getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation())
@@ -265,7 +265,7 @@ class IngredientServiceTest {
     }
 
     @Test
-    public void addIngredientByOpenAi_shouldThrowOpenAiException_whenJsonIsWrong(){
+    void addIngredientByOpenAi_shouldThrowOpenAiException_whenJsonIsWrong(){
         // when
         Mockito.when(mockNutrientOpenAiService
                         .getNutrients(ingredientOpenAiDto.product(),ingredientOpenAiDto.variation())
@@ -285,7 +285,7 @@ class IngredientServiceTest {
     }
 
     @Test
-    public void addIngredientByOpenAi_shouldThrowOpenAiException_whenNoIngredientDtoInJson(){
+    void addIngredientByOpenAi_shouldThrowOpenAiException_whenNoIngredientDtoInJson(){
         // when
         Mockito.when(mockNutrientOpenAiService
                 .getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation())
@@ -299,7 +299,7 @@ class IngredientServiceTest {
                 );
     }
     @Test
-    public void addIngredientByOpenAi_shouldThrowOpenAiException_whenNoNutrientsDtoInJson(){
+    void addIngredientByOpenAi_shouldThrowOpenAiException_whenNoNutrientsDtoInJson(){
         // when
         Mockito.when(mockNutrientOpenAiService
                 .getNutrients(ingredientOpenAiDto.product(), ingredientOpenAiDto.variation())
@@ -311,7 +311,7 @@ class IngredientServiceTest {
     }
 
     @Test
-    public void addIngredientByOpenAi_shouldThrowOpenAiException_whenIngredientFieldQuantityIsInvalid() throws JsonProcessingException {
+    void addIngredientByOpenAi_shouldThrowOpenAiException_whenIngredientFieldQuantityIsInvalid() throws JsonProcessingException {
         // given
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode contentNode = objectMapper.readTree(responseWrongIngredientQuantity);
@@ -331,7 +331,7 @@ class IngredientServiceTest {
         Mockito.verify(mockObjectMapper, Mockito.times(1)).readTree(responseWrongIngredientQuantity);
     }
     @Test
-    public void addIngredientByOpenAi_shouldThrowOpenAiException_whenIngredientFieldUnitIsInvalid() throws JsonProcessingException {
+    void addIngredientByOpenAi_shouldThrowOpenAiException_whenIngredientFieldUnitIsInvalid() throws JsonProcessingException {
         // given
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode contentNode = objectMapper.readTree(responseWrongIngredientUnit);
@@ -352,7 +352,7 @@ class IngredientServiceTest {
     }
 
     @Test
-    public void addIngredientByOpenAi_shouldThrowOpenAiException_whenResponseContainsInvalidIngredient() throws JsonProcessingException {
+    void addIngredientByOpenAi_shouldThrowOpenAiException_whenResponseContainsInvalidIngredient() throws JsonProcessingException {
         // given
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode contentNode = objectMapper.readTree(responseWithInvalidIngredient);
@@ -381,7 +381,7 @@ class IngredientServiceTest {
     }
 
     @Test
-    public void addIngredientByOpenAi_shouldThrowOpenAiException_whenNutrientsDtoInResponseIsEmpty() throws JsonProcessingException {
+    void addIngredientByOpenAi_shouldThrowOpenAiException_whenNutrientsDtoInResponseIsEmpty() throws JsonProcessingException {
         // given
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode contentNode = objectMapper.readTree(responseWithEmptyNutrientsNode);
@@ -401,7 +401,7 @@ class IngredientServiceTest {
     }
 
     @Test
-    public void addIngredientByOpenAi_shouldThrowOpenAiException_whenNutrient_InNutrientsDtoOfResponseIsEmpty() throws JsonProcessingException {
+    void addIngredientByOpenAi_shouldThrowOpenAiException_whenNutrient_InNutrientsDtoOfResponseIsEmpty() throws JsonProcessingException {
         // given
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode contentNode = objectMapper.readTree(responseWithEmptyNutrientInNutrientsNode);
@@ -420,7 +420,7 @@ class IngredientServiceTest {
         Mockito.verify(mockObjectMapper, Mockito.times(1)).readTree(responseWithEmptyNutrientInNutrientsNode);
     }
     @Test
-    public void addIngredientByOpenAi_shouldThrowOpenAiException_whenNutrient_energyKcal_InNutrientsDtoOfResponseIsNull() throws JsonProcessingException {
+    void addIngredientByOpenAi_shouldThrowOpenAiException_whenNutrient_energyKcal_InNutrientsDtoOfResponseIsNull() throws JsonProcessingException {
         // given
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode contentNode = objectMapper.readTree(responseWithoutNutrientEnergyKcal);
@@ -440,7 +440,7 @@ class IngredientServiceTest {
     }
 
     @Test
-    public void addIngredientByOpenAi_shouldThrowOpenAiException_whenNutrientsDtoInResponseContainsInvalidNutrient() throws JsonProcessingException {
+    void addIngredientByOpenAi_shouldThrowOpenAiException_whenNutrientsDtoInResponseContainsInvalidNutrient() throws JsonProcessingException {
         // given
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode contentNode = objectMapper.readTree(responseNutrientsWithInvalidNutrient);
@@ -464,7 +464,7 @@ class IngredientServiceTest {
     }
 
     @Test
-    public void addIngredientByOpenAi_shouldThrowDuplicateKeyException_whenProductVariationFoundByOpenAiExists() throws JsonProcessingException {
+    void addIngredientByOpenAi_shouldThrowDuplicateKeyException_whenProductVariationFoundByOpenAiExists() throws JsonProcessingException {
         // given
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode contentNode = objectMapper.readTree(correctResponse);
@@ -503,7 +503,7 @@ class IngredientServiceTest {
         Mockito.verify(mockObjectMapper, Mockito.times(1)).readTree(correctResponse);
     }
     @Test
-    public void addIngredientByOpenAi_shouldThrowDuplicateKeyException_whenProductVariationExists() {
+    void addIngredientByOpenAi_shouldThrowDuplicateKeyException_whenProductVariationExists() {
         Mockito.when(mockIngredientRepository.getIngredientByProductAndVariationContainsIgnoreCase(
                 ingredientOpenAiDto.product(),
                 ingredientOpenAiDto.variation()
@@ -523,7 +523,7 @@ class IngredientServiceTest {
         Mockito.verify(mockIngredientRepository, Mockito.times(1)).save(milk);
     }
     @Test
-    public void updateIngredient_shouldThrowDuplicateKeyException_whenProductVariationExists(){
+    void updateIngredient_shouldThrowDuplicateKeyException_whenProductVariationExists(){
         // when
         Mockito.when(mockIngredientRepository
                 .getIngredientByProductAndVariationContainsIgnoreCase(milkDto.product(),milkDto.variation())
@@ -535,7 +535,7 @@ class IngredientServiceTest {
                 .getIngredientByProductAndVariationContainsIgnoreCase(milkDto.product(),milkDto.variation());
     }
     @Test
-    public void updateIngredient_should_updatedIngredient_whenProductVariationExists_AndMatchesWithTheGivenId() {
+    void updateIngredient_should_updatedIngredient_whenProductVariationExists_AndMatchesWithTheGivenId() {
         // when
         Mockito.when(mockIngredientRepository
                 .getIngredientByProductAndVariationContainsIgnoreCase(milkDto.product(),milkDto.variation())

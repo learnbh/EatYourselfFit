@@ -133,13 +133,13 @@ public class IngredientControllerTest {
     }
 
     @Test
-    public void getIngredients_shouldReturn_EmptyList_whenDbIsEmpty() throws Exception {
+    void getIngredients_shouldReturn_EmptyList_whenDbIsEmpty() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/eyf/ingredients"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("[]"));
     }
     @Test
-    public void getIngredients_shouldReturn_IngredientsList_whenDbIsNotEmpty() throws Exception {
+    void getIngredients_shouldReturn_IngredientsList_whenDbIsNotEmpty() throws Exception {
         // Given
         mockIngredientRepository.save(milk);
         List<Ingredient> expected = Collections.singletonList(milk);
@@ -183,7 +183,7 @@ public class IngredientControllerTest {
     }
 
     @Test
-    public void addIngredient_shouldThrowMethodArgumentNotValidException_forSizeAndMax_withInvalidIngredientCreate() throws Exception {
+    void addIngredient_shouldThrowMethodArgumentNotValidException_forSizeAndMax_withInvalidIngredientCreate() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(mapper.writeValueAsString(ingredientProfileMaxSize)))
@@ -200,7 +200,7 @@ public class IngredientControllerTest {
                 );
     }
     @Test
-    public void addIngredient_shouldRThrowMethodArgumentNotValidException_forNull_withInvalidIngredientCreate() throws Exception {
+    void addIngredient_shouldRThrowMethodArgumentNotValidException_forNull_withInvalidIngredientCreate() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(ingredientProfileNull)))
@@ -240,7 +240,7 @@ public class IngredientControllerTest {
     }
 
     @Test
-    public void addIngredient_shouldReturn_createdIngredient() throws Exception {
+    void addIngredient_shouldReturn_createdIngredient() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/eyf/ingredients")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(ingredientProfile)))
