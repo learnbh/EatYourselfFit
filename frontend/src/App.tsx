@@ -31,7 +31,7 @@ function App() {
                     <Route path="/recipeplan" element={ <Recipeplan /> }/>
                     <Route path="/weekplan" element={<Weekplan/>}/>
                     <Route path="/shoppinglist" element={<Shoppinglist/>}/>
-                    <Route path="/ingredient/" element={<IngredientDetails/>}/>
+                    <Route path="/ingredient" element={<IngredientDetails/>}/>
                     <Route path="/ingredient/*" element={<Navigate to="/ingredient" />}/>
                     <Route path="/ingredient/add/:product" element={<IngredientCreate/>}/>
                     <Route path="/job/migrate/slugs" element={<Jobs/>}/>

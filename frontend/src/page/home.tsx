@@ -7,10 +7,27 @@ import { GiCook } from "react-icons/gi";
 import { GiHotMeal } from "react-icons/gi";
 import { GrScheduleNew } from "react-icons/gr";
 import { GrSchedule } from "react-icons/gr";
+import {type ChangeEvent, useState} from "react";
 
 export default function Home(){
+    const [ingredientSearch, setIngredientSearch] = useState<string>("");
+
+    function handleChangeIngredient(e:ChangeEvent<HTMLInputElement>){
+        e.preventDefault();
+        setIngredientSearch( e.target.value)
+    }
     return(
         <>
+            <div className="flex flex-col">
+                <div className="flex flex-col">
+                    <input
+                        placeholder="Zutat suchen"
+                        value={ingredientSearch}
+                        name="addingredient"
+                        id="addingredient"
+                        onChange={handleChangeIngredient}
+                    />
+                </div>
             <div className="home">
                 <Tile to="/recipe"
                       title="Rezepte"
@@ -45,6 +62,7 @@ export default function Home(){
                       imgHeight="200"
                 />
             </div>
+        </div>
         </>
     )
 }
