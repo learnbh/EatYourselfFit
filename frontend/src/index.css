@@ -109,6 +109,10 @@ a {
   display: none;
 }
 
+.hamburger:hover{
+  border-width: 0;
+}
+
 .nav-links {
   list-style: none;
   display: flex;
