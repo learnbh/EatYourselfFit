@@ -120,7 +120,8 @@ export function handleAxiosFormError(
 ): {
     userMessage: string;
     logMessage: string;
-} {
+}
+{
     if (axios.isAxiosError(error)) {
         const response = error.response?.data;
         if (response?.messages || response?.error) {
