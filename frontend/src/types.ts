@@ -2,6 +2,7 @@ export type Ingredient = {
     id:string,
     product:string,
     variation:string,
+    slug:string,
     quantity:number,
     unit:string,
     prices:number,

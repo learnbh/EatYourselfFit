@@ -1,5 +1,5 @@
 import type {Ingredient} from "../types.ts";
-import IngredientSearch from "../component/IngredientSearch.tsx";
+import IngredientSearchResultRecipePlan from "../component/IngredientSearchResultRecipePlan.tsx";
 import {type ChangeEvent, useCallback, useEffect, useState} from "react";
 import axios from "axios";
 import IngredientNotFound from "../component/IngredientNotFound.tsx";
@@ -22,7 +22,6 @@ export default function AddRecipe_layout(props:Readonly<Props>) {
     const [ingredientsSearch, setIngredientsSearch] = useState<Ingredient[]>([]);
     const [ingredientNotFoundVisible, setIngredientNotFoundVisible] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
 
     const getDBData = useCallback(async (search:string) => {
         if(search.trim() === ""){
@@ -54,6 +53,7 @@ export default function AddRecipe_layout(props:Readonly<Props>) {
             setIsLoading(false);
         }
     }, [recipeItems]);
+
     const editIngredientGeneratedByOpenAi = useCallback(async (search:string) => {
         if(search.trim() === ""){
             setIngredientsSearch([]);
@@ -181,7 +181,7 @@ export default function AddRecipe_layout(props:Readonly<Props>) {
                         )}
                         {ingredientSearch !== "" && ingredientsSearch.length > 0 && (
                             ingredientsSearch.map((i:Ingredient) =>
-                                    <IngredientSearch
+                                    <IngredientSearchResultRecipePlan
                                         key={i.id}
                                         ingredient={i}
                                         addIngredientToRecipe={addIngredientToRecipe}
