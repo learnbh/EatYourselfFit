@@ -67,7 +67,7 @@ export default function Home(){
             await editIngredientGeneratedByOpenAi(ingredientSearch);
         } catch (error){
             if (axios.isAxiosError(error)) {
-                if (error.response && error.response.data.message) {
+                if (error.response?.data.message) {
                     console.error('Axios errors_:', error.response?.data || error.message);
                     alert(error.response.data.message);
                 } else {
@@ -111,8 +111,7 @@ export default function Home(){
                         ingredientsSearch.map((i:Ingredient) => <IngredientSearchResultItem
                                 key = {i.id}
                                 ingredient={i}
-                                children={null}
-                            />
+                            ></IngredientSearchResultItem>
                         )
                     )}
                 </div>
