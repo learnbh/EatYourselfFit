@@ -50,9 +50,13 @@ export default function Home(){
             }
         } catch (error){
             if (axios.isAxiosError(error)) {
-                console.error('Axios error:', error.response?.data || error.message);
+                if (error.response?.data.message) {
+                    console.error('Axios errors:', error.response?.data || error.message);
+                } else {
+                    console.error('Unexpected Axios error:', error);
+                }
             } else {
-                console.error('Unexpected error:', error);
+                console.log(error);
             }
         }finally {
             setIsLoading(false);
@@ -68,8 +72,7 @@ export default function Home(){
         } catch (error){
             if (axios.isAxiosError(error)) {
                 if (error.response?.data.message) {
-                    console.error('Axios errors_:', error.response?.data || error.message);
-                    alert(error.response.data.message);
+                    console.error('Axios errors:', error.response?.data || error.message);
                 } else {
                     console.log("error: "+error);
                     alert('Es konnten keine Nährstoffe gefunden werden. Änderne die Anfrage und versuche es erneut.');
