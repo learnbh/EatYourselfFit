@@ -1,53 +1,69 @@
 import type {Ingredient} from "../types.ts";
-//import {handleKeyDownNumber} from "../helper.ts";
-import HideDetailIdLink from "./HideDetailIdLink.tsx";
-import React, {useState} from "react";
-import AddButton from "./AddButton.tsx";
+import {type ChangeEvent, useCallback, useEffect, useState} from "react";
+import axios from "axios";
 
 type Props = {
-    ingredient:Ingredient,
-    addIngredientToRecipe:(ingredient:Ingredient) =>  void
-    removeIngredientFromRecipe: (ingredient:Ingredient) => void
-    handleQuantity:(ingredient:Ingredient) =>  void
+    placeholder: string
+    name:string
+    setSearchResult: (result: Ingredient[]) => void
+    setSearchNotFoundVisible: (searchNotFoundVisible: boolean) => void
+    setIsLoading: (isLoading: boolean) => void
 }
-
-export default function IngredientSearch(props:Readonly<Props>) {
-    const [isIngredientAdded, setIsIngredientAdded] = useState<boolean>(false)
-
-    function addIngredientToRecipe(e: React.MouseEvent<HTMLButtonElement>){
-        e.preventDefault()
-        props.addIngredientToRecipe(props.ingredient);
-        setIsIngredientAdded(!isIngredientAdded);
+export default function IngredientSearch(props:Readonly<Props>){
+    const [ingredientSearch, setIngredientSearch] = useState<string>("");
+    
+    const { setSearchResult, setIsLoading, setSearchNotFoundVisible } = props;
+    
+    function handleChangeIngredient(e:ChangeEvent<HTMLInputElement>){
+        e.preventDefault();
+        setIngredientSearch( e.target.value);
     }
 
-    // function handleQuantity(e:React.FormEvent<HTMLInputElement>){
-    //     e.preventDefault()
-    //     props.ingredient.quantity = Number(e.currentTarget.value);
-    //     props.handleQuantity(props.ingredient);
-    // }
+    const getDBData = useCallback(async (search:string) => {
+        if(search.trim() === ""){
+            setSearchResult([]);
+            setIsLoading(false);
+            setSearchNotFoundVisible(false);
+            return;
+        }
+        try {
+            setIsLoading(true);
+            const response = await axios.get("/eyf/ingredients/name/" + search);
+            if (response.data.length > 0) {
+                 setSearchResult(response.data);
+                setSearchNotFoundVisible(false);
+            } else {
+                setSearchResult([]);
+                setSearchNotFoundVisible(true);
+            }
+        } catch (error){
+            if (axios.isAxiosError(error)) {
+                console.error('Axios error:', error.response?.data || error.message);
+            } else {
+                console.error('Unexpected error:', error);
+            }
+        }finally {
+            setIsLoading(false);
+        }
+    }, [setIsLoading, setSearchNotFoundVisible, setSearchResult]);
 
-    return (
+    useEffect(() => {
+        (async () => {
+            await getDBData(ingredientSearch);
+        })();
+    }, [getDBData, ingredientSearch]);
+
+    return(
         <>
-            <div className="grid grid-cols-6  items-center gap-2 w-full border pl-2">
-                <HideDetailIdLink
-                    class="col-span-2 text-left"
-                    to={"/ingredient/"+props.ingredient.id}
-                    id= {props.ingredient.id}
-                >
-                    <span>{props.ingredient.product}</span>
-                </HideDetailIdLink>
-                <span className="text-left col-span-3 ">{props.ingredient.variation}</span>
-                {/*<input className="col-span-2 border w-20"*/}
-                {/*       defaultValue={props.ingredient.quantity}*/}
-                {/*       onChange={handleQuantity}*/}
-                {/*       type="number"*/}
-                {/*       min="0"*/}
-                {/*       pattern="\d*"*/}
-                {/*       onKeyDown={handleKeyDownNumber}*/}
-                {/*/>*/}
-                {/*<span className="col-span-1 ">{props.ingredient.unit}</span>*/}
-                <div  className="text-end"><AddButton add={addIngredientToRecipe}/></div>
+            <div className="flex flex-col">
+                <input
+                    placeholder={props.placeholder}
+                    value={ingredientSearch}
+                    name={props.name}
+                    id={props.name}
+                    onChange={handleChangeIngredient}
+                />
             </div>
         </>
-    );
+    )
 }
