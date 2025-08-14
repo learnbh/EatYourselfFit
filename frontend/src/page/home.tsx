@@ -13,6 +13,7 @@ import type {Ingredient} from "../types.ts";
 import axios from "axios";
 import IngredientNotFound from "../component/IngredientNotFound.tsx";
 import {useNavigate} from "react-router-dom";
+import IngredientSearchResultItem from "../component/IngredientSearchResultItem.tsx";
 
 export default function Home(){
     const [ingredientSearch, setIngredientSearch] = useState<string>("");
@@ -104,16 +105,21 @@ export default function Home(){
                             abort={abortAddIngredient}
                         />
                     )}
+                </div>
+                <div className={ingredientsSearch.length > 0 ? "flex flex-wrap gap-4 border sm:pb-2 sm:pt-2 justify-center":""}>
                     {ingredientsSearch.length > 0 && (
-                        ingredientsSearch.map((i:Ingredient) =>
-                            <span>{i.product +", " + i.variation}</span>
+                        ingredientsSearch.map((i:Ingredient) => <IngredientSearchResultItem
+                                key = {i.id}
+                                ingredient={i}
+                                children={null}
+                            />
                         )
                     )}
+                </div>
                     {isLoading && (
                         <span>Daten werden geladen ...</span>
                     )}
-                </div>
-            <div className="home">
+            <div className="home pt-2">
                 <Tile to="/recipe"
                       title="Rezepte"
                       element ={<GiCook className="m-1"  style = {{ width: "inherit", height:"inherit"}} />}
