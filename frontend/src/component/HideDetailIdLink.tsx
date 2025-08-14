@@ -17,6 +17,7 @@ export default function HideDetailIdLink(props:Readonly<Props>){
         routeTo(props.to);
         //window.open(props.to, "_self"); // Öffnet den Link im neuen Tab
     }, [props.id, props.to, routeTo]);
+
     return(
         <>
             <Link
