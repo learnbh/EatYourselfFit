@@ -125,7 +125,7 @@ export default function IngredientDetails() {
                 <h1> Einen Moment bitte Zutat wird geladen ...</h1>
             ) }
             <div>
-                <h1 className="p-5"> Hier findest Du Informationen zu einer Zutat und <br/>kannst sie auch bearbeiten. </h1>
+                <h1 className="p-5"> Hier findest Du Informationen zu einer Zutat und <br/>Du kannst sie auch bearbeiten. </h1>
                 { isError !== "" && (
                     <ShowError message = { isError } />
                 ) }

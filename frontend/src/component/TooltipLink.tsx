@@ -23,7 +23,6 @@ export default function TooltipLink(props:Readonly<Props>){
         }
         setTooltipShown(true);
     }
-    console.log("icon.iconMiddleX: "+iconMiddleX);
     function handleLeave(){
         setTooltipWidth(0);
         setTooltipShown(false);

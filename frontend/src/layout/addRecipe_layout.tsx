@@ -2,7 +2,7 @@ import type {Ingredient} from "../types.ts";
 import IngredientSearchResultRecipePlan from "../component/IngredientSearchResultRecipePlan.tsx";
 import {type ChangeEvent, useCallback, useEffect, useState} from "react";
 import axios from "axios";
-import IngredientNotFound from "../component/IngredientNotFound.tsx";
+import RecipeIngredientNotFound from "../component/RecipeIngredientNotFound.tsx";
 import {useNavigate} from "react-router-dom";
 import {useRecipeCart} from "../context/CardRecipeContext.tsx";
 
@@ -173,7 +173,7 @@ export default function AddRecipe_layout(props:Readonly<Props>) {
                     </div>
                     <div className="space-y-4">
                         {ingredientNotFoundVisible && (
-                            <IngredientNotFound
+                            <RecipeIngredientNotFound
                                 addPerAi={addPerOpenAiIngredient}
                                 addPerUser={addPerUser}
                                 abort={abortAddIngredient}

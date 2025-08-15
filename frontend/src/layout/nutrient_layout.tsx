@@ -50,37 +50,37 @@ export default function NutrientLayout(props:Readonly<Props>) {
                     <EditNutrientsOfType
                         header="Makronährstoffe"
                         nutrients={ props.nutrients.filter(n => n.type === "MACRONUTRIENT") }
-                        dailyNutrients={ dailyNutrients }
+                        dailyNutrients={ dailyNutrients.filter(n => n.type === "MACRONUTRIENT") }
                         onChange={ handleChange }
                     />
                     <EditNutrientsOfType
                         header="Vitamine"
                         nutrients={ props.nutrients.filter(n => n.type === "VITAMIN") }
-                        dailyNutrients={ dailyNutrients }
+                        dailyNutrients={ dailyNutrients.filter(n => n.type === "VITAMIN") }
                         onChange={ handleChange }
                     />
                     <EditNutrientsOfType
                         header="Mengenelemente"
                         nutrients={ props.nutrients.filter(n => n.type === "MAJORELEMENT") }
-                        dailyNutrients={ dailyNutrients }
+                        dailyNutrients={ dailyNutrients.filter(n => n.type === "MAJORELEMENT") }
                         onChange={ handleChange }
                     />
                     <EditNutrientsOfType
                         header="Spurenlemente"
                         nutrients={ props.nutrients.filter(n => n.type === "TRACEELEMENT") }
-                        dailyNutrients={ dailyNutrients }
+                        dailyNutrients={ dailyNutrients.filter(n => n.type === "TRACEELEMENT") }
                         onChange={ handleChange }
                     />
                     <EditNutrientsOfType
                         header="Aminosäure essentiell"
                         nutrients={ props.nutrients.filter(n => n.type === "ESSENTIALAMINOACID") }
-                        dailyNutrients={ dailyNutrients }
+                        dailyNutrients={ dailyNutrients.filter(n => n.type === "ESSENTIALAMINOACID") }
                         onChange={ handleChange }
                     />
                     <EditNutrientsOfType
                         header="Aminosäure"
                         nutrients={ props.nutrients.filter(n => n.type === "AMINOACID") }
-                        dailyNutrients={ dailyNutrients }
+                        dailyNutrients={ dailyNutrients.filter(n => n.type === "AMINOACID") }
                         onChange={ handleChange }
                     />
                 </div>
