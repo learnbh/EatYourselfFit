@@ -75,6 +75,8 @@ public class OpenAiConfig {
                                             }
                     Regeln:
                     - nutrient: { "name": string, "type": string, "quantity": number, "unit": string }
+                    - wähle für "name" die deutsche Übersetzung aus folgender Menge [Energie, Fett, Eiweiß, Kohlenhydrate, Ballaststoffe, Wasser, Vitamin A, Vitamin B1, Vitamin B2, Vitamin B3, Vitamin B5, Vitamin B6, Vitamin B7, Vitamin B9, Vitamin B12, Vitamin C, Vitamin D, Vitamin E, Vitamin K, Salz, PRAL, Natrium, Kalium, Kalzium, Magnesium, Phosphor, Schwefel, Chlorid, Eisen, Zink, Kupfer, Mangan, Fluorid, Jodid, Isoleucin, Leucin, Lysin, Methionin, Cystein, Phenylalanin, Tyrosin, Threonin, Tryptophan, Valin, Arginin, Histidin, Alanin, Asparaginsäure, Glutaminsäure, Glycin, Prolin, Serin]
+                    - wähle für "type" den NutrientType definiert im obigen JSON-Objekt
                     - Alle Felder sind Pflichtfelder. Verwende Defaultwerte bei Unbekanntem: String: "", Number: 0.
                     - Alle Werte beziehen sich auf 100g des Produkts. Einheiten z.B. "kcal", "g", "mg", "kJ".
                     - ingredientDto.prices: Wähle hier einen handelsüblichen Durchschnittspreis in Euro (z.B. Endverbraucherpreis für Supermarkt Denns's Biomarkt) als realistischen Schätzwert in Euro. Verwende keine Null oder Platzhalter.
