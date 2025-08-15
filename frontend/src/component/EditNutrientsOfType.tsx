@@ -35,20 +35,35 @@ export default function EditNutrientsOfType(props:Readonly<Props>){
                     >
                     <span>{ " " + n.unit }</span>
                     {
-                        props.dailyNutrients
-                        .filter(daily=>
-                            ((n.unit !== "kcal") && (n.unit !== "kJ") && (n.name === daily.name))
-                            ||
-                            ((n.unit === daily.unit) && (n.name === daily.name))
-                        )
-                        .map(daily=> daily.quantity > 0
-                            ? <ShowDailyNutrientData
-                                key = { "daily_"+setKey(daily.unit, daily.name) }
-                                quantity={ daily.quantity }
-                                unit={ " " + daily.unit }
-                            />
-                            : null
-                        )
+                        n.unit === "kcal"
+                            ? props.dailyNutrients
+                                .filter(daily => daily.unit === "kcal")
+                                .map(daily =>
+                                    <ShowDailyNutrientData
+                                        key={"daily_" + setKey(daily.unit, daily.name)}
+                                        quantity={daily.quantity}
+                                        unit={" " + daily.unit}
+                                    />
+                                )
+                            : n.unit === "kJ"
+                                ? props.dailyNutrients
+                                    .filter(daily => daily.unit === "kJ")
+                                    .map(daily =>
+                                        <ShowDailyNutrientData
+                                            key={"daily_" + setKey(daily.unit, daily.name)}
+                                            quantity={daily.quantity}
+                                            unit={" " + daily.unit}
+                                        />
+                                    )
+                                : props.dailyNutrients
+                                    .filter(daily => daily.name === n.name)
+                                    .map(daily =>
+                                        <ShowDailyNutrientData
+                                            key={"daily_" + setKey(daily.unit, daily.name)}
+                                            quantity={daily.quantity}
+                                            unit={" " + daily.unit}
+                                        />
+                                    )
                     }
                     </NutrientInput>
                 )) }
