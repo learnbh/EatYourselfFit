@@ -100,10 +100,9 @@ export default function IngredientCreate(){
     }
 
     useEffect( () => {
-        if( product ) {
-            const fetchIngredientCreate = async () => {
+            const fetchIngredientCreate = async (productname:string) => {
                 const newIngredientCreate: IngredientCreate = {
-                    product: product,
+                    product: productname,
                     variation: "",
                     quantity: 100,
                     unit: "g",
@@ -111,11 +110,12 @@ export default function IngredientCreate(){
                 }
                 return newIngredientCreate
             }
-            fetchIngredientCreate()
+            fetchIngredientCreate(product?product:"")
                 .then( ( response:IngredientCreate ) => setIngredientCreate( response ) )
                 .catch( ( error) => console.error( 'Error while fetching ingredientCreate:', error ) )
-        }
+
     }, [product] );
+
     useEffect( () => {
         ( async () => {
             await getNutrients();
@@ -129,7 +129,7 @@ export default function IngredientCreate(){
                     <h1> Einen Moment bitte Zutat wird geladen ...</h1>
                 ) }
                 {ingredientCreate && (
-                    <h1> Hier kannst Du { ingredientCreate.product } erstellen:  </h1>
+                    <h1> Hier kannst Du eine neue Zutat erstellen:  </h1>
                 ) }
                 { isError !== "" && (
                     <ShowError message = { isError } />
