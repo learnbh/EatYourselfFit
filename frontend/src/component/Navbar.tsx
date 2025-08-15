@@ -53,7 +53,7 @@ export default function Navbar(){
                     tooltipText={ MainNavNames.Ingredients }
                     to = "/ingredient"
                     element={ <GiCorn style = {{ width: "inherit", height:"inherit" }} />  }
-                    class="h-6"
+                    class="h-6 hidden"
                 />
             </div>
         </nav>
