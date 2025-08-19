@@ -36,7 +36,6 @@ label{
 }
 input{
   padding: 10px;
-  margin: 15px 0;
   box-shadow: 0 2px 8px var(--color-site-secondary);
   border-width: var(--border-site-width);
   border-style: var(--border-site-style);

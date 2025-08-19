@@ -53,44 +53,44 @@ export default function Home(){
                         />
                     )}
                 </div>
-                    {isLoading && (
-                        <span>Daten werden geladen ...</span>
-                    )}
-            <div className="home pt-2">
-                <Tile to="/recipe"
-                      title="Rezepte"
-                      element ={<GiCook className="m-1"  style = {{ width: "inherit", height:"inherit"}} />}
-                      img={mealInOven}
-                      imgAlt="picture shows a chicken dish from pixabay.com"
-                      imgWidth="100%"
-                      imgHeight="200"
-                />
-                <Tile to="/weekplan"
-                      title="Wochenplaner"
-                      element = {<GrSchedule className=" m-1"  style = {{ width: "inherit", height:"inherit"}} />}
-                      img={breakfast}
-                      imgAlt="picture shows a Table with breakfast made by palacioerick, pixabay.com"
-                      imgWidth="100%"
-                      imgHeight="200"
-                />
-                <Tile to="/recipeplan"
-                      title="Rezepte erstellen"
-                      element = {<GiHotMeal className="m-1"  style = {{ width: "inherit", height:"inherit"}} />}
-                      img={cookAsia}
-                      imgAlt="picture shows a woman cooking asian food from pixabay.com"
-                      imgWidth="100%"
-                      imgHeight="200"
-                />
-                <Tile to="/shoppinglist"
-                      title="Einkaufsliste"
-                      element = {<GrScheduleNew className="m-1" style = {{ width: "inherit", height:"inherit"}} />}
-                      img={shoppingList}
-                      imgAlt="picture shows someone writing a shoppinglist, pixabay.com"
-                      imgWidth="100%"
-                      imgHeight="200"
-                />
+                {isLoading && (
+                    <span>Daten werden geladen ...</span>
+                )}
+                <div className="home pt-2">
+                    <Tile to="/recipe"
+                          title="Rezepte"
+                          element ={<GiCook className="m-1"  style = {{ width: "inherit", height:"inherit"}} />}
+                          img={mealInOven}
+                          imgAlt="picture shows a chicken dish from pixabay.com"
+                          imgWidth="100%"
+                          imgHeight="200"
+                    />
+                    <Tile to="/weekplan"
+                          title="Wochenplaner"
+                          element = {<GrSchedule className=" m-1"  style = {{ width: "inherit", height:"inherit"}} />}
+                          img={breakfast}
+                          imgAlt="picture shows a Table with breakfast made by palacioerick, pixabay.com"
+                          imgWidth="100%"
+                          imgHeight="200"
+                    />
+                    <Tile to="/recipeplan"
+                          title="Rezepte erstellen"
+                          element = {<GiHotMeal className="m-1"  style = {{ width: "inherit", height:"inherit"}} />}
+                          img={cookAsia}
+                          imgAlt="picture shows a woman cooking asian food from pixabay.com"
+                          imgWidth="100%"
+                          imgHeight="200"
+                    />
+                    <Tile to="/shoppinglist"
+                          title="Einkaufsliste"
+                          element = {<GrScheduleNew className="m-1" style = {{ width: "inherit", height:"inherit"}} />}
+                          img={shoppingList}
+                          imgAlt="picture shows someone writing a shoppinglist, pixabay.com"
+                          imgWidth="100%"
+                          imgHeight="200"
+                    />
+                </div>
             </div>
-        </div>
         </>
     )
 }

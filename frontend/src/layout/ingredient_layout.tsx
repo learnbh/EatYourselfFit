@@ -30,9 +30,9 @@ function IngredientLayout( props:Readonly<Props>, ref: React.Ref<IngredientProdu
     return(
         <>
             {props.ingredient && (
-                <div>
-                    <div className="flex flex-row gap-2 justify-center items-center border p-2 mb-2 mt-2">
+                    <div className="flex flex-row flex-wrap gap-2 justify-center-safe border p-2 mb-2 mt-2">
                         <InputText
+                            class = "flex flex-col md:w-1/5 w-1/2"
                             label="Produkt"
                             name="product"
                             ref = { refProduct }
@@ -40,6 +40,7 @@ function IngredientLayout( props:Readonly<Props>, ref: React.Ref<IngredientProdu
                             onChange={handleChange}
                         />
                         <InputText
+                            class = "flex flex-col md:w-1/5 w-1/3"
                             label="Variation"
                             name="variation"
                             ref = { refVariation }
@@ -47,6 +48,7 @@ function IngredientLayout( props:Readonly<Props>, ref: React.Ref<IngredientProdu
                             onChange={handleChange}
                         />
                         <InputNumber
+                            class = "flex md:flex-col md:w-1/5 md:gap-0 w-1/2 items-center gap-1"
                             label="Menge"
                             name="quantity"
                             value={Number(props.ingredient.quantity)}
@@ -55,6 +57,7 @@ function IngredientLayout( props:Readonly<Props>, ref: React.Ref<IngredientProdu
                             <span>{props.ingredient.unit}</span>
                         </InputNumber>
                         <InputNumber
+                            class = "flex md:flex-col md:w-1/5 md:gap-0 w-1/3 items-center gap-1"
                             label="Preis"
                             name="prices"
                             value={Number(props.ingredient.prices)}
@@ -63,9 +66,6 @@ function IngredientLayout( props:Readonly<Props>, ref: React.Ref<IngredientProdu
                             <span>€</span>
                         </InputNumber>
                     </div>
-                    <div className="flex flex-row gap-2 justify-center items-center">
-                    </div>
-                </div>
             )}
         </>
     )
