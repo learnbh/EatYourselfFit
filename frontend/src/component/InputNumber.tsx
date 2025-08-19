@@ -2,6 +2,7 @@ import {handleKeyDownNumber} from "../helper.ts";
 import type {ChangeEvent, ReactNode} from "react";
 
 type Props = {
+    class:string
     label:string
     name: string
     value:number
@@ -16,7 +17,7 @@ export default function InputNumber(props:Readonly<Props>){
     }
     return(
         <>
-            <div className="flex flex-col">
+            <div className={props.class}>
                 <label>{props.label}:</label>
                 <div className="flex flex-row items-center gap-2">
                     <input

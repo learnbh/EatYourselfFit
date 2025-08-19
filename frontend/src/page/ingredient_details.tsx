@@ -128,7 +128,7 @@ export default function IngredientDetails() {
     return (
         <>
             <div className="flex flex-col">
-            <div className="flex flex-col">
+                <h1 className="p-5"> Hier findest Du Informationen zu einer Zutat und kannst sie auch bearbeiten. </h1>
                 <IngredientSearch
                     placeholder="Zutat suchen"
                     name="addingredient"
@@ -138,57 +138,57 @@ export default function IngredientDetails() {
                     setSearchNotFoundVisible={setIngredientNotFoundVisible}
                     setIsLoading={setLoading}
                 />
-            </div>
-            <div className={ingredientsSearch.length > 0 ? "flex flex-wrap gap-4 border sm:pb-2 sm:pt-2 justify-center":""}>
-                {ingredientsSearch.length > 0 && (
-                    ingredientsSearch.map((i:Ingredient) => <IngredientSearchResultItem
-                            key = {i.id}
-                            ingredient={i}
-                        />
-                    )
-                )}
-            </div>
-            <div className="space-y-4">
-                {ingredientNotFoundVisible && (
-                    <IngredientNotFound
-                        searchWord={ingredientSearch}
-                        setSearchWord={setIngredientSearch}
-                        setSearchResult={setIngredientsSearch}
-                        setSearchNotFoundVisible={setIngredientNotFoundVisible}
-                        setIsLoading={setLoading}
-                    />
-                )}
-            </div>
-            { isLoading && (
-                <h1> Einen Moment bitte Zutat wird geladen ...</h1>
-            ) }
-            <div>
-                <h1 className="p-5"> Hier findest Du Informationen zu einer Zutat und <br/>Du kannst sie auch bearbeiten. </h1>
-                { isError !== "" && (
-                    <ShowError message = { isError } />
-                ) }
-                <form  onSubmit={(e)=>submit(e)}>
-                    { ingredient && (
-                        <IngredientLayout
-                            ingredient={ ingredient }
-                            onChange={ handleChangeIngredient }
-                            ref = { refProduct }
+                <div className={ingredientsSearch.length > 0 ? "flex flex-wrap gap-4 p-2 border justify-center":""}>
+                    {ingredientsSearch.length > 0 && (
+                        ingredientsSearch.map((i:Ingredient) => <IngredientSearchResultItem
+                                key = {i.id}
+                                ingredient={i}
+                            />
+                        )
+                    )}
+                </div>
+                <div className="pt-2">
+                    {ingredientNotFoundVisible && (
+                        <IngredientNotFound
+                            searchWord={ingredientSearch}
+                            setSearchWord={setIngredientSearch}
+                            setSearchResult={setIngredientsSearch}
+                            setSearchNotFoundVisible={setIngredientNotFoundVisible}
+                            setIsLoading={setLoading}
                         />
                     )}
-                    { nutrients && (
-                        <NutrientLayout
-                            nutrients={ nutrients }
-                            onChange={ handleChangeNutrient }
-                        />
-                    ) }
-                    { isError !== "" && (
-                        <ShowError message = { isError } />
-                    ) }
-                    <button className="border pt-2 pb-2 w-full" type="submit" >
-                        Speichern
-                    </button>
-                </form>
-            </div>
+                </div>
+                {   ingredientId && (
+                    <div>
+                        { isLoading && (
+                            <h1> Einen Moment bitte Zutat wird geladen ...</h1>
+                        ) }
+                        { isError !== "" && (
+                            <ShowError message = { isError } />
+                        ) }
+                        <form  onSubmit={(e)=>submit(e)}>
+                            { ingredient && (
+                                <IngredientLayout
+                                    ingredient={ ingredient }
+                                    onChange={ handleChangeIngredient }
+                                    ref = { refProduct }
+                                />
+                            )}
+                            { nutrients && (
+                                <NutrientLayout
+                                    nutrients={ nutrients }
+                                    onChange={ handleChangeNutrient }
+                                />
+                            ) }
+                            { isError !== "" && (
+                                <ShowError message = { isError } />
+                            ) }
+                            <button className="border pt-2 pb-2 w-full" type="submit" >
+                                Speichern
+                            </button>
+                        </form>
+                    </div>
+                )}
             </div>
         </>
     );

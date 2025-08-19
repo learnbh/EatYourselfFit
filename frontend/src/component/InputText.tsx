@@ -2,6 +2,7 @@ import React, { type ChangeEvent, forwardRef, useImperativeHandle, useRef } from
 import type { InputRef } from "../types.ts";
 
 type Props = {
+    class: string
     label:string
     name: string
     value:string
@@ -25,7 +26,7 @@ function InputText (props:Readonly<Props>, ref: React.Ref<InputRef> ){
     }
     return (
         <>
-            <div className="flex flex-col">
+            <div className={props.class}>
                 <label>{ props.label }:</label>
                 <input
                     name = { props.name }
