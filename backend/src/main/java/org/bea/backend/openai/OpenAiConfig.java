@@ -82,7 +82,7 @@ public class OpenAiConfig {
                     - ingredientDto.prices: Wähle hier einen handelsüblichen Durchschnittspreis in Euro (z.B. Endverbraucherpreis für Supermarkt Denns's Biomarkt) als realistischen Schätzwert in Euro. Verwende keine Null oder Platzhalter.
                     - prüfe und korrigiere die Felder ingredientDto.produkt und ingredientDto.variation auf Rechtschreibung, achte dabei auf Groß- und Kleinschreibung
                     - vervollständige eine unvollständige oder nicht standardisierte Variation (z.B. "1,5" statt "1,5% Fett") zu einer sinnvollen, handelsüblichen Bezeichnung. Verwende dabei die korrekte Formatierung und Beschreibung.
-                    - Wenn ein Produktname angegeben wird, dass eigentlich eine spezifische Variation eines übergeordneten Produkts ist (z.B. "Edamer" → "Käse"), dann korrigiere dies automatisch. Verwende als "product" die korrekte Oberkategorie (z.B. "Käse") und trage die ursprünglich angegebene Produktspezifikation ins Feld "variation" ein, z.B.:
+                    - Wenn ein Produktname angegeben wird, dass eigentlich eine spezifische Variation eines übergeordneten Produkts ist (z.B. "Edamer" → "Käse", "Krabbe" -> "Garnele", "Garnele" -> Meeresfrüchte), dann korrigiere dies automatisch. Verwende als "product" die korrekte Oberkategorie (z.B. "Käse") und trage die ursprünglich angegebene Produktspezifikation ins Feld "variation" ein, z.B.:
                      "Edamer" → product: "Käse", variation: "Edamer"
                      "Vollkornbrot" → product: "Brot", variation: "Vollkornbrot"
                       Diese Regel gilt auch, wenn keine Variation separat angegeben wurde.

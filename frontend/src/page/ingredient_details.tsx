@@ -7,9 +7,15 @@ import { handleAxiosFormError, ingredientToDto, mapNutrientsToNutrientArray } fr
 import ShowError from "../component/ShowError.tsx";
 import {useNavigate} from "react-router-dom";
 import {useRecipeCart} from "../context/CardRecipeContext.tsx";
+import IngredientSearch from "../component/IngredientSearch.tsx";
+import IngredientSearchResultItem from "../component/IngredientSearchResultItem.tsx";
+import IngredientNotFound from "../component/IngredientNotFound.tsx";
 
 export default function IngredientDetails() {
     const { addToRecipe } = useRecipeCart()
+        const [ingredientSearch, setIngredientSearch] = useState<string>("");
+        const [ingredientsSearch, setIngredientsSearch] = useState<Ingredient[]>([]);
+        const [ingredientNotFoundVisible, setIngredientNotFoundVisible] = useState<boolean>(false);
 
     const routeTo = useNavigate();
     const refProduct = useRef<IngredientProductRef>({
@@ -121,6 +127,38 @@ export default function IngredientDetails() {
 
     return (
         <>
+            <div className="flex flex-col">
+            <div className="flex flex-col">
+                <IngredientSearch
+                    placeholder="Zutat suchen"
+                    name="addingredient"
+                    searchWord={ingredientSearch}
+                    setSearchWord={setIngredientSearch}
+                    setSearchResult={setIngredientsSearch}
+                    setSearchNotFoundVisible={setIngredientNotFoundVisible}
+                    setIsLoading={setLoading}
+                />
+            </div>
+            <div className={ingredientsSearch.length > 0 ? "flex flex-wrap gap-4 border sm:pb-2 sm:pt-2 justify-center":""}>
+                {ingredientsSearch.length > 0 && (
+                    ingredientsSearch.map((i:Ingredient) => <IngredientSearchResultItem
+                            key = {i.id}
+                            ingredient={i}
+                        />
+                    )
+                )}
+            </div>
+            <div className="space-y-4">
+                {ingredientNotFoundVisible && (
+                    <IngredientNotFound
+                        searchWord={ingredientSearch}
+                        setSearchWord={setIngredientSearch}
+                        setSearchResult={setIngredientsSearch}
+                        setSearchNotFoundVisible={setIngredientNotFoundVisible}
+                        setIsLoading={setLoading}
+                    />
+                )}
+            </div>
             { isLoading && (
                 <h1> Einen Moment bitte Zutat wird geladen ...</h1>
             ) }
@@ -150,6 +188,7 @@ export default function IngredientDetails() {
                         Speichern
                     </button>
                 </form>
+            </div>
             </div>
         </>
     );
