@@ -160,7 +160,7 @@ export default function AddRecipe_layout(props:Readonly<Props>) {
                             onChange={handleChangeRecipeName}
                         />
                     </div>
-                    <div className="flex flex-col">
+                    <div className="flex flex-col mt-3.5">
                         <label>Zutaten hinzufügen:</label>
                         <input
                             className=" grow"
