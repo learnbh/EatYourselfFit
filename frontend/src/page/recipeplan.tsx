@@ -15,6 +15,7 @@ import {useNavigate} from "react-router-dom";
 
 
 export default function Recipeplan(){
+    const [toggleEditShow, setToggleEditShow] = useState<boolean>(true);
     const { dishName, recipeItems, addToRecipe, removeFromRecipe, clearRecipe, changeDishName, changeQuantity } = useRecipeCart()
     const routeTo = useNavigate();
     const refProduct = useRef<IngredientProductRef>({
@@ -22,6 +23,10 @@ export default function Recipeplan(){
     });
 
     const [isError, setError] = useState<string>("")
+
+    function handleToggleButton(){
+        setToggleEditShow(!toggleEditShow);
+    }
 
     function handleChangeDishName(dishName:string){
         setError("");
@@ -87,7 +92,10 @@ export default function Recipeplan(){
             <div>
                 <h1>Hier kannst Du ein neues Gericht erstellen</h1>
                 <div className="recipeplan">
-                    <div>
+                    <div className="md:hidden flex justify-center">
+                        <button onClick={handleToggleButton} className="border p-2">{toggleEditShow?"Rezept anzeigen?":"Rezept bearbeiten?"}</button>
+                    </div>
+                    <div className={`${toggleEditShow ? "visible" : "hidden md:grid"}`}>
                         { isError !== "" && (
                             <ShowError message = { isError } />
                         ) }
@@ -98,8 +106,8 @@ export default function Recipeplan(){
                             handleQuantity={handleChangeQuantity}
                         />
                     </div>
-                    <form  onSubmit={(e:FormEvent<HTMLFormElement>)=>submit(e)}>
-                        <div className="flex flex-col border rounded shadow p-2 font-serif sm:min-w-sm">
+                    <form className={!toggleEditShow?"visible":"hidden md:grid"}  onSubmit={(e:FormEvent<HTMLFormElement>)=>submit(e)}>
+                        <div className="flex flex-col border rounded shadow p-2 font-serif md:min-w-sm">
                             <h2 className="text-2xl mb-2 p-2"><em>{dishName}</em></h2>
                             <div className="">
                                 {recipeItems.length !== 0 ?
@@ -113,7 +121,7 @@ export default function Recipeplan(){
                                     : <span className="text-xl"> Nutze die Zutatensuche, um Zutaten zum Rezept hinzuzufügen.</span>
                                 }
                             </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 p-2">
+                            <div className="flex flex-row justify-end gap-2 mt-2 p-2">
                                 <button className="border p-2 font-sans mt-auto" type="submit">
                                     Rezept Speichern
                                 </button>
