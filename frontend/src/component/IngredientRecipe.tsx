@@ -22,19 +22,23 @@ export default function IngredientRecipe(props:Readonly<Props>){
     }
     return(
       <>
-          <div className="grid  grid-cols-10  items-center gap-2 w-full border pl-2">
-              <RemoveButton remove={removeIngredientFromRecipe} class="border-delete col-span-1 pl-2 pt-2 pb-2"/>
-              <span className="text-left col-span-2">{props.ingredient.product}</span>
-              <span className="text-left col-span-4 pl-3">{props.ingredient.variation}</span>
-              <input className="col-span-2 border w-20"
-                     defaultValue={props.ingredient.quantity}
-                     onChange={handleQuantity}
-                     type="number"
-                     min="0"
-                     pattern="\d*"
-                     onKeyDown={handleKeyDownNumber}
-              />
-              <span className="text-left col-span-1 ml-2">{props.ingredient.unit}</span>
+          <div className="flex flex-row border items-center pl-2 w-full">
+              <RemoveButton remove={removeIngredientFromRecipe} class="border-delete col-span-1 p-2"/>
+              <div className="flex flex-row items-center w-full gap-6 p-1">
+                  <div className="grid  grid-cols-5  items-center gap-2 w-full pl-2">
+                      <span className="text-left col-span-2 break-keep">{props.ingredient.product}</span>
+                      <span className="text-left col-span-2 pl-3 break-words">{props.ingredient.variation}</span>
+                      <input className="col-span-1 border w-20"
+                             defaultValue={props.ingredient.quantity}
+                             onChange={handleQuantity}
+                             type="number"
+                             min="0"
+                             pattern="\d*"
+                             onKeyDown={handleKeyDownNumber}
+                      />
+                  </div>
+                  <span className="text-left">{props.ingredient.unit}</span>
+              </div>
           </div>
       </>
     );
