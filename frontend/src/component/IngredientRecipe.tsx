@@ -2,6 +2,7 @@ import RemoveButton from "./RemoveButton.tsx";
 import React from "react";
 import type {Ingredient} from "../types.ts";
 import {handleKeyDownNumber} from "../helper.ts";
+import HideDetailIdLink from "./HideDetailIdLink.tsx";
 
 type Props = {
     ingredient:Ingredient,
@@ -22,21 +23,25 @@ export default function IngredientRecipe(props:Readonly<Props>){
     }
     return(
       <>
-          <div className="flex flex-row border items-center pl-2 w-full">
-              <RemoveButton remove={removeIngredientFromRecipe} class="border-delete col-span-1 p-2"/>
-              <div className="flex flex-row items-center w-full gap-6 p-1">
-                  <div className="grid  grid-cols-5  items-center gap-2 w-full pl-2">
-                      <span className="text-left col-span-2 break-keep">{props.ingredient.product}</span>
-                      <span className="text-left col-span-2 pl-3 break-words">{props.ingredient.variation}</span>
-                      <input className="col-span-1 border w-20"
-                             defaultValue={props.ingredient.quantity}
-                             onChange={handleQuantity}
-                             type="number"
-                             min="0"
-                             pattern="\d*"
-                             onKeyDown={handleKeyDownNumber}
-                      />
-                  </div>
+          <div className="grid grid-cols-[auto_1fr_1fr_auto] gap-2 items-center  pl-1 pt-1 pb-1 pr-2 w-full border">
+              <RemoveButton remove={removeIngredientFromRecipe} class="border-delete p-2"/>
+              <HideDetailIdLink
+                  class="text-left"
+                  to={"/ingredient/"+props.ingredient.id}
+                  id= {props.ingredient.id}
+              >
+                  <span className="text-left break-keep">{props.ingredient.product}</span>
+              </HideDetailIdLink>
+              <span className="text-left col-span-1 pl-3 break-words">{props.ingredient.variation}</span>
+              <div className="col-span-1 gap-1 flex flex-row items-center">
+                  <input className="w-20"
+                     defaultValue={props.ingredient.quantity}
+                     onChange={handleQuantity}
+                     type="number"
+                     min="0"
+                     pattern="\d*"
+                     onKeyDown={handleKeyDownNumber}
+                 />
                   <span className="text-left">{props.ingredient.unit}</span>
               </div>
           </div>
