@@ -19,10 +19,11 @@ export default function Navbar(){
                 ☰
             </button>
             <ul className={`nav-links ${open ? 'open' : ''}`}>
-                <li><Link to="/">Start</Link></li>
+                <li className="hidden"><Link to="/">Start</Link></li>
                 <li><Link to="/recipe">Rezepte</Link></li>
-                <li><Link to="/recipeplan">Rezepte erstellen ({recipeItems.length})</Link></li>
-                <li><Link to="/job/migrate/slugs">Jobs</Link></li>
+                <li><Link to="/recipeplan">Rezept erstellen ({recipeItems.length} Zutaten)</Link></li>
+                <li><Link to="/ingredient">Zutaten</Link></li>
+                <li className="hidden"><Link to="/job/migrate/slugs">Jobs</Link></li>
             </ul>
             <div className={`nav-links ${!open ? 'open' : ''} `}>
                 <TooltipLink
