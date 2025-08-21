@@ -15,7 +15,7 @@ import {useNavigate} from "react-router-dom";
 
 
 export default function Recipeplan(){
-    const [toggleEditShow, setToggleEditShow] = useState<boolean>(true);
+    const [toggleEditShow, setToggleEditShow] = useState<boolean>(false);
     const { dishName, recipeItems, addToRecipe, removeFromRecipe, clearRecipe, changeDishName, changeQuantity } = useRecipeCart()
     const routeTo = useNavigate();
     const refProduct = useRef<IngredientProductRef>({
@@ -121,14 +121,16 @@ export default function Recipeplan(){
                                     : <span className="text-xl"> Nutze die Zutatensuche, um Zutaten zum Rezept hinzuzufügen.</span>
                                 }
                             </div>
-                            <div className="flex flex-row justify-end gap-2 mt-2 p-2">
-                                <button className="border p-2 font-sans mt-auto" type="submit">
-                                    Rezept Speichern
-                                </button>
-                                <button className="border p-2 font-sans mt-auto" type="button" onClick={handleClearRecipe}>
-                                    Rezept leeren
-                                </button>
-                            </div>
+                            {recipeItems.length !== 0 &&
+                                <div className="flex flex-row justify-end gap-2 mt-2 p-2">
+                                    <button className="border p-2 font-sans mt-auto" type="submit">
+                                        Rezept Speichern
+                                    </button>
+                                    <button className="border p-2 font-sans mt-auto" type="button" onClick={handleClearRecipe}>
+                                        Rezept leeren
+                                    </button>
+                                </div>
+                            }
                         </div>
                     </form>
                 </div>
