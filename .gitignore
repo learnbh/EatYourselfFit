@@ -18,3 +18,5 @@
  frontend/dist-ssr
  frontend/*.local
 /frontend/node_modules/
+.vscode/launch.json
+EatYouFit.code-workspace
