@@ -4,14 +4,10 @@ import { GiCorn } from "react-icons/gi";
 import TooltipLink from "./TooltipLink.tsx";
 import {MainNavNames} from "../enums.ts";
 
-type Props = {
-    open: boolean;
-}
-
-export default function NavIcons(props: Readonly<Props>){
+export default function NavIcons(){
 
     return (
-            <div className={`nav-links ${!props.open ? 'open' : 'open'} `}>
+            <div className="nav-links open">
                 <TooltipLink
                     tooltipText={ MainNavNames.Recipe }
                     to = "/recipe"

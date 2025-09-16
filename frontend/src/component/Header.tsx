@@ -14,7 +14,7 @@ export default function Header(){
                         <button className="hamburger pr-2 pl-2 " onClick={() => setOpen(!open)} onMouseEnter={() => setOpen(!open)}>
                             ☰
                         </button>
-                        <NavIcons open={open} />
+                        <NavIcons />
                     </div>
                     <Link to="/">
                         <div className="logo">
