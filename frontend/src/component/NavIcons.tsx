@@ -1,31 +1,17 @@
-import { useState } from "react";
-import {useRecipeCart} from "../context/CardRecipeContext.tsx";
-import {Link} from "react-router-dom";
 import {GiCook, GiHotMeal} from "react-icons/gi";
 import {GrSchedule, GrScheduleNew} from "react-icons/gr";
 import { GiCorn } from "react-icons/gi";
 import TooltipLink from "./TooltipLink.tsx";
 import {MainNavNames} from "../enums.ts";
 
-export default function Navbar(){
-    const { recipeItems } = useRecipeCart();
-    const [open, setOpen] = useState(false);
+type Props = {
+    open: boolean;
+}
 
-
+export default function NavIcons(props: Readonly<Props>){
 
     return (
-        <nav className="navbar">
-            <button className="hamburger pr-2 pl-2 " onClick={() => setOpen(!open)}>
-                ☰
-            </button>
-            <ul className={`nav-links ${open ? 'open' : ''}`}>
-                <li className="hidden"><Link to="/">Start</Link></li>
-                <li><Link to="/recipe">Rezepte</Link></li>
-                <li><Link to="/recipeplan">Rezept erstellen ({recipeItems.length} Zutaten)</Link></li>
-                <li><Link to="/ingredient">Zutaten</Link></li>
-                <li className="hidden"><Link to="/job/migrate/slugs">Jobs</Link></li>
-            </ul>
-            <div className={`nav-links ${!open ? 'open' : ''} `}>
+            <div className={`nav-links ${!props.open ? 'open' : 'open'} `}>
                 <TooltipLink
                     tooltipText={ MainNavNames.Recipe }
                     to = "/recipe"
@@ -39,6 +25,12 @@ export default function Navbar(){
                     class="h-5"
                 />
                 <TooltipLink
+                    tooltipText={ MainNavNames.Ingredients }
+                    to = "/ingredient"
+                    element={ <GiCorn style = {{ width: "inherit", height:"inherit" }} />  }
+                    class="h-6"
+                />
+                <TooltipLink
                     tooltipText={ MainNavNames.Weekplan }
                     to = "/weekplan"
                     element={ <GrSchedule style = {{ width: "inherit", height:"inherit" }} />  }
@@ -50,13 +42,6 @@ export default function Navbar(){
                     element={ <GrScheduleNew style = {{ width: "inherit", height:"inherit" }} />  }
                     class="h-6"
                 />
-                <TooltipLink
-                    tooltipText={ MainNavNames.Ingredients }
-                    to = "/ingredient"
-                    element={ <GiCorn style = {{ width: "inherit", height:"inherit" }} />  }
-                    class="h-6"
-                />
             </div>
-        </nav>
     );
 }
