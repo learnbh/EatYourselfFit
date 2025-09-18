@@ -119,9 +119,10 @@ a {
 }
 
 .nav-links {
+    display: none;
+    background-color: var(--color-site-secondary);
   list-style: none;
-  display: flex;
-  gap: 1rem;
+  /*display: flex;*/
 }
 
 .nav-links li a {
@@ -137,7 +138,9 @@ a {
 }
 
 .nav-links.open {
-  display: block;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
 }
 
 /* === Main Content === */
@@ -169,14 +172,8 @@ a {
   }
 
   .nav-links {
-    display: none;
-    flex-direction: row;
-    background-color: var(--color-site-secondary);
   }
 
-  .nav-links.open {
-    display: flex;
-  }
 }
 /* === Dark Mode === */
 @media (prefers-color-scheme: light) {

@@ -23,7 +23,7 @@ export default function Header(){
                         </div>
                     </Link>
                 </nav>
-                <div className="pl-2 pr-2">
+                <div className="pl-1">
                     <NavText open={open} />
                 </div>
             </header>

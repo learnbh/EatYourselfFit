@@ -14,7 +14,7 @@ export default function NavText(props: Readonly<Props>){
                 <ul className="flex flex-col gap-2">
                     <li className="hidden"><Link to="/">Start</Link></li>
                     <li><Link to="/recipe">Rezepte</Link></li>
-                    <li><Link to="/recipeplan">Rezept erstellen ({recipeItems.length} Zutaten)</Link></li>
+                    <li><Link to="/recipeplan">Rezept erstellen (Zutaten {recipeItems.length})</Link></li>
                     <li className="hidden"><Link to="/job/migrate/slugs">Jobs</Link></li>
                 </ul>
                 <ul className="flex flex-col gap-2">
