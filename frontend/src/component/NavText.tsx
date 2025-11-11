@@ -1,5 +1,6 @@
 import {useRecipeCart} from "../context/CardRecipeContext.tsx";
 import {Link} from "react-router-dom";
+import { useUser } from "../context/user/useUser.tsx";
 
 type Props = {
     open: boolean;
@@ -7,6 +8,7 @@ type Props = {
 
 export default function NavText(props: Readonly<Props>){
     const { recipeItems } = useRecipeCart();
+    const { user } = useUser();
 
     return (
         <>
@@ -23,6 +25,13 @@ export default function NavText(props: Readonly<Props>){
                 <ul className="flex flex-col gap-2">
                     <li><Link to="/shoppinglist">Einkaufsliste</Link></li>
                     <li><Link to="/weekplan">Wochenplan</Link></li>
+                </ul>
+                <ul className="flex flex-col gap-2"> 
+                    <li>
+                        <Link to={user?"/profile":"/login"}>
+                            {user?"Profile":"Login"}
+                        </Link>
+                    </li>
                 </ul>
             </div>
         </>

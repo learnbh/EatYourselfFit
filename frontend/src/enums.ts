@@ -3,5 +3,7 @@ export enum MainNavNames {
     CreateRecipe = "Rezepte erstellen",
     Weekplan = "Wochenplaner",
     Shoppinglist = "Einkaufsliste",
-    Ingredients = "Zutaten"
+    Ingredients = "Zutaten",
+    Login = "Login",
+    Profil = "Profil"
 }

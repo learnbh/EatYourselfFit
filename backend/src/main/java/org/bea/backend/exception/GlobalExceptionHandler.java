@@ -34,6 +34,17 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND.name());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ExceptionMessage> handleUserNotFoundException(UserNotFoundException e){
+        ExceptionMessage error = new ExceptionMessage(
+                "Error: "+e.getMessage(),
+                Instant.now(),
+                HttpStatus.NOT_FOUND.name());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(ProductVariationNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ExceptionMessage> handleIdNotFoundException(ProductVariationNotFoundException e){

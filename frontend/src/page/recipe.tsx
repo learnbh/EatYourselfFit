@@ -11,7 +11,9 @@ export default function Recipe(){
     const getDBData = useCallback(async () => {
         try {
             //setIsLoading(true);
-            const response = await axios.get("/eyf/recipe");
+            const response = await axios.get("/eyf/recipe", {
+                withCredentials: true
+            });
             setRecipes(response.data);
         } catch (error){
             if (axios.isAxiosError(error)) {
