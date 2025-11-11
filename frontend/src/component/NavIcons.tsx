@@ -1,10 +1,16 @@
 import {GiCook, GiHotMeal} from "react-icons/gi";
 import {GrSchedule, GrScheduleNew} from "react-icons/gr";
 import { GiCorn } from "react-icons/gi";
+import { FaUser } from "react-icons/fa6";
+import { CgProfile } from "react-icons/cg";
 import TooltipLink from "./TooltipLink.tsx";
 import {MainNavNames} from "../enums.ts";
+import { useUser } from "../context/user/useUser.tsx";
 
-export default function NavIcons(){
+export default function NavIcons(){    
+
+    const userContext = useUser();
+    const user = userContext?.user;
 
     return (
             <div className="nav-links open">
@@ -37,6 +43,12 @@ export default function NavIcons(){
                     to = "/shoppinglist"
                     element={ <GrScheduleNew style = {{ width: "inherit", height:"inherit" }} />  }
                     class="h-6"
+                />
+                <TooltipLink
+                    tooltipText={ user?MainNavNames.Profil : MainNavNames.Login }
+                    to ={ user?"/profile":"/login"}
+                    element={ user?<CgProfile style = {{ width: "inherit", height:"inherit" }} />  : <FaUser style = {{ width: "inherit", height:"inherit" }} />  }
+                    class="h-5"
                 />
             </div>
     );
