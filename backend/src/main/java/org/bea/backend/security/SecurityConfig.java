@@ -51,9 +51,8 @@ public class SecurityConfig {
                  */
                 .authorizeHttpRequests(a -> a
                     //.requestMatchers("/api/admin").hasAuthority("ADMIN")
-                    .requestMatchers(HttpMethod.GET,"/eyf/recipe").permitAll()
-                    .requestMatchers("/eyf/login/**", "/eyf/oauth2/**").permitAll()
-                    .anyRequest().authenticated()
+                    .requestMatchers("/eyf/profile").authenticated()
+                    .anyRequest().permitAll()
                 )
                 /** Sagt Spring Security, wann eine Session erstellt werden soll.
                  * gibt cookies raus -> seesion policy
