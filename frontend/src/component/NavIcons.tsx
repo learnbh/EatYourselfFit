@@ -6,11 +6,13 @@ import { CgProfile } from "react-icons/cg";
 import TooltipLink from "./TooltipLink.tsx";
 import {MainNavNames} from "../enums.ts";
 import { useUser } from "../context/user/useUser.tsx";
+import { useState } from "react";
 
 export default function NavIcons(){    
 
     const userContext = useUser();
     const user = userContext?.user;
+    const [imgError, setImgError] = useState(false);
 
     return (
             <div className="nav-links open">
@@ -44,12 +46,30 @@ export default function NavIcons(){
                     element={ <GrScheduleNew style = {{ width: "inherit", height:"inherit" }} />  }
                     class="h-6"
                 />
-                <TooltipLink
-                    tooltipText={ user?MainNavNames.Profil : MainNavNames.Login }
-                    to ={ user?"/profile":"/login"}
-                    element={ user?<CgProfile style = {{ width: "inherit", height:"inherit" }} />  : <FaUser style = {{ width: "inherit", height:"inherit" }} />  }
-                    class="h-5"
-                />
+                {!user && (
+                    <TooltipLink
+                        tooltipText={ MainNavNames.Login }
+                        to ="/login"
+                        element={ <FaUser style = {{ width: "inherit", height:"inherit" }} />  }
+                        class="h-5"
+                    />)
+                }
+                {user && (
+                    <TooltipLink
+                        tooltipText={ MainNavNames.Profil }
+                        to ="/profile"
+                        element={ user.imageUrl && !imgError ? 
+                                 <img 
+                                    src={user.imageUrl} 
+                                    alt="Profilbild" 
+                                    onError={() => setImgError(true)}
+                                    width={25} 
+                                  /> 
+                                : <CgProfile style = {{ width: "inherit", height:"inherit" }} />  
+                        }
+                        class="h-5"
+                    />
+                )}
             </div>
     );
 }
