@@ -7,3 +7,8 @@ export enum MainNavNames {
     Login = "Login",
     Profil = "Profil"
 }
+export enum LoginTypes {
+    Google = "GOOGLE",
+    Github = "GITHUB",
+    Local = "LOCAL"
+}
