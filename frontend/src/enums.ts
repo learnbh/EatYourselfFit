@@ -10,5 +10,10 @@ export enum MainNavNames {
 export enum LoginTypes {
     Google = "GOOGLE",
     Github = "GITHUB",
-    Local = "LOCAL"
+    Local  = "LOCAL"
+}
+export enum UserRoles {
+    Admin = "ADMIN",
+    User  = "USER",
+    Guest = "GUEST"
 }
