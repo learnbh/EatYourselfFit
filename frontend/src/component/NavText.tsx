@@ -1,6 +1,7 @@
 import {useRecipeCart} from "../context/CardRecipeContext.tsx";
 import {Link} from "react-router-dom";
 import { useUser } from "../context/user/useUser.tsx";
+import { UserRoles } from "../enums.ts";
 
 type Props = {
     open: boolean;
@@ -17,7 +18,6 @@ export default function NavText(props: Readonly<Props>){
                     <li className="hidden"><Link to="/">Start</Link></li>
                     <li><Link to="/recipe">Rezepte</Link></li>
                     <li><Link to="/recipeplan">Rezept erstellen (Zutaten {recipeItems.length})</Link></li>
-                    <li className="hidden"><Link to="/job/migrate/slugs">Jobs</Link></li>
                 </ul>
                 <ul className="flex flex-col gap-2">
                     <li><Link to="/ingredient">Zutaten</Link></li>
@@ -30,8 +30,13 @@ export default function NavText(props: Readonly<Props>){
                     <li>
                         <Link to={user?"/profile":"/login"}>
                             {user?"Profile":"Login"}
-                        </Link>
+                        </Link>               
                     </li>
+                    {user?.role === UserRoles.Admin && (
+                        <li>
+                            <Link to="/job/migrate/slugs">Jobs</Link>
+                        </li>
+                    )}     
                 </ul>
             </div>
         </>
