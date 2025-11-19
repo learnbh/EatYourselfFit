@@ -17,8 +17,6 @@ public record User(
     @Size(min = 1, message = "Name must have at least 1 character")
     String name,
 
-    @NotNull(message = "Email cannot be null")
-    @Size(min = 8, message = "Email must have at least 8 characters")
     String email,
 
     @NotNull(message = "Role cannot be null")
