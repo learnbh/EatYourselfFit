@@ -42,13 +42,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .getUserById(provider + "_" + oauth2User.getName())
                 .orElseGet(() -> insertUser(oauth2User, provider));
             return user;
-        } else {
+        } /*else {
             // Anderer Login-Typ, z. B. Username/Password oder JWT
-            /*return Map.of(
+            return Map.of(
                 "authType", authentication.getClass().getSimpleName(),
                 "principal", authentication.getPrincipal()
-            );*/
-        }
+            );
+        }*/
         return null;
     }
 }
