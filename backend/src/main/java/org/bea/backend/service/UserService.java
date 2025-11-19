@@ -14,11 +14,9 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserReprository userReprository;
-    private final ServiceId serviceId;
 
-    public UserService(UserReprository userReprository, ServiceId serviceId) {
+    public UserService(UserReprository userReprository) {
         this.userReprository = userReprository;
-        this.serviceId = serviceId;
     }
 
     public Optional<User> getUserById(String id) {
