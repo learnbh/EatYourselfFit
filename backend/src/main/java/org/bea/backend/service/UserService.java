@@ -54,10 +54,10 @@ public class UserService {
             User existingUser = optionalUser.get();
             User updatedUser = new User(
                 existingUser.id(),
-                userDto.name() != null ? userDto.name() : existingUser.name(),
-                userDto.email() != null ? userDto.email() : existingUser.email(),
+                userDto.name(),
+                userDto.email(),
                 existingUser.role(),
-                userDto.imageUrl() != null ? userDto.imageUrl() : existingUser.imageUrl(),
+                userDto.imageUrl(),
                 existingUser.type(),
                 existingUser.createdAt(),
                 dateService.getCurrentInstant()
