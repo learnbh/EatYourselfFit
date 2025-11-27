@@ -4,19 +4,26 @@ import java.time.Instant;
 import java.util.Optional;
 
 import org.bea.backend.enums.UserRoles;
+import org.bea.backend.enums.UserTypes;
 import org.bea.backend.exception.IdNotFoundException;
 import org.bea.backend.model.User;
 import org.bea.backend.model.UserDto;
+import org.bea.backend.model.UserUpdateDto;
 import org.bea.backend.repository.UserReprository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
-    private final UserReprository userReprository;
+    private final ServiceId serviceId;
 
-    public UserService(UserReprository userReprository) {
+    private final UserReprository userReprository;
+    private final DateService dateService;
+
+    public UserService(UserReprository userReprository, DateService dateService, ServiceId serviceId) {
         this.userReprository = userReprository;
+        this.dateService = dateService;
+        this.serviceId = serviceId;
     }
 
     public Optional<User> getUserById(String id) {
@@ -24,7 +31,10 @@ public class UserService {
     }   
 
     public User insertUser(UserDto userDto, String id) { 
-        Instant date = Instant.now();
+        Instant date = dateService.getCurrentInstant();        
+        if(id.equals(UserTypes.EMAIL.name())){
+            id = "email_" + serviceId.generateId();
+        }
         User newUser = new User(
             id,
             userDto.name(),
@@ -38,7 +48,7 @@ public class UserService {
         return newUser;
     }
 
-    public User updateUser(String id, UserDto userDto) {
+    public User updateUser(String id, UserUpdateDto userDto) {
         Optional<User> optionalUser = userReprository.findById(id);
         if (optionalUser.isPresent()) {
             User existingUser = optionalUser.get();
@@ -50,11 +60,11 @@ public class UserService {
                 userDto.imageUrl() != null ? userDto.imageUrl() : existingUser.imageUrl(),
                 existingUser.type(),
                 existingUser.createdAt(),
-                Instant.now()
+                dateService.getCurrentInstant()
             );
             userReprository.save(updatedUser);
             return updatedUser;
         }
-        throw new IdNotFoundException("Id of User not found");
+        throw new IdNotFoundException("Id " + id + " of User not found");
     }
 }
