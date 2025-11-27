@@ -16,7 +16,7 @@ import org.bea.backend.model.UserDto;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserService userService;
 
-    private CustomOAuth2UserService(UserService userService) {
+    public CustomOAuth2UserService(UserService userService) {
         this.userService = userService;
     }
 
