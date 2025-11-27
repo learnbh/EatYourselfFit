@@ -29,7 +29,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 @AutoConfigureMockRestServiceServer
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 
-public class UserControllerTest {    
+class UserControllerTest {    
         
     @Autowired
     private MockMvc mockMvc;

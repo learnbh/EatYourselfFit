@@ -16,7 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-public class CustomOAuth2UserServiceTest {
+class CustomOAuth2UserServiceTest {
 
     private UserService mockUserService;
     private OAuth2AuthenticationToken mockOAuth2AuthenticationToken;

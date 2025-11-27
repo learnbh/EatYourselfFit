@@ -24,7 +24,7 @@ import org.bea.backend.repository.UserReprository;
 @SpringBootTest
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class AuthControllerTest {
+class AuthControllerTest {
 
     @Autowired
     MockMvc mockMvc;
