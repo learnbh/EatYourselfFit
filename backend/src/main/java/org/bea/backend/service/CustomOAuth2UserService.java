@@ -16,7 +16,7 @@ import org.bea.backend.model.UserDto;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserService userService;
 
-    public CustomOAuth2UserService(UserService userService) {
+    private CustomOAuth2UserService(UserService userService) {
         this.userService = userService;
     }
 
@@ -30,19 +30,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 ? oauth2User.getAttribute("picture")
                 : oauth2User.getAttribute("avatar_url"),
             provider.toUpperCase());
-            User newUser=userService.insertUser(userDto, provider + "_" + oauth2User.getName());
-        return newUser;
+            return userService.insertUser(userDto, provider + "_" + oauth2User.getName());
     }
 
     public User getUser(Authentication authentication) {
-        if (authentication instanceof OAuth2AuthenticationToken) {
-            OAuth2AuthenticationToken oauth2 = (OAuth2AuthenticationToken) authentication;
+        if (authentication instanceof OAuth2AuthenticationToken oauth2) {
             String provider = oauth2.getAuthorizedClientRegistrationId();
             OAuth2User oauth2User = oauth2.getPrincipal();
-            User user = userService
+            return userService
                 .getUserById(provider + "_" + oauth2User.getName())
                 .orElseGet(() -> insertUser(oauth2User, provider));
-            return user;
         } 
         throw new UserIllegalArgumentException("User konnte nicht geladen werden - Authentication is not of type OAuth2AuthenticationToken");
     }
