@@ -14,6 +14,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 
+import java.time.Instant;
+
 import org.bea.backend.enums.UserRoles;
 import org.bea.backend.enums.UserTypes;
 import org.bea.backend.model.User;
@@ -30,6 +32,9 @@ public class AuthControllerTest {
     UserReprository mockUserReprository;
 
     ObjectMapper objectMapper = new ObjectMapper();
+
+    Instant nowInstant = Instant.now();
+
     User user = new User(
         "test_user",
         "github_user",
@@ -37,18 +42,8 @@ public class AuthControllerTest {
         UserRoles.USER.name(),
         null,
         UserTypes.GITHUB.name(),
-        java.time.Instant.now(),
-        java.time.Instant.now()
-    );
-    User userGoogle = new User(
-        "google_user",
-        "google_user",
-        null,
-        UserRoles.USER.name(),
-        null,
-        UserTypes.GOOGLE.name(),
-        java.time.Instant.now(),
-        java.time.Instant.now()
+        nowInstant,
+        nowInstant
     );
     @Test
     void testGetLoginInfo_shouldReturnUserInfos() throws Exception {
