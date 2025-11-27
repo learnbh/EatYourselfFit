@@ -56,4 +56,11 @@ public class AuthControllerTest {
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andExpect(MockMvcResultMatchers.content().string(objectMapper.writeValueAsString(mockUserReprository.findById("test_user").get())));
     }
+    @Test
+    void testGetLoginInfo_ShouldReturnUserIllegalArgumentException() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/eyf/login/success"))      
+            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+            .andExpect(MockMvcResultMatchers.jsonPath("error").value("Error: User konnte nicht geladen werden - Authentication is not of type OAuth2AuthenticationToken"));  
+    }
 }
