@@ -37,6 +37,7 @@ public class SecurityConfig {
                  * Achtung: Nur deaktivieren, 
                  * wenn du kein Login über Formular mit Session nutzt – bei OAuth2 ok.
                  */
+                // NOSONAR: Deaktiviert die Sonar-Warnung für diese Zeile
                 .csrf(AbstractHttpConfigurer::disable)
                 /**
                  * Was es tut: Definiert, welche Endpunkte öffentlich sind und welche Authentifizierung benötigen.
