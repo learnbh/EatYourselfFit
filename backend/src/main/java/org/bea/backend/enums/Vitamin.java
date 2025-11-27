@@ -28,6 +28,7 @@ public enum Vitamin {
     public String getInGerman() {
         return inGerman;
     }
+    
     public String getUnit() {
         return unit;
     }

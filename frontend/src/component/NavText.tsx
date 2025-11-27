@@ -1,5 +1,7 @@
 import {useRecipeCart} from "../context/CardRecipeContext.tsx";
 import {Link} from "react-router-dom";
+import { useUser } from "../context/user/useUser.tsx";
+import { UserRoles } from "../enums.ts";
 
 type Props = {
     open: boolean;
@@ -7,6 +9,7 @@ type Props = {
 
 export default function NavText(props: Readonly<Props>){
     const { recipeItems } = useRecipeCart();
+    const { user } = useUser();
 
     return (
         <>
@@ -15,7 +18,6 @@ export default function NavText(props: Readonly<Props>){
                     <li className="hidden"><Link to="/">Start</Link></li>
                     <li><Link to="/recipe">Rezepte</Link></li>
                     <li><Link to="/recipeplan">Rezept erstellen (Zutaten {recipeItems.length})</Link></li>
-                    <li className="hidden"><Link to="/job/migrate/slugs">Jobs</Link></li>
                 </ul>
                 <ul className="flex flex-col gap-2">
                     <li><Link to="/ingredient">Zutaten</Link></li>
@@ -23,6 +25,18 @@ export default function NavText(props: Readonly<Props>){
                 <ul className="flex flex-col gap-2">
                     <li><Link to="/shoppinglist">Einkaufsliste</Link></li>
                     <li><Link to="/weekplan">Wochenplan</Link></li>
+                </ul>
+                <ul className="flex flex-col gap-2"> 
+                    <li>
+                        <Link to={user?"/profile":"/login"}>
+                            {user?"Profile":"Login"}
+                        </Link>               
+                    </li>
+                    {user?.role === UserRoles.Admin && (
+                        <li>
+                            <Link to="/job/migrate/slugs">Jobs</Link>
+                        </li>
+                    )}     
                 </ul>
             </div>
         </>

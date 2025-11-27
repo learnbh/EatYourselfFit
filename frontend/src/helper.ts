@@ -112,7 +112,6 @@ export function getAxiosErrorMessageForLog(error:unknown):string{
     }
     return errorMessage;
 }
-
 export function handleAxiosFormError(
     error: unknown,
     formRef: React.RefObject<IngredientProductRef>,

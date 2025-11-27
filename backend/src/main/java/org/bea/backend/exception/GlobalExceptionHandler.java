@@ -34,6 +34,28 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND.name());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ExceptionMessage> handleUserNotFoundException(UserNotFoundException e){
+        ExceptionMessage error = new ExceptionMessage(
+                "Error: "+e.getMessage(),
+                Instant.now(),
+                HttpStatus.NOT_FOUND.name());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+    
+    @ExceptionHandler(UserIllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ExceptionMessage> handleUserIllegalArgumentException(UserIllegalArgumentException e){
+        ExceptionMessage error = new ExceptionMessage(
+                "Error: "+e.getMessage(),
+                Instant.now(),
+                HttpStatus.BAD_REQUEST.name());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+
     @ExceptionHandler(ProductVariationNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ExceptionMessage> handleIdNotFoundException(ProductVariationNotFoundException e){

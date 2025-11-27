@@ -65,6 +65,13 @@
   border-color: var(--color-site-secondary);
   border-radius:var(--border-site-radius);
 }
+#additional-links  a{
+  color: var(--text-signup);
+}
+
+#additional-links a:hover{
+  color: var(--hover-signup);
+}
 @media (min-width: 768px) {
   .recipeplan{
     display: grid;

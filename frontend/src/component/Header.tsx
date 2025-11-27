@@ -4,8 +4,9 @@ import {Link} from "react-router-dom";
 import NavIcons from "./NavIcons.tsx";
 import NavText from "./NavText.tsx";
 
-export default function Header(){
+export default function Header() {
     const [open, setOpen] = useState(false);
+
     return (
         <>
             <header className="header">
@@ -14,7 +15,8 @@ export default function Header(){
                         <button className="hamburger pr-2 pl-2 " onClick={() => setOpen(!open)} onMouseEnter={() => setOpen(!open)}>
                             ☰
                         </button>
-                        <NavIcons />
+                        <NavIcons 
+                        />
                     </div>
                     <Link to="/">
                         <div className="logo">
@@ -24,7 +26,8 @@ export default function Header(){
                     </Link>
                 </nav>
                 <div className="pl-1">
-                    <NavText open={open} />
+                    <NavText 
+                            open={open} />
                 </div>
             </header>
         </>

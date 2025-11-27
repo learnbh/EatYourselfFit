@@ -9,10 +9,9 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      "/eyf": {
+      '/eyf': {
         target: "http://localhost:8080",
-        changeOrigin: true
       },
     }
   }
-})
+});
