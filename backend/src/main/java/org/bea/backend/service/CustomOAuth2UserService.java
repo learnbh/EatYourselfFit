@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserServ
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import org.bea.backend.enums.UserTypes;
+import org.bea.backend.exception.UserIllegalArgumentException;
 import org.bea.backend.model.User;
 import org.bea.backend.model.UserDto;
 
@@ -42,13 +43,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .getUserById(provider + "_" + oauth2User.getName())
                 .orElseGet(() -> insertUser(oauth2User, provider));
             return user;
-        } /*else {
-            // Anderer Login-Typ, z. B. Username/Password oder JWT
-            return Map.of(
-                "authType", authentication.getClass().getSimpleName(),
-                "principal", authentication.getPrincipal()
-            );
-        }*/
-        return null;
+        } 
+        throw new UserIllegalArgumentException("User konnte nicht geladen werden - Authentication is not of type OAuth2AuthenticationToken");
     }
 }
