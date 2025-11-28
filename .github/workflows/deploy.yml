@@ -82,6 +82,9 @@ jobs:
           push: 'true' # damit das Image hochgeladen wird
           tags: ${{secrets.DOCKER_IMAGE_TAG}} # z.B. "myuser/my-backend:latest"
           context: . # verweist auf Dockerfile im Projektverzeichnis
+      
+      - name: Logout From Docker Hub
+        uses: docker/logout-action@v2
 
   deploy-to-render:
     needs: put-to-docker-hub
