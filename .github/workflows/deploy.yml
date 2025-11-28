@@ -84,7 +84,7 @@ jobs:
           context: . # verweist auf Dockerfile im Projektverzeichnis
       
       - name: Logout From Docker Hub
-        uses: docker/logout-action@v2
+        run: docker logout
 
   deploy-to-render:
     needs: put-to-docker-hub
