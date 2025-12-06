@@ -1,6 +1,5 @@
 package org.bea.backend.security;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -14,12 +13,6 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-    private final String websiteBaseUrl;
-
-    public SecurityConfig(@Value("${website_base_url}") String websiteBaseUrl) {
-        this.websiteBaseUrl = websiteBaseUrl;
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -68,13 +61,13 @@ public class SecurityConfig {
                 )
                 .logout(l -> l
                     .logoutUrl("/logout")
-                    .logoutSuccessUrl(websiteBaseUrl + "/recipe")
+                    .logoutSuccessUrl("/recipe")
                     .invalidateHttpSession(true)
                     .clearAuthentication(true)
                     .deleteCookies("JSESSIONID")
                 )
                 .oauth2Login(o -> o
-                    .defaultSuccessUrl(websiteBaseUrl + "/login/success", true)
+                    .defaultSuccessUrl("/login/success", true)
                 //    .failureHandler(new SimpleUrlAuthenticationFailureHandler("http://localhost:5173/login/failure"))
                 );
 
