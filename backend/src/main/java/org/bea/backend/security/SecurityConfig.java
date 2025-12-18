@@ -2,6 +2,8 @@ package org.bea.backend.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,10 +17,21 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final String frontendUrl;
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
+    private final String frontendUrl;
     public SecurityConfig(@Value("${frontend.url:${FRONTEND_URL:http://localhost:5173}}") String frontendUrl) {
-        this.frontendUrl = frontendUrl;
+        String value = frontendUrl == null ? "" : frontendUrl.trim();
+        if (value.isEmpty()) {
+            log.warn("frontend.url / FRONTEND_URL is empty - falling back to http://localhost:5173");
+            value = "http://localhost:5173";
+        }
+        if (!value.startsWith("http://") && !value.startsWith("https://")) {
+            log.warn("frontend.url does not contain scheme (http/https): '{}'. Prefixing with 'https://'.", value);
+            value = "https://" + value;
+        }
+        this.frontendUrl = value;
+        log.info("Configured frontendUrl={}", this.frontendUrl);
     }
 
     @Bean
