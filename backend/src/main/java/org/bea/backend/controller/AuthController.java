@@ -28,7 +28,7 @@ public class AuthController {
         String principal = authentication == null ? "null" : authentication.getName();
         log.info("Request GET /eyf/login/success - principal={}", principal);
         User user = customOAuth2UserService.getUser(authentication);
-        log.debug("Resolved user: {}", user == null ? "null" : user.getEmail());
+        log.debug("Resolved user: {}", user == null ? "null" : user.email());
         return user;
     }
 }
