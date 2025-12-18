@@ -83,7 +83,10 @@ public class SecurityConfig {
                     // logoutUrl erwartet den lokalen Pfad, nicht die Frontend-URL.
                     // Die Frontend-URL wird aus der Konfiguration / Umgebung bezogen.
                     .logoutUrl("/logout")
-                    .logoutSuccessUrl(frontendUrl + "/recipe")
+                    .logoutSuccessHandler((request, response, authentication) -> {
+                        log.info("Logout success - redirecting to {}", frontendUrl + "/recipe");
+                        response.sendRedirect(frontendUrl + "/recipe");
+                    })
                     .invalidateHttpSession(true)
                     .clearAuthentication(true)
                     .deleteCookies("JSESSIONID")
