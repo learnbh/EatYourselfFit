@@ -2,6 +2,7 @@ package org.bea.backend.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,6 +14,12 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private final String frontendUrl;
+
+    public SecurityConfig(@Value("${frontend.url:${FRONTEND_URL:http://localhost:5173}}") String frontendUrl) {
+        this.frontendUrl = frontendUrl;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -60,15 +67,17 @@ public class SecurityConfig {
                     .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 )
                 .logout(l -> l
+                    // logoutUrl erwartet den lokalen Pfad, nicht die Frontend-URL.
+                    // Die Frontend-URL wird aus der Konfiguration / Umgebung bezogen.
                     .logoutUrl("/logout")
-                    .logoutSuccessUrl("/recipe")
+                    .logoutSuccessUrl(frontendUrl + "/recipe")
                     .invalidateHttpSession(true)
                     .clearAuthentication(true)
                     .deleteCookies("JSESSIONID")
                 )
                 .oauth2Login(o -> o
-                    .defaultSuccessUrl("/login/success", true)
-                //    .failureHandler(new SimpleUrlAuthenticationFailureHandler("http://localhost:5173/login/failure"))
+                    .defaultSuccessUrl(frontendUrl + "/login/success", true)
+                //    .failureHandler(new SimpleUrlAuthenticationFailureHandler(frontendUrl + "/login/failure"))
                 );
 
         return http.build();
