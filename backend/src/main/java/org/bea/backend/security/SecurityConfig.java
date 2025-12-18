@@ -89,7 +89,10 @@ public class SecurityConfig {
                     .deleteCookies("JSESSIONID")
                 )
                 .oauth2Login(o -> o
-                    .defaultSuccessUrl(frontendUrl + "/login/success", true)
+                    .successHandler((request, response, authentication) -> {
+                        log.info("OAuth2 login success - redirecting to {}", frontendUrl + "/login/success");
+                        response.sendRedirect(frontendUrl + "/login/success");
+                    })
                 //    .failureHandler(new SimpleUrlAuthenticationFailureHandler(frontendUrl + "/login/failure"))
                 );
 

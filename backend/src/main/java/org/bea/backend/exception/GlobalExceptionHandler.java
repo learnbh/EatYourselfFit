@@ -1,6 +1,8 @@
 package org.bea.backend.exception;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +19,12 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionMessage> handleUnknownException(Exception e){
+        // log full stacktrace for unhandled exceptions
+        log.error("Unhandled exception caught", e);
         ExceptionMessage error = new ExceptionMessage("Error: "+e.getMessage(),
                 Instant.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.name());
@@ -55,7 +61,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-
+    
     @ExceptionHandler(ProductVariationNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ExceptionMessage> handleIdNotFoundException(ProductVariationNotFoundException e){
