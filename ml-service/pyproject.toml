@@ -37,3 +37,8 @@ select = [
     "B",  # flake8-bugbear
 ]
 ignore = []
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.6.2",
+]
