@@ -60,7 +60,7 @@ Das Projekt gliedert sich in drei Hauptkomponenten, die durch eine robuste CI/CD
 
     Kern: REST-API zur Verwaltung von Rezepten, Benutzern und Nährwerten.
 
-    Datenbank: MongoDB für persistente Speicherung.
+    Datenbank: MongoDB Atlas als Cloud-Datenbank für die persistente Speicherung.
 
     Qualität: Einsatz von Sonar zur statischen Code-Analyse und Einhaltung von Clean-Code-Prinzipien.
 
@@ -88,7 +88,42 @@ Das Projekt gliedert sich in drei Hauptkomponenten, die durch eine robuste CI/CD
 
     Monitoring: Prometheus & Grafana für Echtzeit-Metriken (Latenz, Fehler) sowie Evidently AI zur Erkennung von Daten-Drift.
 
+5. Docker & Lokale Entwicklung
+Die Docker-Architektur von NutriFlow ist als modulares, entkoppeltes Multi-Container-System konzipiert, das für eine robuste lokale Entwicklung optimiert ist, ohne die CI/CD-Pipeline für die Cloud-Bereitstellung (Render) zu komplizieren:
+
+   1. **Zentrales Orchestrierungs-Modell:** Alle Services sind in der `compose.yaml` über ein virtuelles Bridge-Netzwerk verbunden (Hostnamen-basierte Kommunikation).
+   2. **Design-Prinzipien:**  
+      * **Separation of Concerns:** `docker-compose` dient ausschließlich der lokalen *Developer Experience*, während CI/CD-Pipelines auf individuelle Images setzen.  
+      * **Sicherheit (Defense-in-Depth):** Wir nutzen *Multi-Stage-Builds* und führen den ML-Service unter einem unprivilegierten `appuser` aus, um die Angriffsfläche zu minimieren.  
+      * **BFF-Pattern:** Das Java-Backend fungiert als "Gatekeeper", der Authentifizierung und Zugriff auf den ML-Service zentralisiert.  
+      * **Effizienz:** Der Einsatz von `uv` im Build-Prozess beschleunigt das Python-Dependency-Management massiv.
+
+   *Fazit: Die Architektur bietet eine leichtgewichtige Produktion und eine robuste Entwicklungsumgebung, in der die Container-Isolation durch stabile interne Netzwerke ergänzt wird.*
+
+   #### 🛠️ Nutzung & Validierung der Container-Kommunikation
+   Um die gesamte Multi-Container-Umgebung (Backend, ML-Service) lokal zu starten, nutze im Projekt-Stammverzeichnis:
+
+   ```bash
+   docker compose up -d
+   ```
+   Validierung der Container-Kommunikation:
+
+    Health-Check: Prüfe die Erreichbarkeit für Java über:
+   ```bash 
+    curl -I http://localhost:8080/eyf/ingredients
+   ```
+   für FastAPI über:
+   ```bash
+   curl -I http://localhost:8000/docs
+   ```
+
+    Netzwerk-Test (Container-zu-Container): Die Kommunikation erfolgt intern über den Servicenamen
+   ```
+   docker exec -it eatyoufit-backend curl http://ml-service:8000/
+   ```
+
 📂 Projektstruktur grobe Übersicht
+
 ```text
 EatYouFit/
 ├── .github/workflows/    # CI/CD (Maven, Sonar, Deployment)

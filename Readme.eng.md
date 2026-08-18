@@ -62,7 +62,7 @@ The project is divided into three main components, which are automatically deplo
 
 1. Backend (Java Spring Boot)
 Core: REST API for managing recipes, users, and nutritional values.
-Database: MongoDB for persistent storage.
+Database: MongoDB Atlas cloud database for persistent storage.
 Quality: Use of Sonar for static code analysis and adherence to clean code principles.
 2. Frontend (React)
 Technology: Vite + TypeScript.
@@ -105,6 +105,40 @@ Autonomous Research: The ML agent uses RAG for official data or searches the web
 Validation & Storage: The results are validated, returned as JSON, and stored in MongoDB for future use.
 
 ```
+5. Docker & Local Development
+The NutriFlow Docker architecture is designed as a modular, decoupled multi-container system, optimized for robust local development without complicating the CI/CD pipeline for cloud deployment (Render):
+
+   1. **Central Orchestration Model:** All services are connected in the `compose.yaml` via a virtual bridge network (hostname-based communication).
+   2. **Design Principles:**  
+      * **Separation of Concerns:** `docker-compose` is used exclusively for local *Developer Experience*, while CI/CD pipelines rely on individual images.  
+      * **Security (Defense-in-Depth):** We utilize *multi-stage builds* and run the ML service under an unprivileged `appuser` to minimize the attack surface.  
+      * **BFF Pattern:** The Java backend acts as a "gatekeeper," centralizing authentication and requests to the ML service.  
+      * **Efficiency:** Utilizing `uv` in the build process massively accelerates Python dependency management.
+
+   *Conclusion: The architecture provides lightweight production deployment and a robust development environment, complementing container isolation with stable internal networks.*
+
+   #### 🛠️ Usage & Container Communication Validation
+   To start the entire multi-container environment (backend, ML service) locally, use the following in the project root directory:
+
+   ```bash
+   docker compose up -d
+   ```
+   Container Communication Validation:
+
+   Health-Check: Check the availability for Java via
+   ```bash 
+    curl -I http://localhost:8080/eyf/ingredients
+   ```
+   for FastAPI via
+   ```bash
+   curl -I http://localhost:8000/docs
+   ```
+
+    Network Test (Container-to-Container): Internal communication occurs via the service name
+
+   ```
+   docker exec -it eatyoufit-backend curl http://ml-service:8000/
+   ```
 
 ### 📂 Project Structure
 ```
