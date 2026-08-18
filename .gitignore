@@ -35,3 +35,6 @@ ml-service/.coverage       # If code coverage is used with pytest
 
 # Python packaging metadata
 *.egg-info/
+
+# Docker
+compose.yaml
